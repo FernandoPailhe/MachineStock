@@ -97,10 +97,8 @@ fun Item.getFeatures(): String {
 fun Item.getLocation(): String {
 
     return when (location) {
-        "Zoi" -> Const.LOCATION_1
-        "Zoilo" -> Const.LOCATION_1
-        "Can" -> Const.LOCATION_2
-        "Canavese" -> Const.LOCATION_2
+        "1" -> Const.LOCATION_1
+        "2" -> Const.LOCATION_2
         else -> "A definir"
     }
 }
