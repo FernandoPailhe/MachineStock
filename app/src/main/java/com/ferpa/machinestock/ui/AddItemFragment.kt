@@ -198,7 +198,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
     private fun galleryAddPic(file: File) {
         Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
             val f = File(currentPhotoPath)
-            mediaScanIntent.data = Uri.fromFile(file)
+            mediaScanIntent.data = Uri.fromFile(f)
             this.context?.sendBroadcast(mediaScanIntent)
         }
     }

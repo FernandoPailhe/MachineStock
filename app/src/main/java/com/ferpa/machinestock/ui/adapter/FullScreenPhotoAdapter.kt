@@ -1,13 +1,9 @@
 package com.ferpa.machinestock.ui.adapter
 
-import android.icu.number.NumberFormatter.with
-import android.icu.number.NumberRangeFormatter.with
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FullScreenPhotoItemBinding
 import com.ferpa.machinestock.model.MachinePhoto
@@ -33,7 +29,7 @@ class FullScreenPhotoAdapter(
 
     override fun onBindViewHolder(holder: MachineFullScreenPhotoViewHolder, position: Int) {
         val machinePhotoItem = machinePhotoList[position]
-        holder.bind(machinePhotoItem, machinePhotoList)
+        holder.bind(machinePhotoItem)
 
     }
 
@@ -54,7 +50,7 @@ class FullScreenPhotoAdapter(
             }
         }
 
-        fun bind(machinePhoto: MachinePhoto, machinePhotoList: List<MachinePhoto>) {
+        fun bind(machinePhoto: MachinePhoto) {
 
             if (machinePhoto.id == -1) {
                 binding.fullScreenPhoto.setImageResource(R.drawable.ic_broken_image)

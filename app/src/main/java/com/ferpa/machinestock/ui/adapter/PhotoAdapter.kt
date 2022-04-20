@@ -4,14 +4,9 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.PhotoItemBinding
-import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MachinePhoto
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter.MachinePhotoViewHolder
 import com.squareup.picasso.Picasso
@@ -35,7 +30,7 @@ class PhotoAdapter(
 
     override fun onBindViewHolder(holder: MachinePhotoViewHolder, position: Int) {
         val machinePhotoItem = machinePhotoList[position]
-        holder.bind(machinePhotoItem, machinePhotoList)
+        holder.bind(machinePhotoItem)
 
     }
 
@@ -56,7 +51,7 @@ class PhotoAdapter(
             }
         }
 
-        fun bind(machinePhoto: MachinePhoto, machinePhotoList: List<MachinePhoto>) {
+        fun bind(machinePhoto: MachinePhoto) {
 
             if (machinePhoto.id == -1) {
                 binding.itemPhoto.setImageResource(R.drawable.ic_broken_image)

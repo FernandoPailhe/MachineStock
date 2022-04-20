@@ -11,7 +11,7 @@ import com.ferpa.machinestock.model.Product
 
 class MenuAdapter (private val onItemClicked: (Product) -> Unit) : RecyclerView.Adapter<MenuAdapter.ProductViewHolder>(){
 
-    val productList = ProductsSource.products
+    private val productList = ProductsSource.products
 
     class ProductViewHolder(
         private var binding: MenuItemBinding
@@ -25,7 +25,7 @@ class MenuAdapter (private val onItemClicked: (Product) -> Unit) : RecyclerView.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        return MenuAdapter.ProductViewHolder(
+        return ProductViewHolder(
             MenuItemBinding.inflate(
                 LayoutInflater.from(
                     parent.context

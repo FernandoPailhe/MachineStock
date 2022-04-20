@@ -3,7 +3,6 @@ package com.ferpa.machinestock.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
-import com.ferpa.machinestock.R
 import com.ferpa.machinestock.R.*
 import com.ferpa.machinestock.utilities.Const
 import java.text.NumberFormat
@@ -64,12 +63,10 @@ fun Item.getType(): String{
 
 fun Item.getFormattedPrice(): String {
 
-    var priceInt = NumberFormat.getIntegerInstance().format(price)
-
-    var priceStr = "$priceInt"
+    var priceStr = NumberFormat.getIntegerInstance().format(price)
 
     when (currency) {
-        "USD" -> priceStr = "$priceInt USD"
+        "USD" -> priceStr = "$priceStr USD"
     }
 
     return priceStr
@@ -105,11 +102,11 @@ fun Item.getLocation(): String {
 
 fun Item.getColor(): Int{
 
-    var statusItemColor = when (status){
+    val statusItemColor = when (status){
         "A REPARAR" -> drawable.gradient_list_item_status1
         "SEÑADA" -> drawable.gradient_list_item_status3
         "VENDIDA" -> drawable.gradient_list_item_status4
-        //"Retirada" -> drawable.gradient_list_item_status5
+        "RETIRADA" -> drawable.gradient_list_item_status4
         else -> drawable.gradient_list_item
     }
 
@@ -137,14 +134,13 @@ fun getCurrentDate():String{
 
 fun Item.getMachinePhotoList(): List<MachinePhoto> {
 
-    var machinePhotoList: MutableList<MachinePhoto> = mutableListOf(
+    return mutableListOf(
         MachinePhoto(1, photo1),
         MachinePhoto(2, photo2),
         MachinePhoto(3, photo3),
         MachinePhoto(4, photo4)
     )
 
-    return machinePhotoList
 }
 
 

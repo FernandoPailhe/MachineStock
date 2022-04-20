@@ -1,7 +1,5 @@
 package com.ferpa.machinestock.utilities
 
-import android.util.Log
-import com.ferpa.machinestock.R
 import com.ferpa.machinestock.model.Item
 
 
@@ -22,14 +20,6 @@ class CustomListUtil {
     private val filterStatusList: MutableList<String> = mutableListOf()
 
     private val filterTypeList: MutableList<Char> = mutableListOf()
-
-    private val sortBy: String = "price"
-
-    private val sortDesc: Boolean = false
-
-    fun getSort(): String {
-        return sortBy
-    }
 
     fun filterItem(item: Item): Boolean {
 
@@ -168,19 +158,6 @@ class CustomListUtil {
 
         filterTypeList.clear()
 
-
-    }
-
-    companion object {
-
-        // For Singleton instantiation
-        @Volatile
-        private var instance: CustomListUtil? = null
-
-        fun getInstance() =
-            instance ?: synchronized(this) {
-                instance ?: CustomListUtil().also { instance = it }
-            }
 
     }
 

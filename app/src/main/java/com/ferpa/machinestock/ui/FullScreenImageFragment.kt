@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ferpa.machinestock.MachineStockApplication
 import com.ferpa.machinestock.databinding.FragmentFullScreenImageBinding
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.getMachinePhotoList
@@ -26,7 +25,7 @@ class FullScreenImageFragment : Fragment(), FullScreenPhotoAdapter.OnItemClickLi
     private var _binding: FragmentFullScreenImageBinding? = null
     private val binding get() = _binding!!
 
-    private val viewmodel: MachineStockViewModel by activityViewModels()
+    private val viewModel: MachineStockViewModel by activityViewModels()
 
     lateinit var item: Item
 
@@ -34,7 +33,7 @@ class FullScreenImageFragment : Fragment(), FullScreenPhotoAdapter.OnItemClickLi
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentFullScreenImageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,7 +45,7 @@ class FullScreenImageFragment : Fragment(), FullScreenPhotoAdapter.OnItemClickLi
 
         val photoId = navigationArgs.photoId
 
-        viewmodel.retrieveItem(itemId).observe(this.viewLifecycleOwner){ selectedItem ->
+        viewModel.retrieveItem(itemId).observe(this.viewLifecycleOwner){ selectedItem ->
             item = selectedItem
             bindPhotoRecyclerView(item, photoId)
         }
