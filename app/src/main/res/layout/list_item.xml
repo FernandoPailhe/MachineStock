@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardItem"
+    style="@style/Widget.MachineStock.CardList"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/margin_between_elements"
+    app:cardPreventCornerOverlap="true">
+
+
+    <RelativeLayout
+        android:id="@+id/item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_list_item">
+
+        <LinearLayout
+            android:id="@+id/owner_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_between_elements"
+            android:orientation="vertical"
+            android:padding="@dimen/menu_padding"
+            tools:ignore="MissingConstraints">
+
+            <LinearLayout
+                android:id="@+id/item_product_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/menu_padding">
+
+            <TextView
+                android:id="@+id/item_product_text"
+                style="@style/Widget.MachineStock.ListItemProductTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_between_text"
+                tools:text="GUILLOTINA" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/status_text"
+                style="@style/Widget.MachineStock.ListItemStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Status" />
+
+            <LinearLayout
+                android:id="@+id/productLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:id="@+id/item_up_text"
+                    style="@style/Widget.MachineStock.ListItemUpTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_between_text"
+                    tools:text="BRAND" />
+
+                <TextView
+                    android:id="@+id/item_down_text"
+                    style="@style/Widget.MachineStock.ListItemDownTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_between_text"
+                    android:fontFamily="@font/roboto"
+                    tools:text="2000 mmm x 2 mm" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/price_text"
+                style="@style/Widget.MachineStock.ListItemStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/menu_padding"
+                tools:text="$1500000" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

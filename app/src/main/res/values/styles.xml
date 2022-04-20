@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.MachineStock.ListItemUpTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
+    <style name="Widget.MachineStock.ListItemProductTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
+    <style name="Widget.MachineStock.ListItemDownTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="Widget.MachineStock.ListItemPriceTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">fill_horizontal</item>
+        <item name="android:textSize">15sp</item>
+        <item name="backgroundColor">@color/secondaryDarkColor</item>
+        <item name="textFillColor">@color/primaryDarkColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+    </style>
+
+    <style name="Widget.MachineStock.ListItemStatusTextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+    </style>
+
+    <style name="Widget.MachineStock.CardMenu" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
+        <item name="cardBackgroundColor">@color/secondaryDarkColor</item>
+    </style>
+
+    <style name="Widget.MachineStock.CardList" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cornerFamilyBottomLeft">cut</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="boxCornerRadiusBottomStart">0dp</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
+    </style>
+
+    <style name="Widget.MachineStock.CardDetail" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
+        <item name="cardBackgroundColor">@color/primaryLightColor</item>
+    </style>
+
+    <style name="Widget.MachineStock.ProductTitle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">@dimen/title_card_text_size</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_marginLeft">@dimen/margin_between_elements</item>
+        <item name="android:padding">@dimen/menu_padding</item>
+        <item name="android:textColor">@color/primaryDarkColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+    </style>
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">15dp</item>
+    </style>
+
+    <style name="Widget.MachineStock.ChipFilter" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/primaryLightColor</item>
+        <item name="android:textColor">@color/secondaryDarkColor</item>
+        <item name="checkedIconTint">@color/primaryTextColor</item>
+        <item name="rippleColor">@color/primaryTextColor</item>
+    </style>
+
+    <style name="RoundSquare">
+        <item name="cornerSize">20%</item>
+        <item name="cornerSizeTopRight">40%</item>
+        <item name="cornerFamilyTopRight">cut</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+
+    <style name="Widget.Inventory.TextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="Widget.Inventory.Header" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="Widget.Inventory.TextInputLayout.OutlinedBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="errorIconDrawable">@android:drawable/stat_notify_error</item>
+        <item name="helperTextTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle1
+        </item>
+    </style>
+</resources>

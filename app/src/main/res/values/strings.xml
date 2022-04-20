@@ -1,0 +1,122 @@
+<resources>
+    <string name="app_name">MachineStock</string>
+    <string name="no_file">No image file</string>
+    <string name="status">Estado: %1$s</string>
+    <string name="owner1">Socio 1</string>
+    <string name="owner2">Socio 2</string>
+    <string name="length_and_width">Medidas: %1$s  mm x %2$s mm</string>
+    <string name="length_and_weight">Medidas: %1$s mm x %2$s tns</string>
+    <string name="features">Medidas: %1$s </string>
+    <string name="brand">Marca: %1$s</string>
+    <string name="type">Tipo: %1$s</string>
+    <string name="location">Depósito: %1$s</string>
+    <string name="last_edit">Última edición: %1$s</string>
+    <string name="inside_number">Código: %1$s</string>
+    <string name="save_action">Guardar</string>
+    <string name="share_action">Compartir</string>
+
+    <string name="index_card_with_type"><big>FICHA TECNICA\n</big>=============\n<b>%1$s </b>%2$s \n%3$s \nPrecio: $ %4$s</string>
+    <string name="index_card"><big>FICHA TECNICA\n</big>=============\n<b>%1$s </b>%2$s \nPrecio: $ %3$s</string>
+
+    <string-array name="type_options">
+        <item>Mecánica</item>
+        <item>Hidraúlica</item>
+        <item>Neumática</item>
+        <item>No especifica</item>
+    </string-array>
+
+    <string-array name="owner_options">
+        <item>Socio 1</item>
+        <item>Socio 2</item>
+        <item>Sociedad</item>
+    </string-array>
+
+    <string-array name="status_options">
+        <item>A reparar</item>
+        <item>Disponible</item>
+        <item>Señada</item>
+        <item>Vendida</item>
+        <item>Retirada</item>
+        <item>No informado</item>
+    </string-array>
+
+    <string-array name="product_options">
+        <item>GUILLOTINA</item>
+        <item>PLEGADORA</item>
+        <item>BALANCIN</item>
+        <item>TORNO</item>
+        <item>CILINDRO</item>
+        <item>COMPRESOR</item>
+        <item>FRESADORA</item>
+        <item>PLASMA</item>
+        <item>SERRUCHO</item>
+        <item>SOLDADURA</item>
+        <item>OTROS</item>
+    </string-array>
+
+    <string-array name="brand_options">
+        <item>ARRIGONI</item>
+        <item>ATENA</item>
+        <item>ATLAS</item>
+        <item>BISTCHIN</item>
+        <item>CASANOVA</item>
+        <item>CENA</item>
+        <item>DAISA</item>
+        <item>DIAMINT</item>
+        <item>DRO ITALPLEG</item>
+        <item>DUUB</item>
+        <item>E. PINO</item>
+        <item>ERCOR</item>
+        <item>FHIAM 14</item>
+        <item>NAHUEL</item>
+        <item>NEBIOLO</item>
+        <item>NOVA</item>
+        <item>NOVA PELIS</item>
+        <item>OLIMAG</item>
+        <item>PANTHER</item>
+        <item>PIA</item>
+        <item>PRINCIPE</item>
+        <item>REMAC</item>
+        <item>SDB</item>
+        <item>YUNAN</item>
+    </string-array>
+
+    <string-array name="location_options">
+        <item>Depósito 1</item>
+        <item>Depósito 2</item>
+        <item>A definir</item>
+    </string-array>
+
+    <!-- Messages -->
+    <string name="blank_item">Falta completar características básicas</string>
+
+    <!-- Hint Text -->
+    <string name="item_product_req">Máquina</string>
+    <string name="inside_number_req">Código</string>
+    <string name="item_length_req">Largo *</string>
+    <string name="item_width_guillotina_req">Espesor *</string>
+    <string name="item_width_torno_req">Volteo *</string>
+    <string name="item_weight_req">Tonelaje *</string>
+    <string name="item_price_req">Precio</string>
+    <string name="item_brand_req">Marca</string>
+    <string name="item_location_req">Depósito</string>
+    <string name="item_type_req">Tipo</string>
+    <string name="item_status_req">Estado</string>
+    <string name="item_owner2_req">Socio 2 %</string>
+    <string name="item_owner1_req">Socio 1 %</string>
+    <!-- Content Description -->
+    <string name="edit_item">Edit Item</string>
+    <string name="add_new_item">Add Item</string>
+    <string name="currency_symbol"></string>
+    <string name="dialog_new_product_title">Nuevo ingreso:</string>
+    <string name="invalid_owner">El porcentaje total debe ser 100</string>
+    <string name="filter_ok">Listo</string>
+    <string name="filter_cancel">Cancelar</string>
+    <string name="shared_ownership">Sociedad</string>
+    <string name="filter_title">FILTRAR</string>
+    <string name="search_menu">buscar</string>
+    <string name="camera">Cámara</string>
+    <string name="item_pulg_req">Ancho en pulgadas *</string>
+    <string name="item_mig_req">En mig *</string>
+    <string name="edit_action">EDITAR</string>
+</resources>

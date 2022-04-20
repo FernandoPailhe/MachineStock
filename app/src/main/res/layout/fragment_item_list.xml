@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="bViewModel"
+            type="com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.ItemListFragment">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/card_elevation"
+            app:cardCornerRadius="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_list_menu"
+                android:orientation="vertical"
+                tools:context=".ui.ItemListFragment">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_menu"
+                    style="@style/Widget.MachineStock.CardList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_between_elements"
+                    android:layout_marginVertical="4dp"
+                    app:cardPreventCornerOverlap="true">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="80dp"
+                        android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/list_title"
+                        style="@style/Widget.MachineStock.ProductTitle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/secondaryDarkColor"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:text="Torno" />
+
+                    <ImageButton
+                        android:id="@+id/add_item_action"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:backgroundTint="@color/noneColor"
+                        android:padding="@dimen/margin"
+                        android:src="@drawable/ic_baseline_add_24"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:ignore="MissingConstraints" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardItem"
+                    style="@style/Widget.MachineStock.CardList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_between_elements"
+                    app:cardPreventCornerOverlap="true">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="80dp"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/input_search"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/search_menu"
+                            app:layout_constraintEnd_toStartOf="@+id/clear_filter_action"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:ignore="MissingConstraints" />
+
+                        <ImageButton
+                            android:id="@+id/clear_filter_action"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:backgroundTint="@color/noneColor"
+                            android:padding="@dimen/margin"
+                            android:src="@drawable/ic_baseline_filter_alt_off_24"
+                            app:layout_constraintEnd_toStartOf="@+id/filter_menu_action"
+                            app:layout_constraintStart_toEndOf="@id/input_search"
+                            tools:ignore="MissingConstraints" />
+
+                        <ImageButton
+                            android:id="@+id/filter_menu_action"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:backgroundTint="@color/noneColor"
+                            android:padding="@dimen/margin"
+                            android:src="@drawable/ic_baseline_filter_alt_24"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/clear_filter_action"
+                            tools:ignore="MissingConstraints" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/filter_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layoutAnimation="@anim/layout_animation">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.MachineStock.CardList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_between_elements"
+                    app:cardPreventCornerOverlap="true"
+                    tools:ignore="MissingConstraints">
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/gradient_filter_menu">
+
+                        <LinearLayout
+                            android:id="@+id/filter_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/menu_padding">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="@dimen/menu_padding">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/menu_padding">
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_owner_1"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/owner1" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_owner_2"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/owner2" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_shared"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                </LinearLayout>
+
+                                <com.google.android.material.divider.MaterialDivider
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/menu_padding">
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_type_1"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_type_2"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_type_3"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                </LinearLayout>
+
+                                <com.google.android.material.divider.MaterialDivider
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/menu_padding">
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_status_1"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/owner1" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_status_2"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/owner2" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_status_3"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="@dimen/menu_padding">
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_status_4"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_status_5"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                    <androidx.appcompat.widget.AppCompatCheckBox
+                                        android:id="@+id/filter_status_6"
+                                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="@dimen/menu_padding"
+                                        android:text="@string/shared_ownership" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/margin_between_elements"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@+id/list_title"
+            tools:listitem="@layout/list_item" />
+
+    </LinearLayout>
+</layout>

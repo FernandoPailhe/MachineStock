@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="margin">16dp</dimen>
+    <dimen name="margin_between_elements">16dp</dimen>
+    <dimen name="menu_padding">8dp</dimen>
+    <dimen name="margin_between_text">4dp</dimen>
+    <dimen name="percent_icon_size">40dp</dimen>
+    <dimen name="divider_size">4dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="title_elevation">6dp</dimen>
+    <dimen name="menu_img_size">150dp</dimen>
+    <dimen name="menu_card_size">66dp</dimen>
+    <dimen name="title_card_text_size">20sp</dimen>
+    <dimen name="icon_button_size">40dp</dimen>
+</resources>
