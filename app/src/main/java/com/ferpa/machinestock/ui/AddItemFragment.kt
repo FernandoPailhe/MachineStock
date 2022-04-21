@@ -474,17 +474,25 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
 
     private fun shareIndexCard(message: String) {
 
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.type = "text/plain"
-        intent.setPackage("com.whatsapp")
-        intent.putExtra(Intent.EXTRA_TEXT, message)
-        startActivity(intent)
-        //TODO el chequeo de whatsapp dejo de funcionar
-        if (context?.let { intent.resolveActivity(it.packageManager) } == null) {
-            return
-        } else {
-
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, message)
+            putExtra(Intent.EXTRA_TITLE, getString(R.string.share_tittle))
         }
+        startActivity(Intent.createChooser(intent, null))
+
+    }
+
+    private fun shareImage(imageUri: String){
+
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "image/jpeg"
+            putExtra(Intent.EXTRA_STREAM, imageUri)
+        }
+        startActivity(Intent.createChooser(intent, null))
+
     }
 
     private fun getShareIndexCard(withPrice: Boolean): String {
