@@ -19,7 +19,7 @@ object RetrofitModule {
     fun provideItemsApi(): ItemsApi {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(ItemsApi.BASE_URL)
+            .baseUrl(ItemsApi.BASE_LOCAL_URL)
             .build()
             .create(ItemsApi::class.java)
     }
