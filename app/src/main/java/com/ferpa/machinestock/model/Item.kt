@@ -128,7 +128,7 @@ fun formatNumber (number : Double?): String {
 }
 
 fun getCurrentDate():String{
-    val sdf = SimpleDateFormat("yyyy-MM-dd")
+    val sdf = SimpleDateFormat("yyyy-MM-dd-hh-mm")
     return sdf.format(Date())
 }
 
