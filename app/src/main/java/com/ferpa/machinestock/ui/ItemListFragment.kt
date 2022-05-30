@@ -38,8 +38,6 @@ class ItemListFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
 
     private val viewModel: MachineStockViewModel by activityViewModels()
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
