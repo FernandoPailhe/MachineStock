@@ -17,20 +17,13 @@ interface ItemDao {
     suspend fun delete (item: Item)
 
     @Query ("SELECT * from item WHERE ID = :id")
-    fun getItem(id: Int): Flow<Item>
-
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query ("SELECT DISTINCT id, product from item")
-    fun getProductMenu(): Flow<List<Item>>
-
-    @Query ("SELECT DISTINCT brand from item")
-    fun getBrandArray(): Flow<List<String>>
+    fun getItem(id: Long): Flow<Item>
 
     @Query("SELECT * FROM item " +
             "WHERE product = :product ORDER BY feature1 ASC")
     fun getProducts(product: String): Flow<List<Item>>
 
-    @Query("SELECT * FROM item")
+    @Query("SELECT * FROM item ORDER BY editDate")
     fun getAll(): Flow<List<Item>>
 
     @Query("SELECT * FROM item WHERE product = :product AND (brand LIKE :searchQuery OR insideNumber LIKE :searchQuery OR feature1 LIKE :searchQuery OR feature2 LIKE :searchQuery OR feature3 LIKE :searchQuery)")
