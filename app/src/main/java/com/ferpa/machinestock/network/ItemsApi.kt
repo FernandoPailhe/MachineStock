@@ -12,9 +12,6 @@ interface ItemsApi {
     suspend fun getItemById(@Body itemId: Long): Item
 
     @GET("/getAllItems")
-    suspend fun getItems(@Query ("product") product: String, @Query ("value") value: String) : List<Item>
-
-    @GET("/getAllItems")
     suspend fun getAllItems(): Response<List<Item>>
 
     @POST("/newItem")
