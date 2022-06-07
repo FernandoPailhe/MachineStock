@@ -2,10 +2,9 @@ package com.ferpa.machinestock.utilities
 
 import com.ferpa.machinestock.model.Item
 
-
 class CustomListUtil {
 
-    private var product: String = ""
+    private var product: String = "TODAS"
 
     var isFilteredList: Boolean = false
 
@@ -24,7 +23,6 @@ class CustomListUtil {
     fun filterItem(item: Item): Boolean {
 
         var isAdded = false
-
 
         if (filterOwner1 || filterOwner2 || filterShared) {
             isAdded = filterOwner(item)
@@ -134,17 +132,13 @@ class CustomListUtil {
         }
     }
 
-    fun getSearchInput(): String {
-        return searchInput
-    }
+    fun getSearchInput(): String = searchInput
 
     fun setProduct(newProduct: String) {
         product = newProduct
     }
 
-    fun getProduct(): String {
-        return product
-    }
+    fun getProduct(): String = product
 
     fun clearFilters() {
 
