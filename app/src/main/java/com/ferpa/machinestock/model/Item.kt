@@ -1,5 +1,7 @@
 package com.ferpa.machinestock.model
 
+
+import android.annotation.SuppressLint
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -11,7 +13,7 @@ import java.util.*
 
 @Entity(tableName = "item")
 data class Item(
-    @PrimaryKey(autoGenerate = true) val id: Int = 74,
+    @PrimaryKey(autoGenerate = true) val id: Long = newProductId(),
     @ColumnInfo(name = "insertDate") val insertDate: String? = getCurrentDate(),
     @ColumnInfo(name = "product") val product: String,
     @ColumnInfo(name = "owner1") val owner1: Int? = 0,
@@ -113,6 +115,17 @@ fun Item.getColor(): Int{
     return statusItemColor
 }
 
+fun Item.getMachinePhotoList(): List<MachinePhoto> {
+
+    return mutableListOf(
+        MachinePhoto(1, photo1),
+        MachinePhoto(2, photo2),
+        MachinePhoto(3, photo3),
+        MachinePhoto(4, photo4)
+    )
+
+}
+
 fun formatNumber (number : Double?): String {
 
     return if (number != null) {
@@ -127,21 +140,18 @@ fun formatNumber (number : Double?): String {
 
 }
 
+@SuppressLint("SimpleDateFormat")
 fun getCurrentDate():String{
     val sdf = SimpleDateFormat("yyyy-MM-dd-hh-mm")
     return sdf.format(Date())
 }
 
-fun Item.getMachinePhotoList(): List<MachinePhoto> {
-
-    return mutableListOf(
-        MachinePhoto(1, photo1),
-        MachinePhoto(2, photo2),
-        MachinePhoto(3, photo3),
-        MachinePhoto(4, photo4)
-    )
-
+@SuppressLint("SimpleDateFormat")
+fun newProductId(): Long {
+    val sdf = SimpleDateFormat("yyMMddhhmmssSSS")
+    return (sdf.format(Date())).toLong()
 }
+
 
 
 
