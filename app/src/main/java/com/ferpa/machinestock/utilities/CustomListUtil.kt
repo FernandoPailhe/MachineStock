@@ -2,6 +2,11 @@ package com.ferpa.machinestock.utilities
 
 import com.ferpa.machinestock.model.Item
 
+
+const val SOCIO1 = "Socio 1"
+const val SOCIO2 = "Socio 2"
+const val SOCIEDAD = "Sociedad"
+
 class CustomListUtil {
 
     private var product: String = "TODAS"
@@ -85,16 +90,16 @@ class CustomListUtil {
 
     fun getFilterStatus(type: String): Boolean {
         return when (type) {
-            "Socio 1" -> filterOwner1
-            "Socio 2" -> filterOwner2
-            "Sociedad" -> filterShared
+            SOCIO1 -> filterOwner1
+            SOCIO2 -> filterOwner2
+            SOCIEDAD -> filterShared
             else -> filterStatusList.contains(type)
         }
     }
 
     fun setFilter(type: String) {
 
-        if (type != "Socio 1" && type != "Socio 2" && type != "Sociedad") {
+        if (type != SOCIO1 && type != SOCIO2 && type != SOCIEDAD) {
             if( type != "Mecánica" && type != "Hidraúlica" && type != "Neumática") {
                 if (filterStatusList.contains(type)) {
                     filterStatusList -= type
@@ -111,9 +116,9 @@ class CustomListUtil {
             }
         } else {
             when (type) {
-                "Socio 1" -> filterOwner1 = !filterOwner1
-                "Socio 2" -> filterOwner2 = !filterOwner2
-                "Sociedad" -> filterShared = !filterShared
+                SOCIO1 -> filterOwner1 = !filterOwner1
+                SOCIO2 -> filterOwner2 = !filterOwner2
+                SOCIEDAD -> filterShared = !filterShared
             }
         }
 
