@@ -85,8 +85,8 @@ class CustomListUtil {
 
     fun getFilterStatus(type: String): Boolean {
         return when (type) {
-            "Maquimundo" -> filterOwner1
-            "Canavese" -> filterOwner2
+            "Socio 1" -> filterOwner1
+            "Socio 2" -> filterOwner2
             "Sociedad" -> filterShared
             else -> filterStatusList.contains(type)
         }
@@ -94,7 +94,7 @@ class CustomListUtil {
 
     fun setFilter(type: String) {
 
-        if (type != "Maquimundo" && type != "Canavese" && type != "Sociedad") {
+        if (type != "Socio 1" && type != "Socio 2" && type != "Sociedad") {
             if( type != "Mecánica" && type != "Hidraúlica" && type != "Neumática") {
                 if (filterStatusList.contains(type)) {
                     filterStatusList -= type
@@ -111,8 +111,8 @@ class CustomListUtil {
             }
         } else {
             when (type) {
-                "Maquimundo" -> filterOwner1 = !filterOwner1
-                "Canavese" -> filterOwner2 = !filterOwner2
+                "Socio 1" -> filterOwner1 = !filterOwner1
+                "Socio 2" -> filterOwner2 = !filterOwner2
                 "Sociedad" -> filterShared = !filterShared
             }
         }
