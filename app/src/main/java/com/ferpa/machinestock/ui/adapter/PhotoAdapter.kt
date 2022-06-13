@@ -1,15 +1,18 @@
 package com.ferpa.machinestock.ui.adapter
 
-import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
-import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.PhotoItemBinding
 import com.ferpa.machinestock.model.MachinePhoto
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter.MachinePhotoViewHolder
+import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+
+const val TAG = "PhotoAdapter"
 
 class PhotoAdapter(
     private val machinePhotoList: List<MachinePhoto>,
@@ -53,21 +56,24 @@ class PhotoAdapter(
 
         fun bind(machinePhoto: MachinePhoto) {
 
-            if (machinePhoto.id == -1) {
-                binding.itemPhoto.setImageResource(R.drawable.ic_broken_image)
-            } else if(machinePhoto. id == 10) {
-                val takenImage = BitmapFactory.decodeFile(machinePhoto.imgSrcUrl)
-                binding.itemPhoto.setImageBitmap(takenImage)
-                itemView.isEnabled = false //prevent error from new product
-            }else {
-                machinePhoto.imgSrcUrl?.let {
-                    Picasso.get().load(machinePhoto.imgSrcUrl).into(binding.itemPhoto)
+            if (machinePhoto.imgSrcUrl == null || machinePhotoList.isEmpty() || machinePhoto.id == -1) {
+                binding.itemPhotoCard.apply {
+                    alpha = 0f
+                    isGone
                 }
-                binding.itemId.text =
-                    machinePhoto.id.toString()
 
-                if (machinePhoto.imgSrcUrl == null) {
-                    binding.itemPhotoCard.alpha = 0f
+            } else {
+                FirebaseStorage.getInstance().reference.child(machinePhoto.imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
+                    Picasso.get()
+                        .load(it)
+                        .rotate(90.0F)
+                        .into(binding.itemPhoto)
+                    Log.d(
+                        TAG,
+                        "Succes to retrieve image from ${machinePhoto.imgSrcUrl} with Picasso"
+                    )
+                }.addOnFailureListener {
+                    Log.d(TAG, "Failed to retrieve image with Picasso")
                 }
             }
 
