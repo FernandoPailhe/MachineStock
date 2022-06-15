@@ -31,13 +31,13 @@ class ItemListAdapter(private val onItemClicked: (Item) -> Unit) :
             onItemClicked(current)
         }
         holder.bind(current)
+
     }
 
     class ItemViewHolder(
         private var binding: ListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private var isAllProductsList = false
 
         fun bind(item: Item) {
             binding.apply {
@@ -46,13 +46,7 @@ class ItemListAdapter(private val onItemClicked: (Item) -> Unit) :
                 priceText.text = item.getFormattedPrice()
                 statusText.text = item.status
                 itemLayout.setBackgroundResource(item.getColor())
-
-                if (isAllProductsList){
-                    itemProductLayout.visibility = View.VISIBLE
-                    itemProductText.text = item.product
-                } else {
-                    itemProductLayout.visibility = View.GONE
-                }
+                itemProductLayout.visibility = View.GONE
             }
         }
     }
