@@ -1,13 +1,15 @@
 package com.ferpa.machinestock.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FullScreenPhotoItemBinding
 import com.ferpa.machinestock.model.MachinePhoto
 import com.ferpa.machinestock.ui.adapter.FullScreenPhotoAdapter.MachineFullScreenPhotoViewHolder
+import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 
 class FullScreenPhotoAdapter(
@@ -52,13 +54,15 @@ class FullScreenPhotoAdapter(
 
         fun bind(machinePhoto: MachinePhoto) {
 
-            if (machinePhoto.id == -1) {
-                binding.fullScreenPhoto.setImageResource(R.drawable.ic_broken_image)
-            } else {
-                machinePhoto.imgSrcUrl?.let {
-                    Picasso.get().load(machinePhoto.imgSrcUrl).into(binding.fullScreenPhoto)
-                }
-                //TODO Share function
+            FirebaseStorage.getInstance().reference.child(machinePhoto.imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
+                Picasso.get()
+                    .load(it)
+                    .networkPolicy(NetworkPolicy.OFFLINE)//For cache the images
+                    .rotate(90.0F)
+                    .into(binding.fullScreenPhoto)
+                Log.d(TAG, "Succes to retrieve image from ${machinePhoto.imgSrcUrl} with Picasso")
+            }.addOnFailureListener {
+                Log.d(TAG, "Failed to retrieve image with Picasso")
             }
 
         }
