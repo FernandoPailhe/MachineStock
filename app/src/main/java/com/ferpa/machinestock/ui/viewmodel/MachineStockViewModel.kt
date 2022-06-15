@@ -1,15 +1,21 @@
 package com.ferpa.machinestock.ui.viewmodel
 
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.*
 import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.Item
+import com.ferpa.machinestock.model.addNewPhoto
+import com.ferpa.machinestock.model.updatePhotos
+import com.ferpa.machinestock.utilities.Const
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+
+const val TAG = "MachineStockViewModel"
 
 @HiltViewModel
 class MachineStockViewModel
@@ -19,12 +25,108 @@ constructor(private val itemRepository: ItemRepository) :
 
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 
-    private var _filterItemsFlow: LiveData<List<Item>> = itemRepository.getCustomQuery().asLiveData()
-    val filterItemsFlow: LiveData<List<Item>> get() = _filterItemsFlow
-
-
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
+
+    private val _currentId = MutableStateFlow<Long>(1)
+    val currentId: StateFlow<Long> get() = _currentId
+
+    private var _currentItem: LiveData<Item> = itemRepository.getItem(currentId.value).asLiveData()
+    val currentItem: LiveData<Item> get() = _currentItem
+
+    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
+
+    private var storageRef = storage.reference
+
+    init {
+        //TODO Delete when this will not more necessary
+        /**
+        viewModelScope.launch {
+        itemRepository.populateDb()
+        }
+         **/
+
+    }
+
+    fun getProduct(): String = itemRepository.customListUtil.getProduct()
+
+    fun setCurrentId(id: Long) {
+        _currentId.value = id
+        _currentItem = itemRepository.getItem(currentId.value).asLiveData()
+    }
+
+    //Network
+    fun compareDatabases() {
+        viewModelScope.launch {
+            try {
+                itemRepository.compareDatabases()
+            } catch (e: Exception) {
+                Log.d("CompareNetworkItems", e.toString())
+
+            }
+        }
+    }
+
+    fun uploadPhoto(uri: Uri) {
+
+        //TODO Progress animation
+        val machinePhotosRef =
+            storageRef.child("${Const.USED_MACHINES_PHOTO_BASE_URL}/${currentItem.value?.addNewPhoto()}")
+
+        val uploadTask = machinePhotosRef.putFile(uri)
+
+        var uriPath: String
+
+        val urlTask = uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            machinePhotosRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                uriPath = task.result.path.toString()
+                uriPath?.let { Log.d("Uri Path", it) }
+                currentItem.value?.let {
+                    updateItem(it.updatePhotos(currentItem.value!!.addNewPhoto().split("_").last()))
+                }
+                Log.d(
+                    "Firestorage",
+                    "Upload Image Succes - name: ${machinePhotosRef.name} -- path:${machinePhotosRef.path}"
+                )
+            } else {
+                Log.d("Firestorage", "Upload Image Error ${task.exception.toString()}")
+            }
+        }
+
+    }
+
+    /**
+    fun getNetworkItem(itemId: Long): Flow<Item> = flow {
+    viewModelScope.launch {
+    try {
+    _state.value = state.value.copy(isLoading = true)
+    _state.value = state.value.copy(
+    item = itemRepository.getNetworkItemById(itemId),
+    isLoading = false
+    )
+    } catch (e: Exception) {
+    Log.d("getItemById", e.toString())
+    _state.value = state.value.copy(isLoading = false)
+    }
+    }
+    }
+     **/
+
+    private val _state = MutableStateFlow(ItemState())
+    val state: StateFlow<ItemState> = _state
+
+    data class ItemState(
+        val item: Item? = null,
+        val isLoading: Boolean = false
+    )
+
 
     //Update Custom List Util
     fun setProduct(newProduct: String) {
@@ -32,7 +134,7 @@ constructor(private val itemRepository: ItemRepository) :
         _isNewFilter.value = true
     }
 
-    fun setNewFilterFalse(){
+    fun setNewFilterFalse() {
         _isNewFilter.value = false
     }
 
@@ -45,23 +147,29 @@ constructor(private val itemRepository: ItemRepository) :
         return itemRepository.customListUtil.getFilterStatus(type)
     }
 
-    fun setFilter(type: String){
+    fun setFilter(type: String) {
         itemRepository.customListUtil.setFilter(type)
         _isNewFilter.value = true
     }
 
-    fun isFilterList():Boolean{
+    fun isFilterList(): Boolean {
         return itemRepository.customListUtil.isFilteredList
     }
 
+    fun clearFilters() {
+        itemRepository.customListUtil.clearFilters()
+        _isNewFilter.value = true
+    }
+
     //Manage Single Item
-    fun retrieveItem(id: Int): LiveData<Item> {
+    fun retrieveItem(id: Long): LiveData<Item> {
         return itemRepository.getItem(id).asLiveData()
     }
 
     private fun insertItem(item: Item) {
         viewModelScope.launch {
             itemRepository.insertItem(item)
+            itemRepository.postItem(item)
         }
     }
 
@@ -84,7 +192,8 @@ constructor(private val itemRepository: ItemRepository) :
         currency: String?,
         status: String?,
         owner2: Int?,
-        owner1: Int?
+        owner1: Int?,
+        observations: String?
     ): Item {
         return Item(
             product = product.uppercase(),
@@ -92,7 +201,7 @@ constructor(private val itemRepository: ItemRepository) :
             location = location,
             brand = brand,
             feature1 = feature1.toDouble(),
-            feature2 = feature2.toDouble(),
+            feature2 = feature2.toDoubleOrNull(),
             feature3 = feature3,
             price = price,
             owner1 = owner1,
@@ -100,14 +209,8 @@ constructor(private val itemRepository: ItemRepository) :
             currency = currency,
             type = type,
             status = status,
-            observations = "",
-            editDate = "",
+            observations = observations,
             editUser = "",
-            excelText = "",
-            photo1 = "",
-            photo2 = "",
-            photo3 = "",
-            photo4 = ""
         )
     } //Build new item Object
 
@@ -125,7 +228,8 @@ constructor(private val itemRepository: ItemRepository) :
         currency: String?,
         status: String?,
         owner2: Int?,
-        owner1: Int?
+        owner1: Int?,
+        observations: String?
     ): Item {
         return Item(
             id = item.id,
@@ -143,10 +247,8 @@ constructor(private val itemRepository: ItemRepository) :
             currency = currency,
             type = type,
             status = status,
-            photo1 = item.photo1,
-            photo2 = item.photo2,
-            photo3 = item.photo3,
-            photo4 = item.photo4,
+            observations = observations,
+            photos = item.photos
         )
     } //Build edit item Object
 
@@ -163,7 +265,8 @@ constructor(private val itemRepository: ItemRepository) :
         currency: String?,
         status: String?,
         owner2: String?,
-        owner1: String?
+        owner1: String?,
+        observations: String?
     ) {
         var capType = ""
 
@@ -187,7 +290,8 @@ constructor(private val itemRepository: ItemRepository) :
                 currency,
                 status,
                 getAddOwner(owner2),
-                getAddOwner(owner1)
+                getAddOwner(owner1),
+                observations
             )
         insertItem(newItem)
     }
@@ -206,7 +310,8 @@ constructor(private val itemRepository: ItemRepository) :
         currency: String?,
         status: String?,
         owner2: String?,
-        owner1: String?
+        owner1: String?,
+        observations: String?
     ) {
         var capType = ""
 
@@ -231,7 +336,8 @@ constructor(private val itemRepository: ItemRepository) :
                 currency,
                 status,
                 getAddOwner(owner2),
-                getAddOwner(owner1)
+                getAddOwner(owner1),
+                observations
             )
         updateItem(editItem)
     }
@@ -271,6 +377,8 @@ constructor(private val itemRepository: ItemRepository) :
         return isValid
     }
 
+
+    //Validates Entries
     private fun isOwnerEntryValid(owner1: Int?, owner2: Int?): Boolean {
         var total = 0
         total = owner1!! + owner2!!
@@ -278,7 +386,11 @@ constructor(private val itemRepository: ItemRepository) :
         return (total <= 100)
     }
 
-    private fun isFeatureEntryValid(product: String, itemFeature1: String, itemFeature2: String): Boolean {
+    private fun isFeatureEntryValid(
+        product: String,
+        itemFeature1: String,
+        itemFeature2: String
+    ): Boolean {
         return when (product) {
             "GUILLOTINA" -> !(itemFeature1.isBlank() || itemFeature2.isBlank())
             "PLEGADORA" -> !(itemFeature1.isBlank() || itemFeature2.isBlank())
@@ -307,11 +419,6 @@ constructor(private val itemRepository: ItemRepository) :
             newDouble = nullVariable.replace(",", "").toDouble()
         }
         return newDouble
-    }
-
-    fun clearFilters() {
-        itemRepository.customListUtil.clearFilters()
-        _isNewFilter.value = true
     }
 
 }
