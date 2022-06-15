@@ -6,44 +6,44 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.FileProvider
+import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ferpa.machinestock.MachineStockApplication
-import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
-
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentAddItemBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
-import java.io.File
-import java.io.IOException
+import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.utilities.ImageResizer
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
-
-    private val navigationArgs: AddItemFragmentArgs by navArgs()
 
     private var _binding: FragmentAddItemBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: MachineStockViewModel by activityViewModels()
 
+    private val REQUEST_GALLERY_PHOTO = 199
+    private val REQUEST_TAKE_PHOTO = 198
     lateinit var currentPhotoPath: String
-    private val REQUEST_TAKE_PHOTO = 1
 
     lateinit var item: Item
     private lateinit var newProduct: String
@@ -59,24 +59,21 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Get Navigation Values
+        newProduct = viewModel.getProduct()
+        val id = viewModel.currentId.value
 
-        //Get NavigationArgs
-        newProduct = navigationArgs.product
-        val id = navigationArgs.editId
 
-        //TODO
-        if (navigationArgs.product == "TODAS"){
+        if (newProduct == "TODAS") {
             selectProductDialog(savedInstanceState)
         }
 
-
         //Set interface type
         if (id > 0) {
-            setDetailItemInterface(id)
+            setDetailItemInterface()
         } else {
             setNewItemInterface(newProduct)
         }
-
 
         //Set autocomplete text arrayList
         binding.apply {
@@ -98,11 +95,12 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
     }
 
     private fun setNewItemInterface(newProduct: String) {
-        bindFeatures(newProduct, null, null, null)
+        bindFeatures(newProduct, null, null, "new")
         isEditable(true)
-        bindNoPhotoRecyclerView()
+        //bindNoPhotoRecyclerView()
         binding.apply {
             itemProduct.setText(newProduct)
+            recyclerViewLayout.visibility = View.GONE
             saveAction.setOnClickListener {
                 addNewItem()
             }
@@ -114,8 +112,8 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         }
     }
 
-    private fun setDetailItemInterface(id: Int) {
-        viewModel.retrieveItem(id).observe(this.viewLifecycleOwner) { selectedItem ->
+    private fun setDetailItemInterface() {
+        viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->
             item = selectedItem
             bindItemDetails(item)
             bindPhotoRecyclerView(item)
@@ -136,7 +134,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 shareAction.setText(R.string.filter_cancel)
                 shareAction.setIconResource(R.drawable.ic_baseline_cancel_24)
                 shareAction.setOnClickListener {
-                    setDetailItemInterface(navigationArgs.editId)
+                    setDetailItemInterface()
                     setUpdateButtonInterface(false)
                 }
             }
@@ -153,8 +151,53 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 shareAction.setOnClickListener {
                     shareIndexCard(getShareIndexCard(false))
                 }
+                cameraAction.setOnClickListener {
+                    getCameraInstance()
+                }
+                galleryAction.setOnClickListener {
+                    getGalleryInstance()
+                }
             }
         }
+    }
+
+    //Add Image
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            //For reduced Bitmap
+            viewModel.uploadPhoto(getReduceBitmapFromCamera(currentPhotoPath))
+            //For full size Bitmap
+            //viewModel.uploadPhoto(Uri.fromFile(File(currentPhotoPath)))
+            //TODO Test performance with different image size
+        } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.data != null) {
+                val image = data.data
+                if (image != null) {
+                    //For reduced Bitmap
+                    viewModel.uploadPhoto(getReduceBitmapFromGallery(image))
+                    //For full size Bitmap
+                    //viewModel.uploadPhoto(image)
+                    //TODO Test performance with different image size
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
+        }
+
+    }
+
+    private fun getReduceBitmapFromCamera(photoPath: String): Uri{
+        val fullSizeBitmap = BitmapFactory.decodeFile(photoPath)
+        val reducedBitmap = ImageResizer.reduceBitmapSize(fullSizeBitmap)
+        return Uri.fromFile(createReducedBitmapFile(reducedBitmap))
+    }
+
+    private fun getReduceBitmapFromGallery(imageUri: Uri): Uri{
+        val fullSizeBitmap = MediaStore.Images.Media.getBitmap(binding.galleryAction.context.contentResolver, imageUri)
+        val reducedBitmap = ImageResizer.reduceBitmapSize(fullSizeBitmap)
+        return Uri.fromFile(createReducedBitmapFile(reducedBitmap))
     }
 
     @SuppressLint("QueryPermissionsNeeded")
@@ -186,20 +229,10 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK){
-            bindNewPhotoRecyclerView(currentPhotoPath)
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-
-    }
-
-    private fun galleryAddPic(file: File) {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            mediaScanIntent.data = Uri.fromFile(f)
-            this.context?.sendBroadcast(mediaScanIntent)
+    private fun getGalleryInstance() {
+        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+            type = "image/*"
+            startActivityForResult(this, REQUEST_GALLERY_PHOTO)
         }
     }
 
@@ -219,18 +252,34 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         }
     }
 
-    private fun getGalleryInstance() {
-        //TODO Implement getGalleryInstance method
-    }
+    private fun createReducedBitmapFile(reducedBitmap: Bitmap): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        val file = File.createTempFile("JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */)
+        val bos = ByteArrayOutputStream()
+        reducedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos)
+        val bitmapData = bos.toByteArray()
 
-    private fun sharePicture(){
-        //TODO Implement sharePicture method
+        try {
+            file.createNewFile()
+            val fos = FileOutputStream(file)
+            fos.write(bitmapData)
+            fos.flush()
+            fos.close()
+            return file
+        } catch (e: Exception){
+            Log.d("CreateReduceImageFile", "Fail $e" )
+        }
+
+        return file
     }
 
     private fun bindItemDetails(item: Item) {
         binding.apply {
             itemProduct.setText(item.product, TextView.BufferType.SPANNABLE)
-            bindFeatures(item.product, item.feature1, item.feature2, item.feature3)
+            bindFeatures(item.product, item.feature1, item.feature2, item.feature3.toString())
             itemBrand.setText(item.brand, TextView.BufferType.SPANNABLE)
             itemInsideNumber.setText(item.insideNumber, TextView.BufferType.SPANNABLE)
             itemLocation.apply {
@@ -244,6 +293,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
             itemOwner2.setText(item.owner2.toString())
             itemOwner1.setText(item.owner1.toString())
             itemPrice.setText(item.getFormattedPrice())
+            itemObservations.setText(item.getObservations())
             itemStatus.apply {
                 setText(item.status, TextView.BufferType.SPANNABLE)
                 setAdapter(setAdapterArray(R.array.status_options))
@@ -254,10 +304,9 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 itemPriceLabel.hint = "Precio en USD"
             }
 
-            if (item.photo1 == null && item.photo2 == null && item.photo3 == null && item.photo4 == null){
-                recyclerViewLayout.visibility = View.INVISIBLE
+            if (item.photos == "0") {
+                recyclerViewLayout.visibility = View.GONE
             }
-
 
         }
     }
@@ -267,7 +316,12 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         return ArrayAdapter(requireContext(), R.layout.dropdown_item, array)
     }
 
-    private fun bindFeatures(product: String, feature1: Double?, feature2: Double?, feature3: String?) {
+    private fun bindFeatures(
+        product: String,
+        feature1: Double?,
+        feature2: Double?,
+        feature3: String?
+    ) {
 
         when (product) {
             "GUILLOTINA" -> {
@@ -359,28 +413,32 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 binding.itemFeature2.visibility = View.GONE
             }
         }
+
         //TODO SetRemainsProductsBindFeatures
+
+        if (feature3 != "null"){
+            if (feature3 != "new") {
+                binding.itemFeature3.setText(feature3.toString())
+            }
+        } else {
+            binding.itemFeature3Label.visibility = View.GONE
+        }
+
     }
 
     private fun bindPhotoRecyclerView(item: Item) {
-        val photoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
-        binding.photoRecyclerView.layoutManager =
-            LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-        binding.photoRecyclerView.adapter = photoAdapter
+
+        if (item.getMachinePhotoList().isEmpty()){
+            binding.photoRecyclerView.visibility = View.GONE
+        } else {
+            val photoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
+            binding.photoRecyclerView.layoutManager =
+                LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
+            binding.photoRecyclerView.adapter = photoAdapter
+        }
+
     }
 
-    //TODO implement save photo in web server.
-
-    //Only test method
-    private fun bindNewPhotoRecyclerView(currentPath: String){
-        var machinePhotoList: MutableList<MachinePhoto> = mutableListOf(
-            MachinePhoto(10, currentPath)
-        )
-        val photoAdapter = PhotoAdapter(machinePhotoList, this)
-        binding.photoRecyclerView.layoutManager =
-            LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-        binding.photoRecyclerView.adapter = photoAdapter
-    }
 
     private fun bindNoPhotoRecyclerView() {
         val noPhotoAdapter = PhotoAdapter(listOf<MachinePhoto>(MachinePhoto(-1, "")), this)
@@ -397,7 +455,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 binding.itemType.text.toString(),
                 binding.itemFeature1.text.toString(),
                 binding.itemFeature2.text.toString(),
-                "feature3",//TODO Make logic for feature3
+                binding.itemFeature3.text.toString(),
                 binding.itemPrice.text.toString(),
                 binding.itemBrand.text.toString(),
                 binding.itemInsideNumber.text.toString(),
@@ -405,7 +463,8 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 "$",
                 binding.itemStatus.text.toString(),
                 binding.itemOwner2.text.toString(),
-                binding.itemOwner1.text.toString()
+                binding.itemOwner1.text.toString(),
+                binding.itemObservations.text.toString()
             )
             val action =
                 AddItemFragmentDirections.actionAddItemFragmentToItemListFragment(newProduct)
@@ -422,7 +481,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 binding.itemType.text.toString(),
                 binding.itemFeature1.text.toString(),
                 binding.itemFeature2.text.toString(),
-                "feature3",//TODO Make logic for feature3
+                binding.itemFeature3.text.toString(),
                 binding.itemPrice.text.toString(),
                 binding.itemBrand.text.toString(),
                 binding.itemInsideNumber.text.toString(),
@@ -430,7 +489,8 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 "$",
                 binding.itemStatus.text.toString(),
                 binding.itemOwner2.text.toString(),
-                binding.itemOwner1.text.toString()
+                binding.itemOwner1.text.toString(),
+                binding.itemObservations.text.toString()
             )
         }
 
@@ -441,6 +501,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
             itemProduct.isEnabled = false
             itemFeature1.isEnabled = editMode
             itemFeature2.isEnabled = editMode
+            itemFeature3.isEnabled = editMode
             itemBrand.isEnabled = editMode
             itemType.isEnabled = editMode
             itemPrice.isEnabled = editMode
@@ -449,6 +510,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
             itemOwner2.isEnabled = editMode
             itemOwner1.isEnabled = editMode
             itemStatus.isEnabled = editMode
+            itemObservations.isEnabled = editMode
         }
     }
 
@@ -470,29 +532,6 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         }
 
         return (isEntryValid == 0)
-    }
-
-    private fun shareIndexCard(message: String) {
-
-        val intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, message)
-            putExtra(Intent.EXTRA_TITLE, getString(R.string.share_tittle))
-        }
-        startActivity(Intent.createChooser(intent, null))
-
-    }
-
-    private fun shareImage(imageUri: String){
-
-        val intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "image/jpeg"
-            putExtra(Intent.EXTRA_STREAM, imageUri)
-        }
-        startActivity(Intent.createChooser(intent, null))
-
     }
 
     private fun getShareIndexCard(withPrice: Boolean): String {
@@ -518,9 +557,31 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         return indexCard
     }
 
+    private fun shareIndexCard(message: String) {
+
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, message)
+            putExtra(Intent.EXTRA_TITLE, getString(R.string.share_tittle))
+        }
+        startActivity(Intent.createChooser(intent, null))
+
+    }
+
+    private fun shareImage(imageUri: String) {
+
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "image/jpeg"
+            putExtra(Intent.EXTRA_STREAM, imageUri)
+        }
+        startActivity(Intent.createChooser(intent, null))
+
+    }
+
     override fun onItemClick(position: Int) {
         val action = AddItemFragmentDirections.actionAddItemFragmentToFullScreenImageFragment(
-            item.id,
             position
         )
         this.findNavController().navigate(action)
