@@ -56,24 +56,35 @@ class PhotoAdapter(
 
         fun bind(machinePhoto: MachinePhoto) {
 
+
+
             if (machinePhoto.imgSrcUrl == null || machinePhotoList.isEmpty() || machinePhoto.id == -1) {
                 binding.itemPhotoCard.apply {
                     alpha = 0f
                     isGone
                 }
-
             } else {
                 FirebaseStorage.getInstance().reference.child(machinePhoto.imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
                     Picasso.get()
                         .load(it)
                         .rotate(90.0F)
                         .into(binding.itemPhoto)
+                        /**
+                        .into(binding.itemPhoto, object: com.squareup.picasso.Callback{
+                            override fun onSuccess() {
+                                TODO("Loading Animation")
+                            }
+                            override fun onError(e: Exception?) {
+                                TODO("Not yet implemented")
+                            }
+                        })
+                        **/
                     Log.d(
                         TAG,
                         "Succes to retrieve image from ${machinePhoto.imgSrcUrl} with Picasso"
                     )
                 }.addOnFailureListener {
-                    Log.d(TAG, "Failed to retrieve image with Picasso")
+                    Log.d(TAG, "Failed to retrieve image from ${machinePhoto.imgSrcUrl} with Picasso")
                 }
             }
 
