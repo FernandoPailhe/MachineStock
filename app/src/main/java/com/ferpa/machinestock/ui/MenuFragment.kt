@@ -20,7 +20,6 @@ class MenuFragment : Fragment() {
     private var _binding: FragmentMenuBinding? = null
     private val binding get() = _binding!!
 
-
     private val viewModel: MachineStockViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -35,9 +34,11 @@ class MenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.compareDatabases()
 
         val adapter = MenuAdapter{
             val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment(it.name.toString())
+            viewModel.setProduct(it.name.toString())
             this.findNavController().navigate(action)
         }
 
