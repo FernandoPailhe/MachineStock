@@ -8,6 +8,9 @@ object Const {
     const val LOCATION_1 = "Depósito 1"
     const val LOCATION_2 = "Depósito 2"
 
-    const val IMAGE_EXTENSIONS = "jpg"
+    const val FIRESTORAGE_BASE_URL = "gs://machinestock.appspot.com/"
+    const val USED_MACHINES_PHOTO_BASE_URL = "usedmachinesphotos"
+
+    const val MAX_IMAGE_SIZE = 1036800 // 2073600 = 1920x1080
 
 }
