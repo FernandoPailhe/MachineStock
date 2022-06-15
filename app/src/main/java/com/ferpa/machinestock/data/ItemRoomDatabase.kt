@@ -11,7 +11,7 @@ abstract class ItemRoomDatabase : RoomDatabase () {
 
     companion object {
         const val DATABASE_NAME = "used_item_database"
-        const val DATABASE_ASSET = "database/used_machines.sqlite"
+        const val DATABASE_ASSET = "database/used_machines_final.sqlite"
     }
 
 }
