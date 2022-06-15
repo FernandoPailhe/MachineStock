@@ -41,7 +41,7 @@ class FullScreenImageFragment : Fragment(), FullScreenPhotoAdapter.OnItemClickLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val itemId = navigationArgs.itemId
+        val itemId = viewModel.currentId.value
 
         val photoId = navigationArgs.photoId
 
@@ -63,7 +63,7 @@ class FullScreenImageFragment : Fragment(), FullScreenPhotoAdapter.OnItemClickLi
 
     override fun onItemClick(position: Int) {
         val action =
-            FullScreenImageFragmentDirections.actionFullScreenImageFragmentToAddItemFragment(item.product, item.id)
+            FullScreenImageFragmentDirections.actionFullScreenImageFragmentToAddItemFragment(item.product)
         this.findNavController().navigate(action)
     }
 }
