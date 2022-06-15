@@ -81,13 +81,20 @@ fun Item.getFeatures(): String {
         "BALANCIN" -> "${formatNumber(feature1)} tns"
         "TORNO" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} mm"
         "COMPRESOR" -> "${formatNumber(feature1)} hp / ${formatNumber(feature2)} Volts"
+        "CEPILLO" -> "${formatNumber(feature1)} tns"
+        "CLARK" -> "${formatNumber(feature1)} mm"
+        "FRESADORA" -> "${formatNumber(feature1)} mm"
         "LIMADORA" -> "${formatNumber(feature1)} mm"
+        "PLASMA" -> "${formatNumber(feature1)} amp"
+        "PLATO" -> "${formatNumber(feature1)} mm"
+        "RECTIFICADORA" -> "${formatNumber(feature1)} mm"
         "SERRUCHO" -> "${formatNumber(feature1)} pulgadas"
         "SOLDADURA" -> "${formatNumber(feature1)} mig"
+        "HIDROCOPIADOR" -> ""
         else -> excelText.toString()
     }
 
-    if (features == "null") {
+    if (features == "null" || feature1 == null) {
         features = ""
     }
 
@@ -156,6 +163,16 @@ fun Item.updatePhotos(newPhoto: String): Item{
     }
 
     return updateItem
+}
+
+fun Item.getObservations(): String{
+
+    return if (observations?.startsWith("SUF_", true) == true || observations?.startsWith("2SUF_", true) == true){
+        ""
+    } else {
+        observations ?: ""
+    }
+
 }
 
 fun formatNumber(number: Double?): String {
