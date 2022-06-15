@@ -15,6 +15,7 @@
     <string name="save_action">Guardar</string>
     <string name="share_action">Compartir</string>
 
+    <!--Share templates-->
     <string name="index_card_with_type"><big>FICHA TECNICA\n</big>=============\n<b>%1$s </b>%2$s \n%3$s \nPrecio: $ %4$s</string>
     <string name="index_card"><big>FICHA TECNICA\n</big>=============\n<b>%1$s </b>%2$s \nPrecio: $ %3$s</string>
 
@@ -25,6 +26,7 @@
         <item>No especifica</item>
     </string-array>
 
+    <!--TODO Cambiar a socios originales-->
     <string-array name="owner_options">
         <item>Socio 1</item>
         <item>Socio 2</item>
@@ -34,6 +36,7 @@
     <string-array name="status_options">
         <item>A reparar</item>
         <item>Disponible</item>
+        <item>Reservada</item>
         <item>Señada</item>
         <item>Vendida</item>
         <item>Retirada</item>
@@ -81,6 +84,8 @@
         <item>YUNAN</item>
     </string-array>
 
+
+    <!--TODO Cambiar a depósitos originales-->
     <string-array name="location_options">
         <item>Depósito 1</item>
         <item>Depósito 2</item>
@@ -89,6 +94,11 @@
 
     <!-- Messages -->
     <string name="blank_item">Falta completar características básicas</string>
+    <string name="invalid_owner">El porcentaje total debe ser 100</string>
+    <string name="duplicate_inside_number">El código interno ya existe</string>
+    <string name="succes_upload_image">La imagen ha sido subida al servidor</string>
+    <string name="fail_upload_image">No se ha podido subir la imagen, intentelo más tarde</string>
+    <string name="fail_update_database">Error al actualizar la base de datos, intentelo más tarde</string>
 
     <!-- Hint Text -->
     <string name="item_product_req">Máquina</string>
@@ -104,12 +114,12 @@
     <string name="item_status_req">Estado</string>
     <string name="item_owner2_req">Socio 2 %</string>
     <string name="item_owner1_req">Socio 1 %</string>
+
     <!-- Content Description -->
     <string name="edit_item">Edit Item</string>
     <string name="add_new_item">Add Item</string>
-    <string name="currency_symbol"></string>
+    <string name="currency_symbol">$</string>
     <string name="dialog_new_product_title">Nuevo ingreso:</string>
-    <string name="invalid_owner">El porcentaje total debe ser 100</string>
     <string name="filter_ok">Listo</string>
     <string name="filter_cancel">Cancelar</string>
     <string name="shared_ownership">Sociedad</string>
@@ -120,4 +130,8 @@
     <string name="item_mig_req">En mig *</string>
     <string name="edit_action">EDITAR</string>
     <string name="share_tittle">Compartir informacion</string>
+    <string name="item_observations_req">Observaciones</string>
+    <string name="galeria">Galeria</string>
+    <string name="percent_simbol">%</string>
+
 </resources>
