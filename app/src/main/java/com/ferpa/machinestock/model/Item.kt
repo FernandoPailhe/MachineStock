@@ -29,21 +29,18 @@ data class Item(
     @ColumnInfo(name = "type") val type: String? = "",
     @ColumnInfo(name = "status") val status: String? = "no informado",
     @ColumnInfo(name = "observations") val observations: String? = null,
-    @ColumnInfo(name = "editDate") val editDate: String? = getCurrentDate(),
+    @ColumnInfo(name = "editDate") var editDate: String? = getCurrentDate(),
     @ColumnInfo(name = "editUser") val editUser: String? = null,
     @ColumnInfo(name = "excelText") val excelText: String? = null,
-    @ColumnInfo(name = "photo1") val photo1: String? = null,
-    @ColumnInfo(name = "photo2") val photo2: String? = null,
-    @ColumnInfo(name = "photo3") val photo3: String? = null,
-    @ColumnInfo(name = "photo4") val photo4: String? = null
+    @ColumnInfo(name = "photos") var photos: String? = "0"
 )
 
 fun Item.getName(): String? {
 
     var itemName = brand
 
-    if (brand != null ){
-        when (type){
+    if (brand != null) {
+        when (type) {
             "H" -> itemName = "$brand - Hidráulica"
             "N" -> itemName = "$brand - Neumática"
             "M" -> itemName = "$brand - Mecánica"
@@ -54,8 +51,8 @@ fun Item.getName(): String? {
     return itemName
 }
 
-fun Item.getType(): String{
-    return when (type){
+fun Item.getType(): String {
+    return when (type) {
         "H" -> "Hidráulica"
         "N" -> "Neumática"
         "M" -> "Mecánica"
@@ -65,13 +62,15 @@ fun Item.getType(): String{
 
 fun Item.getFormattedPrice(): String {
 
-    var priceStr = NumberFormat.getIntegerInstance().format(price)
-
-    when (currency) {
-        "USD" -> priceStr = "$priceStr USD"
+    return if (price == null) {
+        "A definir"
+    } else {
+        var priceStr = NumberFormat.getIntegerInstance().format(price)
+        when (currency) {
+            "USD" -> priceStr = "$priceStr USD"
+        }
+        priceStr
     }
-
-    return priceStr
 }
 
 fun Item.getFeatures(): String {
@@ -88,7 +87,9 @@ fun Item.getFeatures(): String {
         else -> excelText.toString()
     }
 
-    if (features == "null"){ features = ""}
+    if (features == "null") {
+        features = ""
+    }
 
     return features
 }
@@ -96,17 +97,18 @@ fun Item.getFeatures(): String {
 fun Item.getLocation(): String {
 
     return when (location) {
-        "1" -> Const.LOCATION_1
-        "2" -> Const.LOCATION_2
+        "Zoi" -> Const.LOCATION_1
+        "Can" -> Const.LOCATION_2
         else -> "A definir"
     }
 }
 
-fun Item.getColor(): Int{
+fun Item.getColor(): Int {
 
-    val statusItemColor = when (status){
+    val statusItemColor = when (status) {
         "A REPARAR" -> drawable.gradient_list_item_status1
         "SEÑADA" -> drawable.gradient_list_item_status3
+        "RESERVADA" -> drawable.gradient_list_item_status3
         "VENDIDA" -> drawable.gradient_list_item_status4
         "RETIRADA" -> drawable.gradient_list_item_status4
         else -> drawable.gradient_list_item
@@ -117,19 +119,49 @@ fun Item.getColor(): Int{
 
 fun Item.getMachinePhotoList(): List<MachinePhoto> {
 
-    return mutableListOf(
-        MachinePhoto(1, photo1),
-        MachinePhoto(2, photo2),
-        MachinePhoto(3, photo3),
-        MachinePhoto(4, photo4)
-    )
+    return if (photos != "0") {
+        val photoList = mutableListOf<MachinePhoto>()
+        photos?.split("/")?.toList()?.forEachIndexed { index, photoId ->
+            photoList.add(
+                MachinePhoto(
+                    index,
+                    "${Const.USED_MACHINES_PHOTO_BASE_URL}/${id}_${photoId}"
+                )
+            )
+        }
+        photoList
+    } else {
+        emptyList()
+    }
 
 }
 
-fun formatNumber (number : Double?): String {
+fun Item.addNewPhoto(): String {
+    return if (photos != "0") {
+        val newPhoto = (photos?.split("/")?.toList()?.last()?.toInt()?.plus(1)).toString()
+        "${id}_${newPhoto}"
+    } else {
+        photos = "1"
+        "${id}_1"
+    }
+}
+
+fun Item.updatePhotos(newPhoto: String): Item{
+    val updateItem = this
+    updateItem.editDate = getCurrentDate()
+    if (this.photos != "0"){
+        updateItem.photos += "/${newPhoto}"
+    } else {
+        updateItem.photos = "1"
+    }
+
+    return updateItem
+}
+
+fun formatNumber(number: Double?): String {
 
     return if (number != null) {
-        if (number.rem(1).equals(0.0)){
+        if (number.rem(1).equals(0.0)) {
             NumberFormat.getIntegerInstance().format(number)
         } else {
             number.toString()
@@ -141,7 +173,7 @@ fun formatNumber (number : Double?): String {
 }
 
 @SuppressLint("SimpleDateFormat")
-fun getCurrentDate():String{
+fun getCurrentDate(): String {
     val sdf = SimpleDateFormat("yyyy-MM-dd-hh-mm")
     return sdf.format(Date())
 }
