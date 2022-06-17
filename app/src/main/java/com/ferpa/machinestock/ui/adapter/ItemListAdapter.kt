@@ -45,7 +45,7 @@ class ItemListAdapter(private val onItemClicked: (Item) -> Unit) :
                 itemDownText.text = item.getFeatures()
                 priceText.text = item.getFormattedPrice()
                 statusText.text = item.status
-                itemLayout.setBackgroundResource(item.getColor())
+                itemLayout.setBackgroundResource(item.getBackgroundColor())
                 itemProductLayout.visibility = View.GONE
             }
         }
