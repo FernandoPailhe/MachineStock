@@ -110,7 +110,7 @@ fun Item.getLocation(): String {
     }
 }
 
-fun Item.getColor(): Int {
+fun Item.getBackgroundColor(): Int {
 
     val statusItemColor = when (status) {
         "A REPARAR" -> drawable.gradient_list_item_status1
@@ -148,11 +148,11 @@ fun Item.addNewPhoto(): String {
         val newPhoto = (photos?.split("/")?.toList()?.last()?.toInt()?.plus(1)).toString()
         "${id}_${newPhoto}"
     } else {
-        photos = "1"
         "${id}_1"
     }
 }
 
+//TODO Check this function
 fun Item.updatePhotos(newPhoto: String): Item{
     val updateItem = this
     updateItem.editDate = getCurrentDate()
@@ -163,6 +163,16 @@ fun Item.updatePhotos(newPhoto: String): Item{
     }
 
     return updateItem
+}
+
+//TODO Check this function
+fun Item.deletePhoto(deletePhoto: String): Item{
+    val updateItem = this
+    updateItem.editDate = getCurrentDate()
+    updateItem.photos?.replaceFirst("/${deletePhoto}", "")
+
+    return updateItem
+
 }
 
 fun Item.getObservations(): String{
