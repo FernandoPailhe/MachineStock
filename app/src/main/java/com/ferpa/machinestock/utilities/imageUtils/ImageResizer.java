@@ -1,4 +1,5 @@
-package com.ferpa.machinestock.utilities;
+package com.ferpa.machinestock.utilities.imageUtils;
+
 
 import android.graphics.Bitmap;
 import android.util.Log;
