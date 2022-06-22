@@ -1,6 +1,7 @@
 package com.ferpa.machinestock.ui.viewmodel
 
 
+import android.content.res.Configuration
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
@@ -22,6 +23,9 @@ class MachineStockViewModel
 @Inject
 constructor(private val itemRepository: ItemRepository) :
     ViewModel() {
+
+    lateinit var currentPhotoPath: String
+    var orientationOfPhoto: Int = Configuration.ORIENTATION_LANDSCAPE
 
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 
@@ -87,7 +91,7 @@ constructor(private val itemRepository: ItemRepository) :
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 uriPath = task.result.path.toString()
-                uriPath?.let { Log.d("Uri Path", it) }
+                uriPath.let { Log.d("Uri Path", it) }
                 currentItem.value?.let {
                     updateItem(it.updatePhotos(currentItem.value!!.addNewPhoto().split("_").last()))
                 }
