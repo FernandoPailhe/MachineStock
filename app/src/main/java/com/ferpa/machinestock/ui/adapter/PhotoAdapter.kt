@@ -1,8 +1,5 @@
 package com.ferpa.machinestock.ui.adapter
 
-import android.content.Context
-import android.media.ExifInterface
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferpa.machinestock.databinding.PhotoItemBinding
 import com.ferpa.machinestock.model.MachinePhoto
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter.MachinePhotoViewHolder
-import com.ferpa.machinestock.utilities.ExifInfo
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import java.io.IOException
 
 const val TAG = "PhotoAdapter"
 
