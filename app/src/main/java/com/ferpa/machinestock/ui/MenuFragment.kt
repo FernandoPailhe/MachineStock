@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ferpa.machinestock.R
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.databinding.FragmentMenuBinding
 import com.ferpa.machinestock.ui.adapter.MenuAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
 
-
-class MenuFragment : Fragment() {
+@AndroidEntryPoint
+class MenuFragment : Fragment(R.layout.fragment_menu) {
 
 
     private var _binding: FragmentMenuBinding? = null

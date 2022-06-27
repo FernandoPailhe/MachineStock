@@ -9,15 +9,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentFullScreenImageBinding
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.getMachinePhotoList
 import com.ferpa.machinestock.ui.adapter.FullScreenPhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 
-
-class FullScreenImageFragment : Fragment(), FullScreenPhotoAdapter.OnItemClickListener {
+@AndroidEntryPoint
+class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), FullScreenPhotoAdapter.OnItemClickListener {
 
 
     private val navigationArgs: FullScreenImageFragmentArgs by navArgs()

@@ -13,10 +13,11 @@ import com.ferpa.machinestock.databinding.FragmentItemListBinding
 import com.ferpa.machinestock.ui.adapter.AllItemsListAdapter
 import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
-class ItemListFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQueryTextListener {
+@AndroidEntryPoint
+class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
     private var _binding: FragmentItemListBinding? = null
     private val binding get() = _binding!!
@@ -53,7 +54,7 @@ class ItemListFragment : Fragment(), androidx.appcompat.widget.SearchView.OnQuer
         productListAdapter = ItemListAdapter {
             viewModel.setProduct(it.product)
             viewModel.setCurrentId(it.id)
-            val action = ItemListFragmentDirections.actionItemListFragmentToAddItemFragment(it.product)
+            val action = ItemListFragmentDirections.actionItemListFragmentToDetailFragment()
             this.findNavController().navigate(action)
             //binding.slidingPaneLayout.openPane()
             //TODO Implement SlidingPaneLayout

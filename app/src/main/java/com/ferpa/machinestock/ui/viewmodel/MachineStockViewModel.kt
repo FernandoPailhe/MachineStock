@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
+import com.ferpa.machinestock.R
 import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.addNewPhoto
@@ -71,7 +72,7 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
-    fun uploadPhoto(uri: Uri) {
+    fun uploadPhoto(uri: Uri){
 
         //TODO Progress animation
         val machinePhotosRef =
@@ -103,7 +104,6 @@ constructor(private val itemRepository: ItemRepository) :
                 Log.d("Firestorage", "Upload Image Error ${task.exception.toString()}")
             }
         }
-
     }
 
     /**
@@ -298,6 +298,7 @@ constructor(private val itemRepository: ItemRepository) :
                 observations
             )
         insertItem(newItem)
+        setCurrentId(newItem.id)
     }
 
     fun setUpdateItem(

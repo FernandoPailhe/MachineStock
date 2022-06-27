@@ -19,6 +19,7 @@ import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
@@ -29,12 +30,13 @@ import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager.Companion.getReduceBitmapFromGallery
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
+@AndroidEntryPoint
+class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnItemClickListener {
 
     private var _binding: FragmentAddItemBinding? = null
     private val binding get() = _binding!!
@@ -95,20 +97,16 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
     private fun setNewItemInterface(newProduct: String) {
         bindFeatures(newProduct, null, null, "new")
         isEditable(true)
-        //bindNoPhotoRecyclerView()
         binding.apply {
             itemProduct.setText(newProduct)
             recyclerViewLayout.visibility = View.GONE
             saveAction.setOnClickListener {
                 addNewItem()
             }
-            /**
-            shareAction.setIconResource(R.drawable.ic_add_photo_camera)
-            shareAction.setText(R.string.camera)
-            shareAction.setOnClickListener {
-            getCameraInstance()
+            cancelAction.setOnClickListener {
+                val action = AddItemFragmentDirections.actionAddItemFragmentToMenuFragment()
+                it.findNavController().navigate(action)
             }
-             **/
         }
     }
 
@@ -118,7 +116,8 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
             bindItemDetails(item)
             bindPhotoRecyclerView(item)
         }
-        setUpdateButtonInterface(false)
+        isEditable(true)
+        setUpdateButtonInterface(true)
     }
 
     private fun setUpdateButtonInterface(updateInterface: Boolean) {
@@ -131,26 +130,14 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                     updateItem()
                     setUpdateButtonInterface(false)
                 }
-                shareAction.setText(R.string.filter_cancel)
-                shareAction.setIconResource(R.drawable.ic_baseline_cancel_24)
-                shareAction.setOnClickListener {
-                    setDetailItemInterface()
-                    setUpdateButtonInterface(false)
+                cancelAction.setOnClickListener {
+                    val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
+                    it.findNavController().navigate(action)
                 }
             }
         } else {
             isEditable(false)
             binding.apply {
-                saveAction.setText(R.string.edit_action)
-                saveAction.setIconResource(R.drawable.ic_edit)
-                saveAction.setOnClickListener {
-                    setUpdateButtonInterface(true)
-                }
-                shareAction.setText(R.string.share_action)
-                shareAction.setIconResource(R.drawable.ic_send)
-                shareAction.setOnClickListener {
-                    shareProduct()
-                }
                 cameraAction.setOnClickListener {
                     getCameraInstance()
                 }
@@ -263,7 +250,6 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 setText(item.status, TextView.BufferType.SPANNABLE)
                 setAdapter(setAdapterArray(R.array.status_options))
             }
-            isEditable(false)
             if (item.currency == "USD") {
                 itemPriceLabel.hint = "Precio en USD"
             }
@@ -384,10 +370,7 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
             if (feature3 != "new") {
                 binding.itemFeature3.setText(feature3.toString())
             }
-        } else {
-            binding.itemFeature3Label.visibility = View.GONE
         }
-
     }
 
     private fun bindPhotoRecyclerView(item: Item) {
@@ -422,9 +405,9 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
-            val action =
-                AddItemFragmentDirections.actionAddItemFragmentToItemListFragment(newProduct)
-            findNavController().navigate(action)
+            //TODO This have to wait the response of the updating
+            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
+            this.findNavController().navigate(action)
         }
 
     }
@@ -448,6 +431,10 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
+
+            //TODO This have to wait the response of the updating
+            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
+            this.findNavController().navigate(action)
         }
 
     }
@@ -488,134 +475,6 @@ class AddItemFragment : Fragment(), PhotoAdapter.OnItemClickListener {
         }
 
         return (isEntryValid == 0)
-    }
-
-    //Share Information
-    private fun shareProduct() {
-
-        if (item.getMachinePhotoList().isEmpty()) {
-            shareIndexCard(getShareIndexCard(true))
-        } else {
-            shareIndexCardWithImages(item.getMachinePhotoList())
-        }
-    }
-
-    private fun shareIndexCard(message: String) {
-
-        val intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, message)
-            putExtra(Intent.EXTRA_TITLE, getString(R.string.share_tittle))
-        }
-        startActivity(Intent.createChooser(intent, null))
-
-    }
-
-    private fun shareIndexCardWithImages(machinePhotoList: List<MachinePhoto>){
-
-        val uriArray = getUriArray(machinePhotoList)
-
-        val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriArray)
-        intent.type = "image/*"
-
-        // adding text to share
-        intent.putExtra(Intent.EXTRA_TEXT, getShareIndexCard(true))
-
-        // Add subject Here
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_tittle))
-
-        // setting type to image
-        intent.type = "image/png"
-
-        // calling startactivity() to share
-        startActivity(Intent.createChooser(intent, getString(R.string.share_tittle)))
-
-    }
-
-    private fun getShareIndexCard(withPrice: Boolean): String {
-
-        var indexCard = resources.getString(R.string.index_card_product, item.product)
-
-        if (item.brand != null) {
-            indexCard += resources.getString(
-                R.string.index_card_brand,
-                item.brand
-            )
-        }
-        if (item.feature1 != null) {
-            indexCard += resources.getString(
-                R.string.index_card_features,
-                item.getFeatures()
-            )
-        }
-        if (item.feature3 != null) {
-            indexCard = resources.getString(
-                R.string.index_card_other_features,
-                item.feature3
-            )
-        }
-        if (item.type != null) {
-            indexCard += resources.getString(
-                R.string.index_card_type,
-                item.getType()
-            )
-        }
-        if (withPrice) {
-            indexCard += resources.getString(
-                R.string.index_card_price,
-                item.getFormattedPrice()
-            )
-        }
-
-        return indexCard
-
-    }
-
-    private fun getUriArray(machinePhotoList: List<MachinePhoto>): ArrayList<Uri>{
-
-        var uriArray = ArrayList<Uri>()
-
-        for (photo in machinePhotoList){
-
-            val file = getLocalFileToShare(photo.imgSrcUrl.toString())
-            uriArray.add(getUriFromFileToShare(file)!!)
-
-        }
-
-        return uriArray
-
-    }
-
-    private fun getLocalFileToShare(imgSrcUrl: String): File{
-        //TODO Change this to use Picasso Cache, probably using Okhttp3
-        val localFile = createImageFile()
-        FirebaseStorage.getInstance().reference.child(imgSrcUrl)
-            .getFile(
-                localFile
-            ).addOnSuccessListener {
-
-            }.addOnFailureListener {
-                Log.d("Firestorage", "Fail get image to share $it")
-            }
-
-        return localFile
-    }
-
-    private fun getUriFromFileToShare(file: File): Uri? {
-
-        var uri: Uri? = null
-        try {
-            uri = FileProvider.getUriForFile(
-                this.requireContext(),
-                "com.ferpa.fileprovider", file
-            )
-        } catch (e: java.lang.Exception) {
-            Toast.makeText(this.requireContext(), "" + e.message, Toast.LENGTH_LONG).show()
-        }
-        return uri
-
     }
 
     //Product dialog for new item

@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_itemListFragment_to_addItemFragment"
             app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_itemListFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/menuFragment"
@@ -34,6 +37,9 @@
         <action
             android:id="@+id/action_menuFragment_to_addItemFragment2"
             app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
@@ -52,6 +58,9 @@
         <action
             android:id="@+id/action_addItemFragment_to_fullScreenImageFragment"
             app:destination="@id/fullScreenImageFragment" />
+        <action
+            android:id="@+id/action_addItemFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/fullScreenImageFragment"
@@ -65,5 +74,19 @@
         <action
             android:id="@+id/action_fullScreenImageFragment_to_addItemFragment"
             app:destination="@id/addItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.ferpa.machinestock.ui.DetailFragment"
+        android:label="DetailFragment" >
+        <action
+            android:id="@+id/action_detailFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_itemListFragment"
+            app:destination="@id/itemListFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_fullScreenImageFragment"
+            app:destination="@id/fullScreenImageFragment" />
     </fragment>
 </navigation>

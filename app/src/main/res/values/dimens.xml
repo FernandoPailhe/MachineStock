@@ -13,4 +13,6 @@
     <dimen name="menu_card_size">66dp</dimen>
     <dimen name="title_card_text_size">20sp</dimen>
     <dimen name="icon_button_size">40dp</dimen>
+    <dimen name="detail_padding">3dp</dimen>
+    <dimen name="detail_card_photo_height">300dp</dimen>
 </resources>

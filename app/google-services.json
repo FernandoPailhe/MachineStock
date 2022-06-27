@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "659280880124",
+    "project_id": "machinestock",
+    "storage_bucket": "machinestock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659280880124:android:9958c888089ecfc5179279",
+        "android_client_info": {
+          "package_name": "com.ferpa.machinestock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "659280880124-hlnf3n2omapabtdrov0gum0j29npnb0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiH_OUrgw45H8JcooSjXLPR7vuDLi6YQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "659280880124-hlnf3n2omapabtdrov0gum0j29npnb0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

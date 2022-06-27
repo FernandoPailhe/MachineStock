@@ -57,8 +57,6 @@ class FullScreenPhotoAdapter(
             FirebaseStorage.getInstance().reference.child(machinePhoto.imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
                 Picasso.get()
                     .load(it)
-                    .networkPolicy(NetworkPolicy.OFFLINE)//For cache the images
-                    .rotate(90.0F)
                     .into(binding.fullScreenPhoto)
                 Log.d(TAG, "Succes to retrieve image from ${machinePhoto.imgSrcUrl} with Picasso")
             }.addOnFailureListener {

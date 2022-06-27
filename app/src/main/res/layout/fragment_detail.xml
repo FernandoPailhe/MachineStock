@@ -3,358 +3,232 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/item_product"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin">
+            android:layout_gravity="left"
+            android:enabled="true"
+            android:singleLine="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/detail_card"
+            tools:text="GUILLOTINA" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_product_label"
-                android:layout_width="0dp"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/detail_card"
+            style="@style/Widget.MachineStock.CardMenu"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/margin"
+            app:layout_constraintTop_toBottomOf="@+id/item_product"
+            app:layout_constraintBottom_toTopOf="@+id/buttons_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_product_req"
-                app:layout_constraintBottom_toTopOf="@id/item_brand_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_product"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:enabled="true"
-                    android:singleLine="true"
-                    android:text="GUILLOTINA"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_brand_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_brand_req"
-                app:layout_constraintBottom_toTopOf="@id/item_feature1_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/item_product_label"
-                app:layout_constraintTop_toBottomOf="@id/item_product_label">
+                android:orientation="vertical">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_brand"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    style="@style/TextAppearance.AppCompat.Headline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:singleLine="true"
-                    android:text="MARCA"/>
+                    tools:text="KUNST" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_feature1_label"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin"
-                app:layout_constraintEnd_toStartOf="@id/item_feature2_label"
-                app:layout_constraintStart_toStartOf="@id/item_product_label"
-                app:layout_constraintTop_toBottomOf="@id/item_brand_label">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_feature1"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:enabled="true"
-                    android:singleLine="true"
-                    android:text="1000 mm"/>
+                    android:layout_height="match_parent">
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_feature2_label"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/item_feature1_label"
-                app:layout_constraintTop_toBottomOf="@id/item_brand_label">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_feature2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:enabled="true"
-                    android:inputType="numberDecimal"
-                    android:singleLine="true"
-                    android:text="10 mm"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_feature3_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_feature3_req"
-                app:layout_constraintBottom_toTopOf="@id/item_price_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/item_type_label"
-                app:layout_constraintTop_toBottomOf="@id/item_feature2_label">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_feature3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:singleLine="true"
-                    android:text="Freno y Embrague"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_type_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                app:layout_constraintBottom_toTopOf="@+id/item_price_label"
-                app:layout_constraintEnd_toStartOf="@+id/item_feature3_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_feature1_label">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/item_type_req"
-                    android:text="HIDRÁULICA"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_price_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_price_req"
-                app:layout_constraintBottom_toBottomOf="@id/item_owner2_label"
-                app:layout_constraintEnd_toStartOf="@id/item_owner2_label"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/item_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="number"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_owner2_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_owner2_req"
-                app:layout_constraintBottom_toTopOf="@id/item_location_label"
-                app:layout_constraintEnd_toStartOf="@id/item_owner1_label"
-                app:layout_constraintStart_toEndOf="@id/item_price_label"
-                app:layout_constraintTop_toBottomOf="@+id/item_type_label">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/item_owner2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="number"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_owner1_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_owner1_req"
-                app:layout_constraintBottom_toTopOf="@id/item_location_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/item_owner2_label"
-                app:layout_constraintTop_toBottomOf="@+id/item_type_label">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/item_owner1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="numberDecimal"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_inside_number_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/inside_number_req"
-                app:layout_constraintBottom_toBottomOf="@id/item_location_label"
-                app:layout_constraintEnd_toStartOf="@+id/item_location_label"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/item_inside_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_location_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintBottom_toTopOf="@id/item_status_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_inside_number_label"
-                app:layout_constraintTop_toBottomOf="@id/item_price_label"
-                app:startIconDrawable="@drawable/ic_location">
-
-                <AutoCompleteTextView
-                    android:id="@+id/item_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/item_location_req"
-                    android:inputType="none" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_status_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_status_req"
-                app:layout_constraintBottom_toTopOf="@+id/item_observations_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_inside_number_label">
-
-                <AutoCompleteTextView
-                    android:id="@+id/item_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/item_observations_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:hint="@string/item_observations_req"
-                app:layout_constraintBottom_toTopOf="@+id/recycler_view_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_status_label">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/item_observations"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <RelativeLayout
-                android:id="@+id/recycler_view_layout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_between_elements"
-                app:layout_constraintBottom_toTopOf="@+id/share_action"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/item_observations_label">
-
-                <androidx.cardview.widget.CardView
-                    style="@style/CardView.Dark"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:elevation="@dimen/card_elevation">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/photo_recycler_view"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="400dp"
-                        android:clipToPadding="false"
-                        android:orientation="horizontal"
-                        android:padding="6dp"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        tools:listitem="@layout/photo_item" />
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin"
+                        android:orientation="vertical">
 
-                </androidx.cardview.widget.CardView>
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
+                            android:hint="@string/item_type_req"
+                            android:padding="@dimen/detail_padding"
+                            app:textAllCaps="true"
+                            tools:text="HIDRÁULICA" />
 
-            </RelativeLayout>
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/photo_card"
+                            style="@style/CardView.Dark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:elevation="@dimen/card_elevation"
+                            android:padding="@dimen/detail_padding">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/photo_recycler_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/detail_card_photo_height"
+                                android:clipToPadding="false"
+                                android:orientation="horizontal"
+                                android:padding="@dimen/detail_padding"
+                                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                                tools:listitem="@layout/photo_item" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_feature1"
+                            style="@style/Widget.Inventory.TextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:enabled="true"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="1000 mm x 2 mm" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_feature3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="Freno y Embrague" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="$513.300" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/item_owner2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="@dimen/margin_between_text"
+                                android:singleLine="true"
+                                tools:text="Owner 2 50%" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/item_owner1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:singleLine="true"
+                                tools:text="Owner 1 50%" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/detail_padding">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/margin_between_text"
+                                android:src="@drawable/ic_location" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/item_location"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_vertical"
+                                app:startIconDrawable="@drawable/ic_location"
+                                tools:text="Depósito" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_status"
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="DISPONIBLE" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_inside_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="Codigo: 5675 C" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_observations"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/detail_padding"
+                            tools:text="Observaciones" />
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detail_card"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/save_action"
+                android:id="@+id/edit_action"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="@string/save_action"
-                app:icon="@drawable/ic_save"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toStartOf="@id/share_action"
+                android:padding="@dimen/detail_padding"
+                android:text="@string/edit_action"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recycler_view_layout" />
+                app:layout_constraintEnd_toStartOf="@+id/share_action"
+                app:icon="@drawable/ic_save"
+                app:iconGravity="textStart" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share_action"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:padding="@dimen/detail_padding"
                 android:text="@string/share_action"
+                app:layout_constraintStart_toEndOf="@+id/edit_action"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:icon="@drawable/ic_send"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/save_action"
-                app:layout_constraintTop_toBottomOf="@id/recycler_view_layout" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/camera_action"
-                style="@style/Widget.AppCompat.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:text="@string/camera"
-                app:icon="@drawable/ic_add_photo_camera"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toStartOf="@id/gallery_action"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/share_action" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/gallery_action"
-                style="@style/Widget.AppCompat.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:text="@string/galeria"
-                app:icon="@drawable/ic_add_photo_file"
-                app:iconGravity="textStart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/camera_action"
-                app:layout_constraintTop_toBottomOf="@id/share_action" />
+                app:iconGravity="textStart" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

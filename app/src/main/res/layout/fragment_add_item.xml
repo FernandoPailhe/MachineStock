@@ -272,7 +272,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/margin_between_elements"
-                app:layout_constraintBottom_toTopOf="@+id/share_action"
+                app:layout_constraintBottom_toTopOf="@+id/cancel_action"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/item_observations_label">
@@ -306,18 +306,18 @@
                 android:text="@string/save_action"
                 app:icon="@drawable/ic_save"
                 app:iconGravity="textStart"
-                app:layout_constraintEnd_toStartOf="@id/share_action"
+                app:layout_constraintEnd_toStartOf="@id/cancel_action"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recycler_view_layout" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/share_action"
+                android:id="@+id/cancel_action"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="@string/share_action"
-                app:icon="@drawable/ic_send"
+                android:text="@string/filter_cancel"
+                app:icon="@drawable/ic_baseline_cancel_24"
                 app:iconGravity="textStart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/save_action"
@@ -334,7 +334,7 @@
                 app:iconGravity="textStart"
                 app:layout_constraintEnd_toStartOf="@id/gallery_action"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/share_action" />
+                app:layout_constraintTop_toBottomOf="@id/cancel_action" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/gallery_action"
@@ -347,7 +347,7 @@
                 app:iconGravity="textStart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/camera_action"
-                app:layout_constraintTop_toBottomOf="@id/share_action" />
+                app:layout_constraintTop_toBottomOf="@id/cancel_action" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

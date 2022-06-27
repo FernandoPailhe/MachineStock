@@ -62,6 +62,7 @@ constructor(
     }
 
     suspend fun compareDatabases() {
+        /**
         val getItemsFromNetwork = itemsApi.getAllItems()
         var needUpdate = true
         if (getItemsFromNetwork.isSuccessful) {
@@ -88,6 +89,7 @@ constructor(
                 }
             }
         }
+        **/
     }
 
     @Suppress("RedundantSuspendModifier")

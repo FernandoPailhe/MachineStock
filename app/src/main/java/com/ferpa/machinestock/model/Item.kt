@@ -101,13 +101,23 @@ fun Item.getFeatures(): String {
     return features
 }
 
-fun Item.getLocation(): String {
+fun Item.getLocation(): String? {
 
     return when (location) {
         "Zoi" -> Const.LOCATION_1
         "Can" -> Const.LOCATION_2
         else -> "A definir"
     }
+}
+
+fun Item.getInsideNumber(): String? {
+
+    return if (insideNumber != null){
+        "Código: $insideNumber"
+    } else {
+        null
+    }
+
 }
 
 fun Item.getBackgroundColor(): Int {

@@ -14,6 +14,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentDetailBinding
@@ -66,136 +68,46 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     private fun bindItemDetails(item: Item) {
 
         binding.apply {
-            itemProduct.setText(item.product, TextView.BufferType.SPANNABLE)
-            bindFeatures(item.product, item.feature1, item.feature2, item.feature3.toString())
-            itemBrand.setText(item.brand, TextView.BufferType.SPANNABLE)
-            itemInsideNumber.setText(item.insideNumber, TextView.BufferType.SPANNABLE)
-            itemLocation.setText(item.getLocation(), TextView.BufferType.SPANNABLE)
-            itemType.setText(item.getType(), TextView.BufferType.SPANNABLE)
+            detailCard.setBackgroundResource(item.getBackgroundColor())
+            bindTextView(itemProduct, item.product)
+            bindTextView(itemBrand, item.brand)
+            bindTextView(itemFeature1, item.getFeatures())
+            bindTextView(itemFeature3, item.feature3)
+            bindTextView(itemInsideNumber, item.getInsideNumber())
+            bindTextView(itemLocation, item.getLocation())
+            bindTextView(itemType, item.getType())
+            bindTextView(itemPrice, item.getFormattedPrice())
+            bindTextView(itemObservations, item.getObservations())
+            bindTextView(itemStatus, item.status)
 
-            itemOwner2.setText(item.owner2.toString())
-            itemOwner1.setText(item.owner1.toString())
-            itemPrice.setText(item.getFormattedPrice())
-            itemObservations.setText(item.getObservations())
-            itemStatus.setText(item.status, TextView.BufferType.SPANNABLE)
-            if (item.currency == "USD") {
-                itemPriceLabel.hint = "Precio en USD"
-            }
+            itemOwner2.text = item.owner2.toString()
+            itemOwner1.text = item.owner1.toString()
+
             if (item.photos == "0") {
-                recyclerViewLayout.visibility = View.GONE
+                photoCard.visibility = View.GONE
+            } else {
+                bindPhotoRecyclerView(item)
+            }
+
+            editAction.setOnClickListener {
+                viewModel.setCurrentId(item.id)
+                val action = DetailFragmentDirections.actionDetailFragmentToAddItemFragment(item.product)
+                it.findNavController().navigate(action)
+            }
+
+            shareAction.setOnClickListener {
+                shareProduct()
             }
 
         }
     }
 
-    private fun bindFeatures(
-        product: String,
-        feature1: Double?,
-        feature2: Double?,
-        feature3: String?
-    ) {
-
-        when (product) {
-            "GUILLOTINA" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(R.string.item_length_req)
-                feature2?.let {
-                    binding.itemFeature2.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature2Label.setHint(R.string.item_width_guillotina_req)
-            }
-            "PLEGADORA" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(R.string.item_length_req)
-                feature2?.let {
-                    binding.itemFeature2.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature2Label.setHint(R.string.item_weight_req)
-            }
-            "BALANCIN" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(R.string.item_weight_req)
-                binding.itemFeature2.visibility = View.GONE
-            }
-            "TORNO" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(R.string.item_length_req)
-                feature2?.let {
-                    binding.itemFeature2.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature2Label.setHint(R.string.item_width_guillotina_req)
-            }
-            "LIMADORA" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(R.string.item_length_req)
-                binding.itemFeature2.visibility = View.GONE
-            }
-            "SERRUCHO" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(getString(R.string.item_pulg_req))
-                binding.itemFeature2.visibility = View.GONE
-            }
-            "SOLDADURA" -> {
-                feature1?.let {
-                    binding.itemFeature1.setText(
-                        it.toString(),
-                        TextView.BufferType.SPANNABLE
-                    )
-                }
-                binding.itemFeature1Label.setHint(getString(R.string.item_mig_req))
-                binding.itemFeature2.visibility = View.GONE
-            }
-        }
-
-        //TODO SetRemainsProductsBindFeatures
-
-        if (feature3 != "null") {
-            if (feature3 != "new") {
-                binding.itemFeature3.setText(feature3.toString())
-            }
+    private fun bindTextView(txtView: TextView, itemDetail: String?) {
+        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail.equals("NO ESPECÍFICA"))) {
+            txtView.visibility = View.GONE
         } else {
-            binding.itemFeature3Label.visibility = View.GONE
+            txtView.text = itemDetail
         }
-
     }
 
     private fun bindPhotoRecyclerView(item: Item) {

@@ -55,12 +55,10 @@
     </style>
 
     <style name="Widget.MachineStock.CardDetail" parent="Widget.MaterialComponents.CardView">
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">60dp</item>
+        <item name="cornerFamily">rounded</item>
         <item name="cardElevation">@dimen/card_elevation</item>
-        <item name="cardPreventCornerOverlap">true</item>
         <item name="cardUseCompatPadding">true</item>
-        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
-        <item name="cardBackgroundColor">@color/primaryLightColor</item>
     </style>
 
     <style name="Widget.MachineStock.ProductTitle" parent="Widget.MaterialComponents.TextView">
