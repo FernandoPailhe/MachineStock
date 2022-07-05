@@ -15,4 +15,6 @@
     <dimen name="icon_button_size">40dp</dimen>
     <dimen name="detail_padding">3dp</dimen>
     <dimen name="detail_card_photo_height">300dp</dimen>
+    <dimen name="detail_mini_card_photo_height">90dp</dimen>
+    <dimen name="detail_mini_card_photo_width">160dp</dimen>
 </resources>

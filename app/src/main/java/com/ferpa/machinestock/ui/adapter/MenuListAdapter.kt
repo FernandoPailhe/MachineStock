@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferpa.machinestock.databinding.MenuCardLayoutBinding
 import com.ferpa.machinestock.model.*
 
-
 class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
     ListAdapter<MenuItem, MenuListAdapter.MenuItemViewHolder>(DiffCallBack) {
 
@@ -53,6 +52,8 @@ class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
             })
 
             miniCardListAdapter.submitList(mainMenuItem.itemList)
+
+            Log.d("MenuListAdapterMainMenu","${mainMenuItem.itemList?.size}" )
 
             binding.apply {
                 cardMenuTitle.text = mainMenuItem.name

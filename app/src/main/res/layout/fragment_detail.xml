@@ -8,31 +8,54 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/item_product"
-            style="@style/TextAppearance.AppCompat.Headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:enabled="true"
-            android:singleLine="true"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/detail_card"
-            tools:text="GUILLOTINA" />
-
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/detail_card"
-            style="@style/Widget.MachineStock.CardMenu"
+            android:id="@+id/title_card"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="@dimen/margin"
-            app:layout_constraintTop_toBottomOf="@+id/item_product"
-            app:layout_constraintBottom_toTopOf="@+id/buttons_layout">
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/card_elevation"
+            app:cardCornerRadius="0dp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/gradient_list_menu"
+                android:orientation="vertical"
+                tools:context=".ui.ItemListFragment">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_product"
+                    style="@style/TextAppearance.AppCompat.Headline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_margin="@dimen/margin"
+                    android:padding="@dimen/detail_padding"
+                    android:enabled="true"
+                    android:singleLine="true"
+                    android:textColor="@color/primaryTextColor"
+                    app:layout_constraintBottom_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="GUILLOTINA" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/detail_card"
+            style="@style/Widget.MachineStock.CardDetail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/margin"
+            android:padding="@dimen/detail_padding"
+            app:layout_constraintBottom_toTopOf="@+id/buttons_layout"
+            app:layout_constraintTop_toBottomOf="@+id/title_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <com.google.android.material.textview.MaterialTextView
@@ -44,26 +67,25 @@
                     android:singleLine="true"
                     tools:text="KUNST" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:hint="@string/item_type_req"
+                    android:padding="@dimen/detail_padding"
+                    app:textAllCaps="true"
+                    tools:text="HIDRÁULICA" />
+
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin"
                         android:orientation="vertical">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/item_type"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="1"
-                            android:hint="@string/item_type_req"
-                            android:padding="@dimen/detail_padding"
-                            app:textAllCaps="true"
-                            tools:text="HIDRÁULICA" />
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/photo_card"
@@ -89,7 +111,7 @@
                             android:id="@+id/item_feature1"
                             style="@style/Widget.Inventory.TextView"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:enabled="true"
                             android:padding="@dimen/detail_padding"
@@ -99,16 +121,21 @@
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/item_feature3"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:padding="@dimen/detail_padding"
                             android:singleLine="true"
                             tools:text="Freno y Embrague" />
 
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/item_price"
+                            style="@style/TextAppearance.AppCompat.Medium"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:padding="@dimen/detail_padding"
                             android:singleLine="true"
@@ -116,14 +143,14 @@
 
                         <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:orientation="horizontal">
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/item_owner2"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/margin_between_text"
                                 android:singleLine="true"
                                 tools:text="Owner 2 50%" />
@@ -131,15 +158,29 @@
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/item_owner1"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:singleLine="true"
                                 tools:text="Owner 1 50%" />
 
                         </LinearLayout>
 
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_status"
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="DISPONIBLE" />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:orientation="horizontal"
                             android:padding="@dimen/detail_padding">
@@ -153,7 +194,7 @@
                             <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/item_location"
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 app:startIconDrawable="@drawable/ic_location"
                                 tools:text="Depósito" />
@@ -161,29 +202,21 @@
                         </LinearLayout>
 
                         <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/item_status"
-                            style="@style/TextAppearance.AppCompat.Medium"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/item_observations"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
                             android:padding="@dimen/detail_padding"
-                            android:singleLine="true"
-                            tools:text="DISPONIBLE" />
+                            tools:text="Observaciones" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/item_inside_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/detail_padding"
+                            android:layout_gravity="right"
                             android:singleLine="true"
+                            android:layout_marginBottom="@dimen/margin"
                             tools:text="Codigo: 5675 C" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/item_observations"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="@dimen/detail_padding"
-                            tools:text="Observaciones" />
 
                     </LinearLayout>
 
@@ -197,11 +230,12 @@
             android:id="@+id/buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/margin"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detail_card"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:orientation="horizontal">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detail_card">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/edit_action"
@@ -210,10 +244,10 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/detail_padding"
                 android:text="@string/edit_action"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/share_action"
                 app:icon="@drawable/ic_save"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toStartOf="@+id/share_action"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share_action"
@@ -222,10 +256,10 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/detail_padding"
                 android:text="@string/share_action"
-                app:layout_constraintStart_toEndOf="@+id/edit_action"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:icon="@drawable/ic_send"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/edit_action" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

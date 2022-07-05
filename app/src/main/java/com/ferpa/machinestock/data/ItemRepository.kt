@@ -3,12 +3,15 @@ package com.ferpa.machinestock.data
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.ferpa.machinestock.model.Item
+import com.ferpa.machinestock.model.MenuItem
 import com.ferpa.machinestock.network.ItemsApi
 import com.ferpa.machinestock.utilities.CustomListUtil
+import com.ferpa.machinestock.utilities.MenuListUtil
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlin.Exception
 
+const val TAG = "ItemRepository"
 
 class ItemRepository
 constructor(
@@ -19,10 +22,13 @@ constructor(
 
     var allItems = itemDao.getAll()
 
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val itemsFlow: Flow<List<Item>> = getCustomQuery().flatMapLatest {
         getCustomQuery()
     }
+
+    //val itemsFlow: Flow<List<Item>> = getCustomQuery()
 
     fun getCustomQuery(): Flow<List<Item>> {
         val product = customListUtil.getProduct()
@@ -30,12 +36,12 @@ constructor(
         var temporalQuery = allItems
         if (product != "TODAS") {
             if (customListUtil.getSearchInput() == "%%") {
-                temporalQuery = itemDao.getProducts(product)
+                temporalQuery = itemDao.getProducts(product, "Vendida", "Retirada")
             } else {
-                temporalQuery = itemDao.getSearchQuery(product, searchQuery)
+                temporalQuery = itemDao.getSearchQueryFilterByProduct(product, searchQuery)
             }
         } else if (customListUtil.getSearchInput() != "%%") {
-            temporalQuery = itemDao.getSearchQueryAll(customListUtil.getSearchInput())
+            temporalQuery = itemDao.getSearchQueryAllItems(customListUtil.getSearchInput())
         }
 
         if (customListUtil.isFilteredList) {
@@ -44,6 +50,55 @@ constructor(
 
         return (temporalQuery)
 
+    }
+
+    val menuList: Flow<List<MenuItem>> = getMenuItemList()
+
+    private fun getMenuItemList() = flow<List<MenuItem>> {
+
+        var menuList = arrayListOf<MenuItem>()
+        MainMenuSource.mainMenu.forEach() {
+            menuList.add(createMenuItem(it))
+            Log.d(TAG, it.name)
+        }
+
+        emit(menuList)
+    }
+
+    private suspend fun createMenuItem(menuItem: MenuItem): MenuItem {
+
+        return MenuItem(
+            menuItem.name,
+            menuItem.imageResourceId,
+            menuItem.priority,
+            menuItem.hasNews,
+            menuItem.menuListUtil,
+            getMenuQuery(menuItem.menuListUtil)
+        )
+    }
+
+    private suspend fun getMenuQuery(menuListUtil: MenuListUtil): List<Item> {
+        return if (menuListUtil.filterByProduct.size == 1) {
+            val product = menuListUtil.filterByProduct.first()
+            itemDao.getProductsWithLimit(product, menuListUtil.listSize.toString()).map { list ->
+                menuListUtil.getMenuList(list)
+            }.first()
+        } else if (menuListUtil.filterByProduct.size > 1 && menuListUtil.filterByProduct.contains("NOT")) {
+            val notProduct = menuListUtil.filterByProduct.subList(1, 5)
+            itemDao.getOthersProductsWithLimit(
+                notProduct[0],
+                notProduct[1],
+                notProduct[2],
+                notProduct[3],
+                menuListUtil.listSize.toString()
+            ).map { list ->
+                menuListUtil.getMenuList(list)
+            }.first()
+        } else {
+            allItems.map { list ->
+                menuListUtil.getMenuList(list)
+            }.first()
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -57,39 +112,35 @@ constructor(
         return itemDao.getItem(id)
     }
 
-    suspend fun getNetworkItemById(itemId: Long): Item {
-        return itemsApi.getItemById(itemId)
-    }
-
     suspend fun compareDatabases() {
         /**
         val getItemsFromNetwork = itemsApi.getAllItems()
         var needUpdate = true
         if (getItemsFromNetwork.isSuccessful) {
-            itemDao.getAll().collectLatest { localList ->
-                while (needUpdate) {
-                    getItemsFromNetwork.body()?.forEach { networkItem ->
-                        val currentItem = localList.find { localItem ->
-                            networkItem.id == localItem.id
-                        }
-                        if (currentItem == null) {
-                            itemDao.insert(networkItem)
-                            Log.d("NetworkTrack", "Insert Item: ${networkItem.id}")
-                        } else {
-                            if (networkItem.editDate!! > currentItem.editDate.toString()) {
-                                itemDao.update(networkItem)
-                                Log.d("NetworkTrack", "Update Item: ${networkItem.id}")
-                            } else {
-                                Log.d("NetworkTrack", "Update End")
-                                needUpdate = false
-                                return@collectLatest
-                            }
-                        }
-                    }
-                }
-            }
+        itemDao.getAll().collectLatest { localList ->
+        while (needUpdate) {
+        getItemsFromNetwork.body()?.forEach { networkItem ->
+        val currentItem = localList.find { localItem ->
+        networkItem.id == localItem.id
         }
-        **/
+        if (currentItem == null) {
+        itemDao.insert(networkItem)
+        Log.d("NetworkTrack", "Insert Item: ${networkItem.id}")
+        } else {
+        if (networkItem.editDate!! > currentItem.editDate.toString()) {
+        itemDao.update(networkItem)
+        Log.d("NetworkTrack", "Update Item: ${networkItem.id}")
+        } else {
+        Log.d("NetworkTrack", "Update End")
+        needUpdate = false
+        return@collectLatest
+        }
+        }
+        }
+        }
+        }
+        }
+         **/
     }
 
     @Suppress("RedundantSuspendModifier")

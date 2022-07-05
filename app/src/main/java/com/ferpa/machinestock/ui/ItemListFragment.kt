@@ -32,7 +32,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentItemListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,7 +45,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
         allItemsListAdapter = AllItemsListAdapter {
             viewModel.setProduct(it.product)
             viewModel.setCurrentId(it.id)
-            val action = ItemListFragmentDirections.actionItemListFragmentToAddItemFragment(it.product)
+            val action = ItemListFragmentDirections.actionItemListFragmentToDetailFragment()
             this.findNavController().navigate(action)
             //binding.slidingPaneLayout.openPane()
             //TODO Implement SlidingPaneLayout
@@ -73,18 +73,18 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
             //Top Menu
             listTitle.text = viewModel.getProduct()
             inputSearch.setOnQueryTextListener(this@ItemListFragment)
-            addItemAction.setOnClickListener() {
+            addItemAction.setOnClickListener {
                 viewModel.setCurrentId(0)
                 findNavController().navigate(
                     ItemListFragmentDirections.actionItemListFragmentToAddItemFragment(viewModel.getProduct())
                 )
             }
-            clearFilterAction.setOnClickListener() {
+            clearFilterAction.setOnClickListener {
                 clearAllFilters()
             }
             //Filter Menu
             setFilterMenuVisibility(isFilterMenuVisible)
-            filterMenuAction.setOnClickListener() {
+            filterMenuAction.setOnClickListener {
                 setFilterMenuVisibility(!isFilterMenuVisible)
                 isFilterMenuVisible = !isFilterMenuVisible
             }
@@ -131,7 +131,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
 
     private fun subscribeUi(adapter: ItemListAdapter) {
         lifecycleScope.launchWhenStarted {
-            viewModel.filterItems.collect() {
+            viewModel.filterItems.collect {
                 adapter.submitList(it)
             }
         }
@@ -139,7 +139,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
 
     private fun subscribeUiAllItems(adapter: AllItemsListAdapter) {
         lifecycleScope.launchWhenStarted {
-            viewModel.filterItems.collect() {
+            viewModel.filterItems.collect {
                 adapter.submitList(it)
             }
         }

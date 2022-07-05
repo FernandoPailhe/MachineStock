@@ -29,7 +29,6 @@ import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager.Companion.getReduceBitmapFromGallery
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.*
 import java.text.SimpleDateFormat
@@ -244,7 +243,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             }
             itemOwner2.setText(item.owner2.toString())
             itemOwner1.setText(item.owner1.toString())
-            itemPrice.setText(item.getFormattedPrice())
+            itemPrice.setText(item.getFormattedPrice(false))
             itemObservations.setText(item.getObservations())
             itemStatus.apply {
                 setText(item.status, TextView.BufferType.SPANNABLE)

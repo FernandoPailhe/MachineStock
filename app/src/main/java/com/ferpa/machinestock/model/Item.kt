@@ -2,6 +2,7 @@ package com.ferpa.machinestock.model
 
 
 import android.annotation.SuppressLint
+import android.telephony.PhoneNumberUtils.formatNumber
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -60,14 +61,18 @@ fun Item.getType(): String {
     }
 }
 
-fun Item.getFormattedPrice(): String {
+fun Item.getFormattedPrice(withPref: Boolean): String {
 
     return if (price == null) {
         "A definir"
     } else {
         var priceStr = NumberFormat.getIntegerInstance().format(price)
-        when (currency) {
-            "USD" -> priceStr = "$priceStr USD"
+        if (withPref) {
+            priceStr = if (currency.equals("USD")) {
+                "$priceStr USD"
+            } else {
+                "$ $priceStr"
+            }
         }
         priceStr
     }
@@ -132,6 +137,14 @@ fun Item.getBackgroundColor(): Int {
     }
 
     return statusItemColor
+}
+
+fun Item.getStatus(): String {
+    return if (status == null || status == ""){
+        "NO INFORMADO"
+    } else {
+        status.uppercase(Locale.getDefault())
+    }
 }
 
 fun Item.getMachinePhotoList(): List<MachinePhoto> {

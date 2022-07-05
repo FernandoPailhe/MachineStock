@@ -68,7 +68,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     private fun bindItemDetails(item: Item) {
 
         binding.apply {
-            detailCard.setBackgroundResource(item.getBackgroundColor())
             bindTextView(itemProduct, item.product)
             bindTextView(itemBrand, item.brand)
             bindTextView(itemFeature1, item.getFeatures())
@@ -76,7 +75,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             bindTextView(itemInsideNumber, item.getInsideNumber())
             bindTextView(itemLocation, item.getLocation())
             bindTextView(itemType, item.getType())
-            bindTextView(itemPrice, item.getFormattedPrice())
+            bindTextView(itemPrice, item.getFormattedPrice(true))
             bindTextView(itemObservations, item.getObservations())
             bindTextView(itemStatus, item.status)
 
@@ -100,10 +99,11 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             }
 
         }
+
     }
 
     private fun bindTextView(txtView: TextView, itemDetail: String?) {
-        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail.equals("NO ESPECÍFICA"))) {
+        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail.equals("NO ESPECÍFICA"))) {
             txtView.visibility = View.GONE
         } else {
             txtView.text = itemDetail
@@ -198,7 +198,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
         if (withPrice) {
             indexCard += resources.getString(
                 R.string.index_card_price,
-                item.getFormattedPrice()
+                item.getFormattedPrice(true)
             )
         }
 

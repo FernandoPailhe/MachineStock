@@ -20,16 +20,28 @@ interface ItemDao {
     fun getItem(id: Long): Flow<Item>
 
     @Query("SELECT * FROM item " +
-            "WHERE product = :product ORDER BY feature1 ASC")
-    fun getProducts(product: String): Flow<List<Item>>
+            "WHERE product = :product " +
+            "AND NOT status = :notStatus1 OR status = :notStatus2 " +
+            "ORDER BY feature1 ASC")
+    fun getProducts(product: String, notStatus1: String, notStatus2: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
+            "WHERE product = :product " +
+            "ORDER BY feature1 ASC LIMIT :limit")
+    fun getProductsWithLimit(product: String, limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
+            "WHERE NOT product = :product1 OR product = :product2 OR product = :product3 OR product = :product4 " +
+            "ORDER BY editDate ASC LIMIT :limit")
+    fun getOthersProductsWithLimit(product1: String, product2: String, product3:String, product4: String, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item ORDER BY editDate")
     fun getAll(): Flow<List<Item>>
 
     @Query("SELECT * FROM item WHERE product = :product AND (brand LIKE :searchQuery OR insideNumber LIKE :searchQuery OR feature1 LIKE :searchQuery OR feature2 LIKE :searchQuery OR feature3 LIKE :searchQuery)")
-    fun getSearchQuery(product: String, searchQuery: String): Flow<List<Item>>
+    fun getSearchQueryFilterByProduct(product: String, searchQuery: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item WHERE (brand LIKE :searchQuery OR insideNumber LIKE :searchQuery OR feature1 LIKE :searchQuery OR feature2 LIKE :searchQuery OR feature3 LIKE :searchQuery OR product LIKE :searchQuery)")
-    fun getSearchQueryAll(searchQuery: String): Flow<List<Item>>
+    fun getSearchQueryAllItems(searchQuery: String): Flow<List<Item>>
 
 }

@@ -66,7 +66,7 @@ class MiniCardListAdapter(
                 bindTextView(itemFeature3, item.feature3)
                 bindTextView(itemType, " - ${item.getType()[0]}")
                 bindTextView(itemPrice, item.getFormattedPrice(true))
-                bindTextView(itemStatus, item.status)
+                bindTextView(itemStatus, item.getStatus())
 
                 if (item.getMachinePhotoList().isNotEmpty()) {
                     //Todo make imgScrUrl for thumbnail

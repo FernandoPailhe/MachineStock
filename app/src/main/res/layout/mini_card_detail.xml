@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mini_card_detail"
+        style="@style/Widget.MachineStock.CardDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_elements"
+        app:cardPreventCornerOverlap="true">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/item_product"
+            style="@style/TextAppearance.AppCompat.Display1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:singleLine="true"
+            android:textColor="@color/secondaryDarkColor"
+            tools:text="G" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/margin">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_brand"
+                    style="@style/TextAppearance.AppCompat.Menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:singleLine="true"
+                    tools:text="KUNST" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_type"
+                    style="@style/TextAppearance.AppCompat.Menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    app:textAllCaps="true"
+                    tools:text=" - H" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margin"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/photo_card"
+                    style="@style/CardView.Dark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="@dimen/card_elevation"
+                    android:padding="@dimen/detail_padding">
+
+                    <ImageView
+                        android:id="@+id/photo_view"
+                        android:layout_width="@dimen/detail_mini_card_photo_width"
+                        android:layout_height="@dimen/detail_mini_card_photo_height"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/detail_padding"
+                        tools:listitem="@layout/photo_item" />
+
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_feature1"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:enabled="true"
+                    android:padding="@dimen/detail_padding"
+                    android:singleLine="true"
+                    tools:text="1000 mm x 2 mm" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_feature3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/detail_padding"
+                    android:singleLine="true"
+                    tools:text="Freno y Embrague" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/detail_padding"
+                    android:singleLine="true"
+                    tools:text="$513.300" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/item_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/detail_padding"
+                    android:singleLine="true"
+                    tools:text="DISPONIBLE" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

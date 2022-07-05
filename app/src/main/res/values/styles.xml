@@ -54,11 +54,20 @@
         <item name="android:textAppearance">?attr/textAppearanceOverline</item>
     </style>
 
-    <style name="Widget.MachineStock.CardDetail" parent="Widget.MaterialComponents.CardView">
-        <item name="cardCornerRadius">60dp</item>
+    <style name="Widget.MachineStock.CardDetail" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeBottomRight">16dp</item>
+        <item name="cornerFamilyBottomRight">cut</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
+    </style>
+
+    <style name="Widget.MachineStock.CardMenuLayout" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">8dp</item>
         <item name="cornerFamily">rounded</item>
         <item name="cardElevation">@dimen/card_elevation</item>
-        <item name="cardUseCompatPadding">true</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
     </style>
 
     <style name="Widget.MachineStock.ProductTitle" parent="Widget.MaterialComponents.TextView">
@@ -89,7 +98,6 @@
         <item name="cornerFamilyTopRight">cut</item>
         <item name="cornerFamily">rounded</item>
     </style>
-
 
     <style name="Widget.Inventory.TextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:textSize">16sp</item>

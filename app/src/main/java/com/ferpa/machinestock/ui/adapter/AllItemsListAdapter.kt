@@ -42,7 +42,7 @@ class AllItemsListAdapter(private val onItemClicked: (Item) -> Unit) :
             binding.apply {
                 itemUpText.text = item.getName()
                 itemDownText.text = item.getFeatures()
-                priceText.text = item.getFormattedPrice()
+                priceText.text = item.getFormattedPrice(true)
                 statusText.text = item.status
                 itemLayout.setBackgroundResource(item.getBackgroundColor())
                 itemProductText.text = item.product

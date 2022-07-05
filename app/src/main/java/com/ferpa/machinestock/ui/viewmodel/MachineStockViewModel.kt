@@ -5,11 +5,9 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
-import com.ferpa.machinestock.R
 import com.ferpa.machinestock.data.ItemRepository
-import com.ferpa.machinestock.model.Item
-import com.ferpa.machinestock.model.addNewPhoto
-import com.ferpa.machinestock.model.updatePhotos
+import com.ferpa.machinestock.data.MainMenuSource
+import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.utilities.Const
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +28,8 @@ constructor(private val itemRepository: ItemRepository) :
 
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 
+    val menuItemListFlow: Flow<List<MenuItem>> = itemRepository.menuList
+
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
 
@@ -44,6 +44,7 @@ constructor(private val itemRepository: ItemRepository) :
     private var storageRef = storage.reference
 
     init {
+        compareDatabases()
         //TODO Delete when this will not more necessary
         /**
         viewModelScope.launch {
@@ -72,7 +73,7 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
-    fun uploadPhoto(uri: Uri){
+    fun uploadPhoto(uri: Uri) {
 
         //TODO Progress animation
         val machinePhotosRef =
@@ -105,32 +106,6 @@ constructor(private val itemRepository: ItemRepository) :
             }
         }
     }
-
-    /**
-    fun getNetworkItem(itemId: Long): Flow<Item> = flow {
-    viewModelScope.launch {
-    try {
-    _state.value = state.value.copy(isLoading = true)
-    _state.value = state.value.copy(
-    item = itemRepository.getNetworkItemById(itemId),
-    isLoading = false
-    )
-    } catch (e: Exception) {
-    Log.d("getItemById", e.toString())
-    _state.value = state.value.copy(isLoading = false)
-    }
-    }
-    }
-     **/
-
-    private val _state = MutableStateFlow(ItemState())
-    val state: StateFlow<ItemState> = _state
-
-    data class ItemState(
-        val item: Item? = null,
-        val isLoading: Boolean = false
-    )
-
 
     //Update Custom List Util
     fun setProduct(newProduct: String) {

@@ -16,8 +16,13 @@
     <string name="share_action">Compartir</string>
 
     <!--Share templates-->
-    <string name="index_card_with_type"><big>FICHA TECNICA\n</big>=============\n<b>%1$s </b>%2$s \n%3$s \nPrecio: $ %4$s</string>
-    <string name="index_card"><big>FICHA TECNICA\n</big>=============\n<b>%1$s </b>%2$s \nPrecio: $ %3$s</string>
+    <string name="index_card_title"><big>FICHA TECNICA\n</big>--------------</string>
+    <string name="index_card_product"><b>%1$s</b></string>
+    <string name="index_card_brand">\n<b>Marca:</b> %1$s</string>
+    <string name="index_card_features">\n- %1$s</string>
+    <string name="index_card_other_features">\n- %1$s</string>
+    <string name="index_card_type">\n- %1$s</string>
+    <string name="index_card_price">\n- Precio: %1$s</string>
 
     <string-array name="type_options">
         <item>Mecánica</item>
@@ -28,8 +33,8 @@
 
     <!--TODO Cambiar a socios originales-->
     <string-array name="owner_options">
-        <item>Socio 1</item>
-        <item>Socio 2</item>
+        <item>Maquimundo</item>
+        <item>Canavese</item>
         <item>Sociedad</item>
     </string-array>
 
@@ -87,8 +92,8 @@
 
     <!--TODO Cambiar a depósitos originales-->
     <string-array name="location_options">
-        <item>Depósito 1</item>
-        <item>Depósito 2</item>
+        <item>Zoilo</item>
+        <item>Canavese</item>
         <item>A definir</item>
     </string-array>
 
@@ -107,13 +112,19 @@
     <string name="item_width_guillotina_req">Espesor *</string>
     <string name="item_width_torno_req">Volteo *</string>
     <string name="item_weight_req">Tonelaje *</string>
+    <string name="item_volt_req">Voltaje</string>
+    <string name="item_hp_req">HP *</string>
+    <string name="item_pulg_req">Ancho en pulgadas *</string>
+    <string name="item_mig_req">En mig *</string>
     <string name="item_price_req">Precio</string>
     <string name="item_brand_req">Marca</string>
     <string name="item_location_req">Depósito</string>
     <string name="item_type_req">Tipo</string>
     <string name="item_status_req">Estado</string>
-    <string name="item_owner2_req">Socio 2 %</string>
-    <string name="item_owner1_req">Socio 1 %</string>
+    <string name="item_owner2_req">Canavese %</string>
+    <string name="item_owner1_req">Maquimundo %</string>
+    <string name="item_feature3_req">Otras características</string>
+    <string name="item_observations_req">Observaciones</string>
 
     <!-- Content Description -->
     <string name="edit_item">Edit Item</string>
@@ -126,12 +137,14 @@
     <string name="filter_title">FILTRAR</string>
     <string name="search_menu">buscar</string>
     <string name="camera">Cámara</string>
-    <string name="item_pulg_req">Ancho en pulgadas *</string>
-    <string name="item_mig_req">En mig *</string>
     <string name="edit_action">EDITAR</string>
     <string name="share_tittle">Compartir informacion</string>
-    <string name="item_observations_req">Observaciones</string>
     <string name="galeria">Galeria</string>
     <string name="percent_simbol">%</string>
+    <string name="photo_upload_successfuly">La foto se ha subido correctamente</string>
+    <string name="photo_upload_fail">Fallo en la carga de la foto, intentalo nuevamente</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>
