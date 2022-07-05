@@ -78,6 +78,8 @@ constructor(
     }
 
     private suspend fun getMenuQuery(menuListUtil: MenuListUtil): List<Item> {
+
+
         return if (menuListUtil.filterByProduct.size == 1) {
             val product = menuListUtil.filterByProduct.first()
             itemDao.getProductsWithLimit(product, menuListUtil.listSize.toString()).map { list ->

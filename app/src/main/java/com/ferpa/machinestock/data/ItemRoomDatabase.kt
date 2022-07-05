@@ -10,7 +10,7 @@ abstract class ItemRoomDatabase : RoomDatabase () {
     abstract fun itemDao(): ItemDao
 
     companion object {
-        const val DATABASE_NAME = "used_item_database"
+        const val DATABASE_NAME = "used_item_db"
         const val DATABASE_ASSET = "database/used_machines_final.sqlite"
     }
 
