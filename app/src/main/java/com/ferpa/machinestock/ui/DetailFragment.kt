@@ -112,8 +112,19 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     private fun bindPhotoRecyclerView(item: Item) {
 
+        //Todo Carrousel de fotos e imagenes de siluetas
         if (item.getMachinePhotoList().isEmpty()) {
-            binding.photoRecyclerView.visibility = View.GONE
+            /**
+            when (item.product){
+                "GUILLOTINA" -> photoView.setImageResource(R.drawable.s_guillotina)
+                "PLEGADORA" -> photoView.setImageResource(R.drawable.s_plegadora)
+                "BALANCIN" -> photoView.setImageResource(R.drawable.s_balancin)
+                "TORNO" -> photoView.setImageResource(R.drawable.s_torno)
+                "FRESADORA" -> photoView.setImageResource(R.drawable.s_fresadora)
+                "PLASMA" -> photoView.setImageResource(R.drawable.s_plasma)
+                else -> photoView.setImageResource(R.drawable.ic_machine_icon)
+            }
+            **/
         } else {
             val photoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
             binding.photoRecyclerView.layoutManager =
@@ -184,7 +195,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             )
         }
         if (item.feature3 != null) {
-            indexCard = resources.getString(
+            indexCard += resources.getString(
                 R.string.index_card_other_features,
                 item.feature3
             )
