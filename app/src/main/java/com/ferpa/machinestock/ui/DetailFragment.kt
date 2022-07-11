@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
@@ -151,20 +153,14 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
         val uriArray = getUriArray(machinePhotoList)
 
-        val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriArray)
-        intent.type = "image/*"
+        val intent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+            putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriArray)
+            type = "image/*"
+            putExtra(Intent.EXTRA_TEXT, getShareIndexCard(true))
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_tittle))
+            type = "image/png"
+        }
 
-        // adding text to share
-        intent.putExtra(Intent.EXTRA_TEXT, getShareIndexCard(true))
-
-        // Add subject Here
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_tittle))
-
-        // setting type to image
-        intent.type = "image/png"
-
-        // calling startactivity() to share
         startActivity(Intent.createChooser(intent, getString(R.string.share_tittle)))
 
     }
@@ -210,7 +206,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     private fun getUriArray(machinePhotoList: List<MachinePhoto>): ArrayList<Uri> {
 
-        var uriArray = ArrayList<Uri>()
+        val uriArray = ArrayList<Uri>()
 
         for (photo in machinePhotoList) {
 
@@ -277,15 +273,18 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             val ei = ExifInterface(viewModel.currentPhotoPath)
             val orientation = ei.getAttribute(ExifInterface.TAG_ORIENTATION)
-            val uriList = ImageManager.getReduceBitmapListFromCamera(viewModel.currentPhotoPath,
-                orientation?.toInt() ?: 0, requireContext())
+            val uriList = ImageManager.getReduceBitmapListFromCamera(
+                viewModel.currentPhotoPath,
+                orientation?.toInt() ?: 0, requireContext()
+            )
             viewModel.uploadPhoto(uriList[0])
             viewModel.uploadPhoto(uriList[1], true)
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
                 val image = data.data
                 if (image != null) {
-                    val uriList = ImageManager.getReducedBitmapListFromGallery(image, requireContext())
+                    val uriList =
+                        ImageManager.getReducedBitmapListFromGallery(image, requireContext())
                     viewModel.uploadPhoto(uriList[0])
                     viewModel.uploadPhoto(uriList[1], true)
                 }
@@ -334,13 +333,12 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     }
 
 
-
     /*
     Navigate To Photo Detail
      */
     override fun onItemClick(position: Int) {
 
-        if (item.getMachinePhotoList()[0].id == -1){
+        if (item.getMachinePhotoList()[0].id == -1) {
             getGalleryInstance()
         } else {
             val action = DetailFragmentDirections.actionDetailFragmentToFullScreenImageFragment(
