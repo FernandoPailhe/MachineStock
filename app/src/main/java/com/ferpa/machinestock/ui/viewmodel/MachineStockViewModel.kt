@@ -23,7 +23,6 @@ constructor(private val itemRepository: ItemRepository) :
     ViewModel() {
 
     lateinit var currentPhotoPath: String
-    var orientationOfPhoto: Int = Configuration.ORIENTATION_LANDSCAPE
 
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 

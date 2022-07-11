@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.exifinterface.media.ExifInterface.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -54,8 +55,10 @@ class ImageManager {
         fun getReduceBitmapListFromCamera(photoPath: String, orientation: Int, context: Context): List<Uri> {
             val fullSizeBitmap = BitmapFactory.decodeFile(photoPath)
             var reducedBitmap = ImageResizer.reduceBitmapSize(fullSizeBitmap)
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                reducedBitmap = ImageRotator.rotateImage(reducedBitmap, 90.0f)
+            when (orientation){
+                ORIENTATION_ROTATE_90 -> reducedBitmap = ImageRotator.rotateImage(reducedBitmap, 90.0f)
+                ORIENTATION_ROTATE_180 -> reducedBitmap = ImageRotator.rotateImage(reducedBitmap, 180.0f)
+                ORIENTATION_ROTATE_270 -> reducedBitmap = ImageRotator.rotateImage(reducedBitmap, 270.0f)
             }
             val thumbnailBitmap = ImageResizer.generateThumb(reducedBitmap)
 

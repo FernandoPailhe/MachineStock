@@ -8,13 +8,14 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -24,7 +25,6 @@ import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
-import com.ferpa.machinestock.utilities.imageUtils.ImageResizer
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -275,7 +275,10 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
-            val uriList = ImageManager.getReduceBitmapListFromCamera(viewModel.currentPhotoPath, viewModel.orientationOfPhoto, requireContext())
+            val ei = ExifInterface(viewModel.currentPhotoPath)
+            val orientation = ei.getAttribute(ExifInterface.TAG_ORIENTATION)
+            val uriList = ImageManager.getReduceBitmapListFromCamera(viewModel.currentPhotoPath,
+                orientation?.toInt() ?: 0, requireContext())
             viewModel.uploadPhoto(uriList[0])
             viewModel.uploadPhoto(uriList[1], true)
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
@@ -317,7 +320,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
                         startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
 
                     }
-                    viewModel.orientationOfPhoto = resources.configuration.orientation
                 }
             }
         }
