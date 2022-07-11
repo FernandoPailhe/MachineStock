@@ -9,9 +9,6 @@
         android:name="com.ferpa.machinestock.ui.ItemListFragment"
         android:label="fragment_item_list"
         tools:layout="@layout/fragment_item_list" >
-        <argument
-            android:name="product"
-            app:argType="string" />
         <action
             android:id="@+id/action_itemListFragment_to_menuFragment"
             app:destination="@id/menuFragment"
@@ -68,7 +65,7 @@
         android:label="fragment_full_screen_image"
         tools:layout="@layout/fragment_full_screen_image" >
         <argument
-            android:name="photo_id"
+            android:name="photo_position"
             app:argType="integer"
             android:defaultValue="0" />
         <action

@@ -6,7 +6,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
 import com.ferpa.machinestock.data.ItemRepository
-import com.ferpa.machinestock.data.MainMenuSource
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.utilities.Const
 import com.google.firebase.storage.FirebaseStorage
@@ -28,7 +27,7 @@ constructor(private val itemRepository: ItemRepository) :
 
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 
-    val menuItemListFlow: Flow<List<MenuItem>> = itemRepository.menuList
+    val mainMenuItemListFlow: Flow<List<MainMenuItem>> = itemRepository.menuList
 
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
@@ -45,12 +44,12 @@ constructor(private val itemRepository: ItemRepository) :
 
     init {
         compareDatabases()
-        //TODO Delete when this will not more necessary
-        /**
+
+        /* //TODO Delete when this will not more necessary
         viewModelScope.launch {
         itemRepository.populateDb()
         }
-         **/
+         */
 
     }
 
@@ -62,7 +61,7 @@ constructor(private val itemRepository: ItemRepository) :
     }
 
     //Network
-    fun compareDatabases() {
+    private fun compareDatabases() {
         viewModelScope.launch {
             try {
                 itemRepository.compareDatabases()
@@ -73,11 +72,14 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
-    fun uploadPhoto(uri: Uri) {
+    fun uploadPhoto(uri: Uri, isThumbnail: Boolean = false) {
 
         //TODO Progress animation
-        val machinePhotosRef =
+        val machinePhotosRef = if (!isThumbnail) {
             storageRef.child("${Const.USED_MACHINES_PHOTO_BASE_URL}/${currentItem.value?.addNewPhoto()}")
+        } else {
+            storageRef.child("${Const.USED_MACHINES_PHOTO_BASE_URL}/${currentItem.value?.addNewPhoto()}t")
+        }
 
         val uploadTask = machinePhotosRef.putFile(uri)
 
@@ -91,7 +93,7 @@ constructor(private val itemRepository: ItemRepository) :
             }
             machinePhotosRef.downloadUrl
         }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+            if (task.isSuccessful && !isThumbnail) {
                 uriPath = task.result.path.toString()
                 uriPath.let { Log.d("Uri Path", it) }
                 currentItem.value?.let {

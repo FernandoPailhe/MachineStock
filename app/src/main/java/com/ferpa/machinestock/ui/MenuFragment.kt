@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.databinding.FragmentMenuBinding
-import com.ferpa.machinestock.model.MenuItem
 import com.ferpa.machinestock.ui.adapter.MenuListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,20 +50,46 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
             menuRecyclerView.layoutManager = LinearLayoutManager(this@MenuFragment.requireContext())
 
             include.inputSearch.setOnSearchClickListener {
-                val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment("TODAS")
+                val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment()
                 findNavController().navigate(action)
             }
+            include.filterMenuAction.visibility = View.GONE
+            include.clearFilterAction.visibility = View.GONE
+            include.secondBar.visibility = View.GONE
+            include.filterMenu.visibility = View.GONE
+
+            floatingActionButtonAddItem.setOnClickListener {
+                viewModel.setCurrentId(0)
+                val action = MenuFragmentDirections.actionMenuFragmentToAddItemFragment2()
+                findNavController().navigate(action)
+            }
+
         }
 
     }
 
+    override fun onResume() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.mainMenuItemListFlow.collect {
+                idList.clear()
+                it.forEachIndexed { index, menuItem ->
+                    idList.add(mutableListOf<Long>())
+                    menuItem.itemList?.forEach { item ->
+                        idList[index].add(item.id)
+                    }
+                }
+            }
+        }
+        super.onResume()
+    }
+
     private fun subscribeUi(adapter: MenuListAdapter) {
         lifecycleScope.launchWhenStarted {
-            viewModel.menuItemListFlow.collect {
+            viewModel.mainMenuItemListFlow.collect {
                 adapter.submitList(it)
                 it.forEachIndexed { index, menuItem ->
                     idList.add(mutableListOf<Long>())
-                    menuItem.itemList?.forEach{ item ->
+                    menuItem.itemList?.forEach { item ->
                         idList[index].add(item.id)
                     }
                 }
@@ -85,7 +110,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
                 this.findNavController().navigate(action)
             }
         } else {
-            //Todo Navigate to List Fragment
+            // TODO Navigate to List Fragment
         }
     }
 

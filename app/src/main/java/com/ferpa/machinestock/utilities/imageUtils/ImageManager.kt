@@ -17,7 +17,7 @@ import java.util.*
 
 class ImageManager {
 
-    companion object{
+    companion object {
 
         fun getReduceBitmapFromCamera(photoPath: String, orientation: Int, context: Context): Uri {
             val fullSizeBitmap = BitmapFactory.decodeFile(photoPath)
@@ -35,6 +35,34 @@ class ImageManager {
             )
             val reducedBitmap = ImageResizer.reduceBitmapSize(fullSizeBitmap)
             return Uri.fromFile(createBitmapFile(reducedBitmap, context))
+        }
+
+        fun getReducedBitmapListFromGallery(imageUri: Uri, context: Context): List<Uri> {
+            val fullSizeBitmap = MediaStore.Images.Media.getBitmap(
+                context.contentResolver,
+                imageUri
+            )
+            val reducedBitmap = ImageResizer.reduceBitmapSize(fullSizeBitmap)
+            val thumbnailBitmap = ImageResizer.generateThumb(reducedBitmap)
+
+            return listOf(
+                Uri.fromFile(createBitmapFile(reducedBitmap, context)),
+                Uri.fromFile(createBitmapFile(thumbnailBitmap, context))
+            )
+        }
+
+        fun getReduceBitmapListFromCamera(photoPath: String, orientation: Int, context: Context): List<Uri> {
+            val fullSizeBitmap = BitmapFactory.decodeFile(photoPath)
+            var reducedBitmap = ImageResizer.reduceBitmapSize(fullSizeBitmap)
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                reducedBitmap = ImageRotator.rotateImage(reducedBitmap, 90.0f)
+            }
+            val thumbnailBitmap = ImageResizer.generateThumb(reducedBitmap)
+
+            return listOf(
+                Uri.fromFile(createBitmapFile(reducedBitmap, context)),
+                Uri.fromFile(createBitmapFile(thumbnailBitmap, context))
+            )
         }
 
         private fun createBitmapFile(reducedBitmap: Bitmap, context: Context): File {

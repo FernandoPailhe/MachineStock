@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.MenuFragment">
 
-    <include
-        android:id="@+id/include"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        layout="@layout/search_menu" />
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/menu_recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/menu_card_layout" />
+        android:orientation="vertical">
 
-</LinearLayout>
+        <include
+            android:id="@+id/include"
+            layout="@layout/top_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/menu_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/menu_card_layout" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button_add_item"
+        style="@style/Widget.MachineStock.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/margin_between_elements"
+        android:contentDescription="@string/add_new_item"
+        app:srcCompat="@drawable/ic_baseline_add_24" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

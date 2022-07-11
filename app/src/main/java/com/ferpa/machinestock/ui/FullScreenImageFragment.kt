@@ -8,18 +8,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentFullScreenImageBinding
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.getMachinePhotoList
-import com.ferpa.machinestock.ui.adapter.FullScreenPhotoAdapter
+import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), FullScreenPhotoAdapter.OnItemClickListener {
+class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), PhotoAdapter.OnItemClickListener {
 
 
     private val navigationArgs: FullScreenImageFragmentArgs by navArgs()
@@ -45,22 +44,21 @@ class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), F
 
         val itemId = viewModel.currentId.value
 
-        val photoId = navigationArgs.photoId
+        val photoPosition = navigationArgs.photoPosition
 
         viewModel.retrieveItem(itemId).observe(this.viewLifecycleOwner){ selectedItem ->
             item = selectedItem
-            bindPhotoRecyclerView(item, photoId)
+            bindPhotoRecyclerView(item, photoPosition)
         }
 
     }
 
-    private fun bindPhotoRecyclerView(item: Item, photoId :Int) {
-        val fullScreenPhotoAdapter = FullScreenPhotoAdapter(item.getMachinePhotoList(), this)
-
-        binding.fullScreenPhotoRecyclerView.layoutManager =
-            LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-        binding.fullScreenPhotoRecyclerView.adapter = fullScreenPhotoAdapter
-        binding.fullScreenPhotoRecyclerView.scrollToPosition(photoId)
+    private fun bindPhotoRecyclerView(item: Item, photoPosition :Int) {
+        val fullScreenPhotoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
+        binding.fullScreenPhotoViewPager.adapter = fullScreenPhotoAdapter
+        /* TODO set initial position
+        binding.fullScreenPhotoViewPager.scrollToPosition(photoId)
+         */
     }
 
     override fun onItemClick(position: Int) {

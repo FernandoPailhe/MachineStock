@@ -3,7 +3,7 @@ package com.ferpa.machinestock.data
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.ferpa.machinestock.model.Item
-import com.ferpa.machinestock.model.MenuItem
+import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.network.ItemsApi
 import com.ferpa.machinestock.utilities.CustomListUtil
 import com.ferpa.machinestock.utilities.MenuListUtil
@@ -52,11 +52,11 @@ constructor(
 
     }
 
-    val menuList: Flow<List<MenuItem>> = getMenuItemList()
+    val menuList: Flow<List<MainMenuItem>> = getMenuItemList()
 
-    private fun getMenuItemList() = flow<List<MenuItem>> {
+    private fun getMenuItemList() = flow<List<MainMenuItem>> {
 
-        var menuList = arrayListOf<MenuItem>()
+        var menuList = arrayListOf<MainMenuItem>()
         MainMenuSource.mainMenu.forEach() {
             menuList.add(createMenuItem(it))
             Log.d(TAG, it.name)
@@ -65,15 +65,15 @@ constructor(
         emit(menuList)
     }
 
-    private suspend fun createMenuItem(menuItem: MenuItem): MenuItem {
+    private suspend fun createMenuItem(mainMenuItem: MainMenuItem): MainMenuItem {
 
-        return MenuItem(
-            menuItem.name,
-            menuItem.imageResourceId,
-            menuItem.priority,
-            menuItem.hasNews,
-            menuItem.menuListUtil,
-            getMenuQuery(menuItem.menuListUtil)
+        return MainMenuItem(
+            mainMenuItem.name,
+            mainMenuItem.imageResourceId,
+            mainMenuItem.priority,
+            mainMenuItem.hasNews,
+            mainMenuItem.menuListUtil,
+            getMenuQuery(mainMenuItem.menuListUtil)
         )
     }
 

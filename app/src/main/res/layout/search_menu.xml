@@ -20,7 +20,7 @@
             tools:context=".ui.ItemListFragment">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_item"
+                android:id="@+id/first_bar"
                 style="@style/Widget.MachineStock.CardList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

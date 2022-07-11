@@ -7,8 +7,8 @@
     android:layout_width="match_parent"
     android:background="#000000">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/full_screen_photo_recycler_view"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/full_screen_photo_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/full_screen_photo_item" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </LinearLayout>

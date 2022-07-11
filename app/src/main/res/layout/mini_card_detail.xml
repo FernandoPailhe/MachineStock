@@ -62,25 +62,12 @@
                 android:layout_margin="@dimen/margin"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/photo_card"
-                    style="@style/CardView.Dark"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:elevation="@dimen/card_elevation"
-                    android:padding="@dimen/detail_padding">
-
-                    <ImageView
-                        android:id="@+id/photo_view"
-                        android:layout_width="@dimen/detail_mini_card_photo_width"
-                        android:layout_height="@dimen/detail_mini_card_photo_height"
-                        android:clipToPadding="false"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/detail_padding"
-                        tools:listitem="@layout/photo_item" />
-
-                </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/mini_card_image_view"
+                    android:layout_width="160dp"
+                    android:layout_height="90dp"
+                    android:scaleType="fitCenter"
+                    tools:src="@tools:sample/backgrounds/scenic"/>
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_feature1"

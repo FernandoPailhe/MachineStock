@@ -1,10 +1,12 @@
 package com.ferpa.machinestock.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,12 +18,13 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentDetailBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.utilities.imageUtils.ImageManager
+import com.ferpa.machinestock.utilities.imageUtils.ImageResizer
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -57,11 +60,13 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     }
 
+    /* Binding
+
+     */
     private fun setDetailItemInterface() {
         viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->
             item = selectedItem
             bindItemDetails(item)
-            bindPhotoRecyclerView(item)
         }
     }
 
@@ -82,19 +87,24 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             itemOwner2.text = item.owner2.toString()
             itemOwner1.text = item.owner1.toString()
 
-            if (item.photos == "0") {
-                photoCard.visibility = View.GONE
-            } else {
-                bindPhotoRecyclerView(item)
-            }
+            photoViewPager.adapter = PhotoAdapter(item.getMachinePhotoList(), this@DetailFragment)
 
-            editAction.setOnClickListener {
+            floatingActionButtonEditItem.setOnClickListener {
                 viewModel.setCurrentId(item.id)
-                val action = DetailFragmentDirections.actionDetailFragmentToAddItemFragment(item.product)
+                val action =
+                    DetailFragmentDirections.actionDetailFragmentToAddItemFragment(item.product)
                 it.findNavController().navigate(action)
             }
 
-            shareAction.setOnClickListener {
+            floatingActionButtonGallery.setOnClickListener {
+                getGalleryInstance()
+            }
+
+            floatingActionButtonCamera.setOnClickListener {
+                getCameraInstance()
+            }
+
+            floatingActionButtonShare.setOnClickListener {
                 shareProduct()
             }
 
@@ -103,38 +113,19 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     }
 
     private fun bindTextView(txtView: TextView, itemDetail: String?) {
-        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail.equals("NO ESPECÍFICA"))) {
+        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail.equals(
+                "NO ESPECÍFICA"
+            ))
+        ) {
             txtView.visibility = View.GONE
         } else {
             txtView.text = itemDetail
         }
     }
 
-    private fun bindPhotoRecyclerView(item: Item) {
-
-        //Todo Carrousel de fotos e imagenes de siluetas
-        if (item.getMachinePhotoList().isEmpty()) {
-            /**
-            when (item.product){
-                "GUILLOTINA" -> photoView.setImageResource(R.drawable.s_guillotina)
-                "PLEGADORA" -> photoView.setImageResource(R.drawable.s_plegadora)
-                "BALANCIN" -> photoView.setImageResource(R.drawable.s_balancin)
-                "TORNO" -> photoView.setImageResource(R.drawable.s_torno)
-                "FRESADORA" -> photoView.setImageResource(R.drawable.s_fresadora)
-                "PLASMA" -> photoView.setImageResource(R.drawable.s_plasma)
-                else -> photoView.setImageResource(R.drawable.ic_machine_icon)
-            }
-            **/
-        } else {
-            val photoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
-            binding.photoRecyclerView.layoutManager =
-                LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-            binding.photoRecyclerView.adapter = photoAdapter
-        }
-
-    }
-
-    //Share Information
+    /*
+    Share Information
+    */
     private fun shareProduct() {
 
         if (item.getMachinePhotoList().isEmpty()) {
@@ -278,9 +269,83 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
         }
     }
 
-    //Navigate To Photo Detail
+    /*
+    Upload Images
+    */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            val uriList = ImageManager.getReduceBitmapListFromCamera(viewModel.currentPhotoPath, viewModel.orientationOfPhoto, requireContext())
+            viewModel.uploadPhoto(uriList[0])
+            viewModel.uploadPhoto(uriList[1], true)
+        } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.data != null) {
+                val image = data.data
+                if (image != null) {
+                    val uriList = ImageManager.getReducedBitmapListFromGallery(image, requireContext())
+                    viewModel.uploadPhoto(uriList[0])
+                    viewModel.uploadPhoto(uriList[1], true)
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
+        }
+
+    }
+
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun getCameraInstance() {
+
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            context?.let {
+                takePictureIntent.resolveActivity(it.packageManager)?.also {
+                    // Create the File where the photo should go
+                    val photoFile: File? = try {
+                        createImageFile()
+                    } catch (ex: IOException) {
+                        // Error occurred while creating the File
+                        null
+                    }
+                    // Continue only if the File was successfully created
+                    photoFile?.also { file ->
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this.requireContext(),
+                            "com.ferpa.fileprovider",
+                            file
+                        )
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+
+                    }
+                    viewModel.orientationOfPhoto = resources.configuration.orientation
+                }
+            }
+        }
+
+    }
+
+    private fun getGalleryInstance() {
+        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+            type = "image/*"
+            startActivityForResult(this, REQUEST_GALLERY_PHOTO)
+        }
+    }
+
+
+
+    /*
+    Navigate To Photo Detail
+     */
     override fun onItemClick(position: Int) {
-        TODO("Not yet implemented")
+
+        if (item.getMachinePhotoList()[0].id == -1){
+            getGalleryInstance()
+        } else {
+            val action = DetailFragmentDirections.actionDetailFragmentToFullScreenImageFragment(
+                position
+            )
+            this.findNavController().navigate(action)
+        }
     }
 
 }

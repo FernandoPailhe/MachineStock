@@ -7,7 +7,7 @@ import com.ferpa.machinestock.utilities.MenuListUtil
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 
-data class MenuItem(
+data class MainMenuItem(
     val name: String,
     @DrawableRes val imageResourceId: Int?,
     var priority: Int?,

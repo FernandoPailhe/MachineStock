@@ -19,14 +19,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-            /**
+            /* TODO Compare and update database first
              * setKeepOnScreenCondition {
             }
             **/
         }
         setContentView(R.layout.activity_main)
 
-        // Retrieve NavController from the NavHostFragment
+        /*
+         Retrieve NavController from the NavHostFragment
+         */
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -35,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    /**
-     * Handle navigation when the user chooses Up from the action bar.
+    /*
+     Handle navigation when the user chooses Up from the action bar.
      */
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

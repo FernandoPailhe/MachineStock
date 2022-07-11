@@ -120,9 +120,18 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
-    <style name="Widget.Inventory.TextInputLayout.OutlinedBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="errorIconDrawable">@android:drawable/stat_notify_error</item>
-        <item name="helperTextTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle1
-        </item>
+    <style name="Widget.MachineStock.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.FloatingActionButton</item>
     </style>
+
+    <style name="ThemeOverlay.App.FloatingActionButton" parent="">
+        <item name="colorContainer">@color/secondaryColor</item>
+        <item name="colorOnContainer">@color/primaryTextColor</item>
+    </style>
+
+    <style name="Widget.MachineStock.Button" parent="Widget.Material3.CardView.Elevated">
+        <item name="backgroundColor">@color/secondaryDarkColor</item>
+        <item name="cornerFamily">cut</item>
+    </style>
+
 </resources>

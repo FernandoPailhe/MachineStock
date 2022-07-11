@@ -1,12 +1,12 @@
 package com.ferpa.machinestock.data
 
-import com.ferpa.machinestock.model.MenuItem
+import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.utilities.MenuListUtil
 
 object MainMenuSource {
 
-    var mainMenu: List<MenuItem> = listOf(
-        MenuItem(
+    var mainMenu: List<MainMenuItem> = listOf(
+        MainMenuItem(
             "Nuevos ingresos",
             null,
             1,
@@ -17,7 +17,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Novedades",
             null,
             2,
@@ -28,7 +28,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Vendidas",
             null,
             8,
@@ -40,7 +40,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Guillotinas",
             null,
             4,
@@ -52,7 +52,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Plegadoras",
             null,
             5,
@@ -64,7 +64,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Balancines",
             null,
             6,
@@ -76,7 +76,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Tornos",
             null,
             3,
@@ -88,7 +88,7 @@ object MainMenuSource {
             ),
             null
         ),
-        MenuItem(
+        MainMenuItem(
             "Otros",
             null,
             7,

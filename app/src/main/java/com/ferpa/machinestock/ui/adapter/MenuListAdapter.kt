@@ -12,7 +12,7 @@ import com.ferpa.machinestock.databinding.MenuCardLayoutBinding
 import com.ferpa.machinestock.model.*
 
 class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
-    ListAdapter<MenuItem, MenuListAdapter.MenuItemViewHolder>(DiffCallBack) {
+    ListAdapter<MainMenuItem, MenuListAdapter.MenuItemViewHolder>(DiffCallBack) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -41,30 +41,32 @@ class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
             itemView.setOnClickListener(this)
         }
 
-        fun bind(mainMenuItem: MenuItem) {
+        fun bind(mainMenuItem: MainMenuItem) {
 
             val miniCardListAdapter = MiniCardListAdapter(object: MiniCardListAdapter.OnChildItemClickListener{
-
                 override fun onChildItemClick(clickPosition: Int) {
                     mainMenuListener.onItemClick(adapterPosition, clickPosition)
                     Log.d("OnItemClick", "override onChildItemClick Main Adapter $adapterPosition / $clickPosition")
                 }
             })
 
-            miniCardListAdapter.submitList(mainMenuItem.itemList)
-
-            Log.d("MenuListAdapterMainMenu","${mainMenuItem.itemList?.size}" )
-
-            binding.apply {
-                cardMenuTitle.text = mainMenuItem.name
-                miniCardRecyclerView.layoutManager = LinearLayoutManager(
-                    miniCardRecyclerView.context,
-                    RecyclerView.HORIZONTAL,
-                    false
-                )
-                miniCardRecyclerView.adapter = miniCardListAdapter
+            if (mainMenuItem.itemList?.isEmpty() == true || mainMenuItem.itemList == null){
+                binding.apply {
+                    cardItem.visibility = View.GONE
+                    miniCardRecyclerView.visibility = View.GONE
+                }
+            } else {
+                miniCardListAdapter.submitList(mainMenuItem.itemList)
+                binding.apply {
+                    cardMenuTitle.text = mainMenuItem.name
+                    miniCardRecyclerView.layoutManager = LinearLayoutManager(
+                        miniCardRecyclerView.context,
+                        RecyclerView.HORIZONTAL,
+                        false
+                    )
+                    miniCardRecyclerView.adapter = miniCardListAdapter
+                }
             }
-
         }
 
         override fun onClick(p0: View?) {
@@ -83,12 +85,12 @@ class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
     }
 
     companion object {
-        private val DiffCallBack = object : DiffUtil.ItemCallback<MenuItem>() {
-            override fun areItemsTheSame(oldItem: MenuItem, newItem: MenuItem): Boolean {
+        private val DiffCallBack = object : DiffUtil.ItemCallback<MainMenuItem>() {
+            override fun areItemsTheSame(oldItem: MainMenuItem, newItem: MainMenuItem): Boolean {
                 return oldItem === newItem
             }
 
-            override fun areContentsTheSame(oldItem: MenuItem, newItem: MenuItem): Boolean {
+            override fun areContentsTheSame(oldItem: MainMenuItem, newItem: MainMenuItem): Boolean {
                 return oldItem.name == newItem.name
             }
 

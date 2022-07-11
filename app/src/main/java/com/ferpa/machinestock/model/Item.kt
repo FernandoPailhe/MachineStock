@@ -1,8 +1,6 @@
 package com.ferpa.machinestock.model
 
-
 import android.annotation.SuppressLint
-import android.telephony.PhoneNumberUtils.formatNumber
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -161,7 +159,7 @@ fun Item.getMachinePhotoList(): List<MachinePhoto> {
         }
         photoList
     } else {
-        emptyList()
+        return mutableListOf(MachinePhoto(-1, product))
     }
 
 }

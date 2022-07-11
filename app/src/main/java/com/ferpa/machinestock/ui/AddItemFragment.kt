@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +33,9 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val REQUEST_GALLERY_PHOTO = 199
+private const val REQUEST_TAKE_PHOTO = 198
+
 @AndroidEntryPoint
 class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnItemClickListener {
 
@@ -41,9 +43,6 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     private val binding get() = _binding!!
 
     private val viewModel: MachineStockViewModel by activityViewModels()
-
-    private val REQUEST_GALLERY_PHOTO = 199
-    private val REQUEST_TAKE_PHOTO = 198
 
     lateinit var item: Item
     private lateinit var newProduct: String
@@ -60,21 +59,24 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         super.onViewCreated(view, savedInstanceState)
 
         //Get Navigation Values
-        newProduct = viewModel.getProduct()
         val id = viewModel.currentId.value
-
-        if (newProduct == "TODAS") {
-            selectProductDialog(savedInstanceState)
-        }
 
         //Set interface type
         if (id > 0) {
             setDetailItemInterface()
+            newProduct = viewModel.currentItem.value?.product.toString()
         } else {
-            setNewItemInterface(newProduct)
+            newProduct = viewModel.getProduct()
+            if (newProduct == "TODAS") {
+                selectProductDialog(savedInstanceState)
+            } else {
+                setNewItemInterface(newProduct)
+            }
         }
 
-        //Set autocomplete text arrayList
+        /*
+        Set autocomplete text arrayList
+         */
         binding.apply {
             itemLocation.apply {
                 setAdapter(setAdapterArray(R.array.location_options))
@@ -98,6 +100,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         isEditable(true)
         binding.apply {
             itemProduct.setText(newProduct)
+            galleryAction.visibility = View.GONE
+            cameraAction.visibility = View.GONE
             recyclerViewLayout.visibility = View.GONE
             saveAction.setOnClickListener {
                 addNewItem()
@@ -151,20 +155,16 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
-            //For reduced Bitmap
-            viewModel.uploadPhoto(ImageManager.getReduceBitmapFromCamera(viewModel.currentPhotoPath, viewModel.orientationOfPhoto, requireContext()))
-            //For full size Bitmap
-            //viewModel.uploadPhoto(Uri.fromFile(File(currentPhotoPath)))
-            //TODO Test performance with different image size
+            val uriList = ImageManager.getReduceBitmapListFromCamera(viewModel.currentPhotoPath, viewModel.orientationOfPhoto, requireContext())
+            viewModel.uploadPhoto(uriList[0])
+            viewModel.uploadPhoto(uriList[1], true)
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
                 val image = data.data
                 if (image != null) {
-                    //For reduced Bitmap
-                    viewModel.uploadPhoto(getReduceBitmapFromGallery(image, requireContext()))
-                    //For full size Bitmap
-                    //viewModel.uploadPhoto(image)
-                    //TODO Test performance with different image size
+                    val uriList = ImageManager.getReducedBitmapListFromGallery(image, requireContext())
+                    viewModel.uploadPhoto(uriList[0])
+                    viewModel.uploadPhoto(uriList[1], true)
                 }
             } else {
                 super.onActivityResult(requestCode, resultCode, data)
@@ -257,6 +257,9 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 recyclerViewLayout.visibility = View.GONE
             }
 
+            galleryAction.isEnabled = true
+            cameraAction.isEnabled = true
+
         }
     }
 
@@ -329,7 +332,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                         TextView.BufferType.SPANNABLE
                     )
                 }
-                binding.itemFeature2Label.setHint(R.string.item_width_guillotina_req)
+                binding.itemFeature2Label.setHint(R.string.item_width_torno_req)
             }
             "LIMADORA" -> {
                 feature1?.let {
@@ -348,7 +351,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                         TextView.BufferType.SPANNABLE
                     )
                 }
-                binding.itemFeature1Label.setHint(getString(R.string.item_pulg_req))
+                binding.itemFeature1Label.hint = getString(R.string.item_pulg_req)
                 binding.itemFeature2.visibility = View.GONE
             }
             "SOLDADURA" -> {
@@ -358,7 +361,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                         TextView.BufferType.SPANNABLE
                     )
                 }
-                binding.itemFeature1Label.setHint(getString(R.string.item_mig_req))
+                binding.itemFeature1Label.hint = getString(R.string.item_mig_req)
                 binding.itemFeature2.visibility = View.GONE
             }
         }
@@ -368,6 +371,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         if (feature3 != "null") {
             if (feature3 != "new") {
                 binding.itemFeature3.setText(feature3.toString())
+            } else {
+                binding.itemFeature3Label.hint = getString(R.string.item_feature3_req)
             }
         }
     }
@@ -476,7 +481,9 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         return (isEntryValid == 0)
     }
 
-    //Product dialog for new item
+    /*
+    Product dialog for new item
+     */
     private fun selectProductDialog(savedInstanceState: Bundle?): Dialog {
         val arrayList = resources.getStringArray(R.array.product_options)
         return activity?.let {
@@ -489,11 +496,17 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                         setNewItemInterface(newProduct)
                     })
             builder.create()
+            builder.setOnCancelListener{
+                val action = AddItemFragmentDirections.actionAddItemFragmentToMenuFragment()
+                this.findNavController().navigate(action)
+            }
             builder.show()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    //Navigate to edit photo detail
+    /*
+    Navigate to edit photo detail
+    */
     override fun onItemClick(position: Int) {
         val action = AddItemFragmentDirections.actionAddItemFragmentToFullScreenImageFragment(
             position

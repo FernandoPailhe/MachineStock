@@ -20,10 +20,6 @@ interface ItemsApi {
     @POST("/updateItem")
     suspend fun updateItem(@Body item: Item): Call<*>
 
-    @Multipart
-    @POST
-    suspend fun postNewPhoto(@Part image:MultipartBody.Part):Call<*>
-
     companion object {
         const val BASE_LOCAL_URL = "http://192.168.100.4:8080"
         const val BASE_ORACLE_URL = "http://129.151.106.230"

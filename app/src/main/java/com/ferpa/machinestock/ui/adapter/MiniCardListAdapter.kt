@@ -1,6 +1,5 @@
 package com.ferpa.machinestock.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +7,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.MiniCardDetailBinding
 import com.ferpa.machinestock.model.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-
 
 class MiniCardListAdapter(
     private val childItemClickListener: OnChildItemClickListener
@@ -67,28 +66,38 @@ class MiniCardListAdapter(
                 bindTextView(itemType, " - ${item.getType()[0]}")
                 bindTextView(itemPrice, item.getFormattedPrice(true))
                 bindTextView(itemStatus, item.getStatus())
+                bindPhoto(item)
 
-                if (item.getMachinePhotoList().isNotEmpty()) {
-                    //Todo make imgScrUrl for thumbnail
-                    FirebaseStorage.getInstance().reference.child(item.getMachinePhotoList()[0].imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
-                        Picasso.get()
-                            .load(it)
-                            .into(photoView)
-                    }
-                } else {
-                    photoView.visibility = View.GONE
-                }
             }
         }
 
         private fun bindTextView(txtView: TextView, itemDetail: String?) {
-            if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail.equals(
-                    "NO ESPECÍFICA"
-                ))
+            if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail == "NO ESPECÍFICA")
             ) {
                 txtView.visibility = View.GONE
             } else {
                 txtView.text = itemDetail
+            }
+        }
+
+        private fun bindPhoto(item: Item) {
+            if (item.getMachinePhotoList()[0].id == -1) {
+                val photoResource = when (item.product) {
+                    "GUILLOTINA" -> R.drawable.s_guillotina
+                    "PLEGADORA" -> R.drawable.s_plegadora
+                    "BALANCIN" -> R.drawable.s_balancin
+                    "TORNO" -> R.drawable.s_torno
+                    "FRESADORA" -> R.drawable.s_fresadora
+                    "PLASMA" -> R.drawable.s_plasma
+                    else -> R.drawable.ic_machine_icon
+                }
+                binding.miniCardImageView.setImageResource(photoResource)
+            } else {
+                FirebaseStorage.getInstance().reference.child(item.getMachinePhotoList()[0].imgSrcUrl.toString()+"t").downloadUrl.addOnSuccessListener {
+                    Picasso.get()
+                        .load(it)
+                        .into(binding.miniCardImageView)
+                }
             }
         }
 
@@ -110,7 +119,6 @@ class MiniCardListAdapter(
 
         }
     }
-
 
 
 }
