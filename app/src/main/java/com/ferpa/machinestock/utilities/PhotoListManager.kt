@@ -12,6 +12,7 @@ class PhotoListManager {
 
         private const val PHOTO_SEPARATOR = "/"
         private const val URL_NAME_SEPARATOR = "_"
+        private const val THUMBNAIL = "t"
         private const val TAG = "PhotoListManager"
 
         fun getNewPhotoUrl(item: Item): String {
@@ -26,13 +27,17 @@ class PhotoListManager {
         fun getDeleteUrl(item: Item, index: Int): String =
             "${USED_MACHINES_PHOTO_BASE_URL}/${item.id}${URL_NAME_SEPARATOR}${getPhotoList(item)[index]}"
 
-        fun getMachinePhotoList(item: Item): List<MachinePhoto> {
+        fun getMachinePhotoList(item: Item, isThumbnail: Boolean = false): List<MachinePhoto> {
+            var thumbnailChar = ""
+            if (isThumbnail) {
+                thumbnailChar = THUMBNAIL
+            }
             return if (item.photos != "0") {
                 val mutableList: MutableList<Int> = getPhotoList(item).toMutableList()
                 mutableList.map {
                     MachinePhoto(
                         it,
-                        "${USED_MACHINES_PHOTO_BASE_URL}/${item.id}${URL_NAME_SEPARATOR}${it}"
+                        "${USED_MACHINES_PHOTO_BASE_URL}/${item.id}${URL_NAME_SEPARATOR}${it}${thumbnailChar}"
                     )
                 }
             } else {
@@ -94,8 +99,13 @@ class PhotoListManager {
             }
         }
 
-        private fun stringFromPhotoList(machinePhotoList: List<Int>): String =
-            machinePhotoList.joinToString(separator = PHOTO_SEPARATOR)
+        private fun stringFromPhotoList(intPhotoList: List<Int>): String {
+            return if (intPhotoList.isEmpty()) {
+                "0"
+            } else {
+                intPhotoList.joinToString(separator = PHOTO_SEPARATOR)
+            }
+        }
 
         private fun getPhotoList(item: Item): List<Int> {
             return if (item.photos != "0") {
