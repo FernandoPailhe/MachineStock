@@ -1,18 +1,22 @@
 package com.ferpa.machinestock.ui.viewmodel
 
 
-import android.content.res.Configuration
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
 import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.utilities.Const
+import com.ferpa.machinestock.utilities.PhotoListManager
+import com.ferpa.machinestock.utilities.PhotoListManager.Companion.addNewPhoto
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+
 
 const val TAG = "MachineStockViewModel"
 
@@ -59,7 +63,9 @@ constructor(private val itemRepository: ItemRepository) :
         _currentItem = itemRepository.getItem(currentId.value).asLiveData()
     }
 
-    //Network
+    /*
+    Network
+     */
     private fun compareDatabases() {
         viewModelScope.launch {
             try {
@@ -71,13 +77,16 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
+    /*
+    Image Business Logic
+     */
     fun uploadPhoto(uri: Uri, isThumbnail: Boolean = false) {
 
         //TODO Progress animation
         val machinePhotosRef = if (!isThumbnail) {
-            storageRef.child("${Const.USED_MACHINES_PHOTO_BASE_URL}/${currentItem.value?.addNewPhoto()}")
+            storageRef.child(currentItem.value!!.addNewPhoto())
         } else {
-            storageRef.child("${Const.USED_MACHINES_PHOTO_BASE_URL}/${currentItem.value?.addNewPhoto()}t")
+            storageRef.child(currentItem.value!!.addNewPhoto() + "t")
         }
 
         val uploadTask = machinePhotosRef.putFile(uri)
@@ -96,7 +105,8 @@ constructor(private val itemRepository: ItemRepository) :
                 uriPath = task.result.path.toString()
                 uriPath.let { Log.d("Uri Path", it) }
                 currentItem.value?.let {
-                    updateItem(it.updatePhotos(currentItem.value!!.addNewPhoto().split("_").last()))
+                    //updateItem(it.updatePhotos(currentItem.value!!.addNewPhoto().split("_").last()))
+                    updateItem(PhotoListManager.addNewPhoto(it))
                 }
                 Log.d(
                     "Firestorage",
@@ -108,7 +118,38 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
-    //Update Custom List Util
+    fun deletePhoto(item: Item, deletePhoto: Int) {
+
+        val photoRef =
+            storageRef.child(PhotoListManager.getDeleteUrl(item, deletePhoto))
+
+        photoRef.delete()
+            .addOnSuccessListener(OnSuccessListener<Void?> {
+                Log.d(TAG, "onSuccess: deleted file $deletePhoto")
+                updateItem(PhotoListManager.deletePhoto(item, deletePhoto))
+            }).addOnFailureListener(OnFailureListener {
+                Log.d(TAG, "onFailure: did not delete file $deletePhoto")
+            })
+
+        val thumbRef = storageRef.child(
+            PhotoListManager.getDeleteUrl(
+                item,
+                deletePhoto
+            ) + "t"
+        )
+
+        thumbRef.delete()
+            .addOnSuccessListener(OnSuccessListener<Void?> {
+                Log.d(TAG, "onSuccess: deleted file $deletePhoto t")
+            }).addOnFailureListener(OnFailureListener {
+                Log.d(TAG, "onFailure: did not delete file $deletePhoto t")
+            })
+
+    }
+
+    /*
+    Update Custom List Util
+     */
     fun setProduct(newProduct: String) {
         itemRepository.customListUtil.setProduct(newProduct)
         _isNewFilter.value = true
