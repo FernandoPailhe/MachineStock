@@ -5,6 +5,7 @@ object Const {
 
     const val OWNER_1 = "Dueño 1"
     const val OWNER_2 = "Dueño 2"
+    const val SOCIEDAD = "Sociedad"
 
     const val LOCATION_1 = "Depósito 1"
     const val LOCATION_2 = "Depósito 2"
@@ -15,4 +16,7 @@ object Const {
     const val USED_MACHINES_PHOTO_BASE_URL = "usedmachinesphotos"
 
     const val MAX_IMAGE_SIZE: Long = 1036800
+
+
+
 }
