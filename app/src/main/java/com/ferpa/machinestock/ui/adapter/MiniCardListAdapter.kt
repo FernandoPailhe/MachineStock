@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.MiniCardDetailBinding
 import com.ferpa.machinestock.model.*
+import com.ferpa.machinestock.utilities.PhotoListManager
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
@@ -93,7 +94,7 @@ class MiniCardListAdapter(
                 }
                 binding.miniCardImageView.setImageResource(photoResource)
             } else {
-                FirebaseStorage.getInstance().reference.child(item.getMachinePhotoList()[0].imgSrcUrl.toString()+"t").downloadUrl.addOnSuccessListener {
+                FirebaseStorage.getInstance().reference.child(PhotoListManager.getMachinePhotoList(item,true)[0].imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
                     Picasso.get()
                         .load(it)
                         .into(binding.miniCardImageView)
