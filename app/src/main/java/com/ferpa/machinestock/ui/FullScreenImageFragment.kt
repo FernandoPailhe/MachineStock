@@ -1,6 +1,7 @@
 package com.ferpa.machinestock.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), PhotoAdapter.OnItemClickListener {
-
 
     private val navigationArgs: FullScreenImageFragmentArgs by navArgs()
 
@@ -51,19 +51,32 @@ class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), P
             bindPhotoRecyclerView(item, photoPosition)
         }
 
+        binding.apply {
+
+            deleteAction.setOnClickListener {
+                viewModel.deletePhoto(item, fullScreenPhotoViewPager.currentItem)
+            }
+
+            cancelAction.setOnClickListener {
+                val action = FullScreenImageFragmentDirections.actionFullScreenImageFragmentToDetailFragment()
+                this@FullScreenImageFragment.findNavController().navigate(action)
+            }
+
+        }
+
     }
 
     private fun bindPhotoRecyclerView(item: Item, photoPosition :Int) {
         val fullScreenPhotoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
         binding.fullScreenPhotoViewPager.adapter = fullScreenPhotoAdapter
-        /* TODO set initial position
-        binding.fullScreenPhotoViewPager.scrollToPosition(photoId)
-         */
+        binding.fullScreenPhotoViewPager.currentItem = photoPosition
     }
 
     override fun onItemClick(position: Int) {
-        val action =
-            FullScreenImageFragmentDirections.actionFullScreenImageFragmentToAddItemFragment(item.product)
-        this.findNavController().navigate(action)
+        //TODO Context Menu to share and edit photo?
+    }
+
+    companion object {
+        const val TAG = "FullScreenImageFragment"
     }
 }
