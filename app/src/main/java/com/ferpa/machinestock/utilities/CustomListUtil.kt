@@ -51,7 +51,7 @@ class CustomListUtil {
         return isAdded
     }
 
-    private fun filterOwner(item: Item): Boolean{
+    fun filterOwner(item: Item): Boolean{
 
         var isAdded = false
 

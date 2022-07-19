@@ -50,7 +50,6 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         var isFilterMenuVisible = false
 
         allItemsListAdapter = AllItemsListAdapter {
-            viewModel.setProduct(it.product)
             viewModel.setCurrentId(it.id)
             val action = ItemListFragmentDirections.actionItemListFragmentToDetailFragment()
             this.findNavController().navigate(action)
@@ -59,7 +58,6 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         }
 
         productListAdapter = ItemListAdapter {
-            viewModel.setProduct(it.product)
             viewModel.setCurrentId(it.id)
             val action = ItemListFragmentDirections.actionItemListFragmentToDetailFragment()
             this.findNavController().navigate(action)
@@ -67,30 +65,31 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
             //TODO Implement SlidingPaneLayout
         }
 
-        if (viewModel.getProduct() == "TODAS") {
-            binding.recyclerView.adapter = allItemsListAdapter
-        } else {
-            binding.recyclerView.adapter = productListAdapter
-        }
+        bindRecyclerView(viewModel.getProduct())
 
         binding.apply {
 
             recyclerView.layoutManager = LinearLayoutManager(this@ItemListFragment.context)
 
-            //Top Menu
+            /*
+            Top Menu
+             */
             listTitle.apply {
                 inputType = InputType.TYPE_NULL
                 setText(viewModel.getProduct(), TextView.BufferType.SPANNABLE)
                 setAdapter(setAdapterArray(R.array.product_options))
                 setOnItemClickListener { adapterView, view, position, l ->
                     viewModel.setProduct(adapterView.getItemAtPosition(position) as String)
+                    bindRecyclerView(adapterView.getItemAtPosition(position) as String)
                 }
             }
             inputSearch.setOnQueryTextListener(this@ItemListFragment)
             clearFilterAction.setOnClickListener {
                 clearAllFilters()
             }
-            //Filter Menu
+            /*
+            Filter Menu
+             */
             setFilterMenuVisibility(isFilterMenuVisible)
             filterMenuAction.setOnClickListener {
                 setFilterMenuVisibility(!isFilterMenuVisible)
@@ -100,7 +99,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
         }
 
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             viewModel.isNewFilter.collect {
                 if (it) {
                     Log.d(TAG, "IsNewFilter")
@@ -125,6 +124,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
             setAdapter(setAdapterArray(R.array.product_options))
             setOnItemClickListener { adapterView, view, position, l ->
                 viewModel.setProduct(adapterView.getItemAtPosition(position) as String)
+                bindRecyclerView(adapterView.getItemAtPosition(position) as String)
             }
         }
         super.onResume()
@@ -155,7 +155,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
     private fun subscribeUi(adapter: ItemListAdapter) {
         lifecycleScope.launchWhenStarted {
             viewModel.filterItems.collect {
-                Log.d(TAG, "subscribeUi -> $it")
+                Log.d(TAG, "subscribeUi -> ${it.size} items")
                 adapter.submitList(it)
             }
         }
@@ -164,6 +164,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
     private fun subscribeUiAllItems(adapter: AllItemsListAdapter) {
         lifecycleScope.launchWhenStarted {
             viewModel.filterItems.collect {
+                Log.d(TAG, "subscribeUiAll -> ${it.size} items")
                 adapter.submitList(it)
             }
         }
@@ -179,6 +180,14 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
             checkFilter()
         }
 
+    }
+
+    private fun bindRecyclerView(product: String){
+        if (product == "TODAS") {
+            binding.recyclerView.adapter = allItemsListAdapter
+        } else {
+            binding.recyclerView.adapter = productListAdapter
+        }
     }
 
     private fun bindFilterMenu() {

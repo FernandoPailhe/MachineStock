@@ -26,8 +26,16 @@ constructor(
 
         val flow =
             if (customListUtil.getSearchInput() == "%%") {
-                if (customListUtil.getProduct() == "TODAS" && customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isEmpty()) {
-                    itemDao.getAll()
+                if (customListUtil.getProduct() == "TODAS"){
+                    if ( customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isEmpty()) {
+                        itemDao.getAll()
+                    } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()){
+                        itemDao.getAllFilterType(customListUtil.filterTypeList)
+                    } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()){
+                        itemDao.getAllFilterStatus(customListUtil.filterStatusList)
+                    } else {
+                        itemDao.getAllFilterStatusAndType(customListUtil.filterStatusList, customListUtil.filterTypeList)
+                    }
                 } else if (customListUtil.filterStatusList.isNotEmpty()) {
                     if (customListUtil.filterTypeList.isNotEmpty()) {
                         itemDao.getFilteredProductStatusAndType(
@@ -52,10 +60,27 @@ constructor(
                     )
                 }
             } else {
-                if (!customListUtil.isFilteredList && customListUtil.getProduct() == "TODAS") {
-                    itemDao.getSearchQueryAllItems(
-                        customListUtil.getSearchInput()
-                    )
+                if (customListUtil.getProduct() == "TODAS") {
+                    if (!customListUtil.isFilteredList ) {
+                        itemDao.getSearchQueryAllItems(
+                            customListUtil.getSearchInput()
+                        )
+                    } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()){
+                        itemDao.getAllFilterTypeWithSearch(
+                            customListUtil.filterTypeList,
+                            customListUtil.getSearchInput()
+                        )
+                    } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()){
+                        itemDao.getAllFilterStatusWithSearch(
+                            customListUtil.filterStatusList,
+                            customListUtil.getSearchInput()
+                        )
+                    } else {
+                        itemDao.getAllFilterStatusAndTypeWithSearch(
+                            customListUtil.filterStatusList, customListUtil.filterTypeList,
+                            customListUtil.getSearchInput()
+                        )
+                    }
                 } else if (customListUtil.filterStatusList.isNotEmpty()) {
                     if (customListUtil.filterTypeList.isNotEmpty()) {
                         itemDao.getFilteredProductStatusAndTypeWithSearch(
