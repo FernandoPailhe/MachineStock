@@ -53,6 +53,10 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
             menuRecyclerView.adapter = menuListAdapter
             menuRecyclerView.layoutManager = LinearLayoutManager(this@MenuFragment.requireContext())
 
+            menuAction.setOnClickListener {
+                //TODO Implement option menu
+            }
+
             searchAction.setOnClickListener {
                 val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment()
                 findNavController().navigate(action)
