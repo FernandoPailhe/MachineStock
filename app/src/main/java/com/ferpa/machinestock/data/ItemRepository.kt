@@ -224,34 +224,34 @@ constructor(
     Network
      */
     suspend fun compareDatabases() {
-        /*
+
         val getItemsFromNetwork = itemsApi.getAllItems()
         var needUpdate = true
         if (getItemsFromNetwork.isSuccessful) {
-        itemDao.getAll().collectLatest { localList ->
-        while (needUpdate) {
-        getItemsFromNetwork.body()?.forEach { networkItem ->
-        val currentItem = localList.find { localItem ->
-        networkItem.id == localItem.id
+            itemDao.getAll().collectLatest { localList ->
+                while (needUpdate) {
+                    getItemsFromNetwork.body()?.forEach { networkItem ->
+                        val currentItem = localList.find { localItem ->
+                            networkItem.id == localItem.id
+                        }
+                        if (currentItem == null) {
+                            itemDao.insert(networkItem)
+                            Log.d("NetworkTrack", "Insert Item: ${networkItem.id}")
+                        } else {
+                            if (networkItem.editDate!! > currentItem.editDate.toString()) {
+                                itemDao.update(networkItem)
+                                Log.d("NetworkTrack", "Update Item: ${networkItem.id}")
+                            } else {
+                                Log.d("NetworkTrack", "Update End")
+                                needUpdate = false
+                                return@collectLatest
+                            }
+                        }
+                    }
+                }
+            }
         }
-        if (currentItem == null) {
-        itemDao.insert(networkItem)
-        Log.d("NetworkTrack", "Insert Item: ${networkItem.id}")
-        } else {
-        if (networkItem.editDate!! > currentItem.editDate.toString()) {
-        itemDao.update(networkItem)
-        Log.d("NetworkTrack", "Update Item: ${networkItem.id}")
-        } else {
-        Log.d("NetworkTrack", "Update End")
-        needUpdate = false
-        return@collectLatest
-        }
-        }
-        }
-        }
-        }
-        }
-         */
+
     }
 
     //TODO Delete when this will not more necessary
