@@ -12,11 +12,38 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/include"
-            layout="@layout/top_menu"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/card_elevation"
+            app:cardCornerRadius="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_list_menu"
+                android:orientation="horizontal"
+                tools:context=".ui.ItemListFragment">
+
+                <ImageButton
+                    android:id="@+id/menu_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_menu_24"
+                    android:background="@color/noneColor"
+                    android:layout_margin="@dimen/margin_between_elements"/>
+
+                <ImageButton
+                    android:id="@+id/search_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_search_24_white"
+                    android:background="@color/noneColor"
+                    android:layout_margin="@dimen/margin_between_elements"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/menu_recycler_view"

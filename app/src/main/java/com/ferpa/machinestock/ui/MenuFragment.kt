@@ -53,14 +53,10 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
             menuRecyclerView.adapter = menuListAdapter
             menuRecyclerView.layoutManager = LinearLayoutManager(this@MenuFragment.requireContext())
 
-            include.inputSearch.setOnSearchClickListener {
+            searchAction.setOnClickListener {
                 val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment()
                 findNavController().navigate(action)
             }
-            include.filterMenuAction.visibility = View.GONE
-            include.clearFilterAction.visibility = View.GONE
-            include.secondBar.visibility = View.GONE
-            include.filterMenu.visibility = View.GONE
 
             floatingActionButtonAddItem.setOnClickListener {
                 viewModel.setCurrentId(0)
