@@ -1,15 +1,13 @@
 package com.ferpa.machinestock.data
 
-import android.os.Build.VERSION_CODES.M
+
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.network.ItemsApi
-import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.utilities.CustomListUtil
 import com.ferpa.machinestock.utilities.MenuListUtil
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlin.Exception
 
@@ -20,11 +18,11 @@ constructor(
     val customListUtil: CustomListUtil
 ) {
 
-    var allItems = itemDao.getAll()
+    private var allItems = itemDao.getAll()
 
     val itemsFlow: Flow<List<Item>> = getCustomQuery()
 
-    private fun getCustomQuery() = flow<List<Item>> {
+    private fun getCustomQuery() = flow {
 
         val flow =
             if (customListUtil.getSearchInput() == "%%") {
@@ -87,18 +85,7 @@ constructor(
                 }
             }
 
-        if (customListUtil.getIsOwnerFiltered()) {
-
-        }
-
         emit(flow.first())
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun getFilterList(flowList: Flow<List<Item>>): Flow<List<Item>> {
-        return flowList.mapLatest { list ->
-            list.filter { customListUtil.filterItem(it) }.sortedBy { it.feature1 }
-        }
     }
 
     /*
@@ -108,8 +95,8 @@ constructor(
 
     private fun getMenuItemList() = flow<List<MainMenuItem>> {
 
-        var menuList = arrayListOf<MainMenuItem>()
-        MainMenuSource.mainMenu.forEach() {
+        val menuList = arrayListOf<MainMenuItem>()
+        MainMenuSource.mainMenu.forEach {
             menuList.add(createMenuItem(it))
         }
 
@@ -224,7 +211,7 @@ constructor(
     Network
      */
     suspend fun compareDatabases() {
-
+        /*
         val getItemsFromNetwork = itemsApi.getAllItems()
         var needUpdate = true
         if (getItemsFromNetwork.isSuccessful) {
@@ -251,12 +238,12 @@ constructor(
                 }
             }
         }
-
+        */
     }
 
     //TODO Delete when this will not more necessary
     suspend fun populateDb() {
-        allItems.collect() { list ->
+        allItems.collect { list ->
             list.forEach { item ->
                 try {
                     itemsApi.postNewItem(item)
@@ -270,7 +257,8 @@ constructor(
     companion object {
         const val TAG = "ItemRepository"
     }
-
 }
+
+
 
 
