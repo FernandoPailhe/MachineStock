@@ -1,11 +1,13 @@
 package com.ferpa.machinestock.model
 
 import android.annotation.SuppressLint
+import android.telephony.PhoneNumberUtils.formatNumber
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import com.ferpa.machinestock.R.*
 import com.ferpa.machinestock.utilities.Const
+import com.ferpa.machinestock.utilities.PhotoListManager
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +31,7 @@ data class Item(
     @ColumnInfo(name = "status") val status: String? = "no informado",
     @ColumnInfo(name = "observations") val observations: String? = null,
     @ColumnInfo(name = "editDate") var editDate: String? = getCurrentDate(),
-    @ColumnInfo(name = "editUser") val editUser: String? = null,
+    @ColumnInfo(name = "editUser") var editUser: String? = null,
     @ColumnInfo(name = "excelText") val excelText: String? = null,
     @ColumnInfo(name = "photos") var photos: String? = "0"
 )
@@ -146,54 +148,11 @@ fun Item.getStatus(): String {
 }
 
 fun Item.getMachinePhotoList(): List<MachinePhoto> {
-
-    return if (photos != "0") {
-        val photoList = mutableListOf<MachinePhoto>()
-        photos?.split("/")?.toList()?.forEachIndexed { index, photoId ->
-            photoList.add(
-                MachinePhoto(
-                    index,
-                    "${Const.USED_MACHINES_PHOTO_BASE_URL}/${id}_${photoId}"
-                )
-            )
-        }
-        photoList
-    } else {
-        return mutableListOf(MachinePhoto(-1, product))
-    }
-
+    return PhotoListManager.getMachinePhotoList(this)
 }
 
 fun Item.addNewPhoto(): String {
-    return if (photos != "0") {
-        val newPhoto = (photos?.split("/")?.toList()?.last()?.toInt()?.plus(1)).toString()
-        "${id}_${newPhoto}"
-    } else {
-        "${id}_1"
-    }
-}
-
-//TODO Check this function
-fun Item.updatePhotos(newPhoto: String): Item{
-    val updateItem = this
-    updateItem.editDate = getCurrentDate()
-    if (this.photos != "0"){
-        updateItem.photos += "/${newPhoto}"
-    } else {
-        updateItem.photos = "1"
-    }
-
-    return updateItem
-}
-
-//TODO Check this function
-fun Item.deletePhoto(deletePhoto: String): Item{
-    val updateItem = this
-    updateItem.editDate = getCurrentDate()
-    updateItem.photos?.replaceFirst("/${deletePhoto}", "")
-
-    return updateItem
-
+    return PhotoListManager.getNewPhotoUrl(this)
 }
 
 fun Item.getObservations(): String{
