@@ -22,38 +22,9 @@ constructor(
 
     var allItems = itemDao.getAll()
 
-    /*
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val itemsFlow: Flow<List<Item>> = getCustomQuery().flatMapLatest {
-        getCustomQuery()
-    }
-    */
-
     val itemsFlow: Flow<List<Item>> = getCustomQuery()
 
     private fun getCustomQuery() = flow<List<Item>> {
-
-        /*
-        val product = customListUtil.getProduct()
-        val searchQuery = customListUtil.getSearchInput()
-        var temporalQuery = allItems
-        Log.d(TAG, "GetCustomQuery - Product = $product")
-        if (product != "TODAS") {
-            if (customListUtil.getSearchInput() == "%%") {
-                temporalQuery = itemDao.getProducts(product)
-            } else {
-                temporalQuery = itemDao.getSearchQueryFilterByProduct(product, searchQuery)
-            }
-        } else if (customListUtil.getSearchInput() != "%%") {
-            temporalQuery = itemDao.getSearchQueryAllItems(customListUtil.getSearchInput())
-        }
-
-        if (customListUtil.isFilteredList) {
-            temporalQuery = getFilterList(temporalQuery)
-        }
-
-        return (temporalQuery)
-         */
 
         val flow =
             if (customListUtil.getSearchInput() == "%%") {
