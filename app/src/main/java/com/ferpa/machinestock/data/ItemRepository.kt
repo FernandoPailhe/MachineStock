@@ -148,16 +148,9 @@ constructor(
                 .map { list ->
                     menuListUtil.getMenuList(list)
                 }.first()
-        } else if (menuListUtil.filterByProduct.size > 1 && menuListUtil.filterByProduct.contains(
-                "NOT"
-            )
-        ) {
+        } else if (menuListUtil.filterByProduct.size > 1 && menuListUtil.filterByProduct.contains("NOT")) {
             val notProduct = menuListUtil.filterByProduct.subList(1, 5)
-            itemDao.getOthersProductsWithLimit(
-                notProduct[0],
-                notProduct[1],
-                notProduct[2],
-                notProduct[3],
+            itemDao.getOthersProductsWithLimit(notProduct,
                 menuListUtil.listSize.toString()
             ).map { list ->
                 menuListUtil.getMenuList(list)
