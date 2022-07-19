@@ -18,8 +18,6 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 
-const val TAG = "MachineStockViewModel"
-
 @HiltViewModel
 class MachineStockViewModel
 @Inject
@@ -30,7 +28,7 @@ constructor(private val itemRepository: ItemRepository) :
 
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 
-    val mainMenuItemListFlow: Flow<List<MainMenuItem>> = itemRepository.menuList
+    val mainMenuItemList: Flow<List<MainMenuItem>> = itemRepository.menuList
 
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
@@ -71,7 +69,7 @@ constructor(private val itemRepository: ItemRepository) :
             try {
                 itemRepository.compareDatabases()
             } catch (e: Exception) {
-                Log.d("CompareNetworkItems", e.toString())
+                Log.e(TAG, "CompareNetworkItems $e")
 
             }
         }
@@ -105,7 +103,6 @@ constructor(private val itemRepository: ItemRepository) :
                 uriPath = task.result.path.toString()
                 uriPath.let { Log.d("Uri Path", it) }
                 currentItem.value?.let {
-                    //updateItem(it.updatePhotos(currentItem.value!!.addNewPhoto().split("_").last()))
                     updateItem(PhotoListManager.addNewPhoto(it))
                 }
                 Log.d(
@@ -151,7 +148,8 @@ constructor(private val itemRepository: ItemRepository) :
     Update Custom List Util
      */
     fun setProduct(newProduct: String) {
-        itemRepository.customListUtil.setProduct(newProduct)
+        itemRepository.setProduct(newProduct)
+        Log.d(TAG, "New Filter Product -> $newProduct")
         _isNewFilter.value = true
     }
 
@@ -160,25 +158,25 @@ constructor(private val itemRepository: ItemRepository) :
     }
 
     fun setQueryText(inputSearch: String?) {
-        itemRepository.customListUtil.setQueryText(inputSearch)
+        itemRepository.setQueryText(inputSearch)
         _isNewFilter.value = true
     }
 
     fun getFilterStatus(type: String): Boolean {
-        return itemRepository.customListUtil.getFilterStatus(type)
+        return itemRepository.getFilterStatus(type)
     }
 
     fun setFilter(type: String) {
-        itemRepository.customListUtil.setFilter(type)
+        itemRepository.setFilter(type)
         _isNewFilter.value = true
     }
 
     fun isFilterList(): Boolean {
-        return itemRepository.customListUtil.isFilteredList
+        return itemRepository.isFilterList()
     }
 
     fun clearFilters() {
-        itemRepository.customListUtil.clearFilters()
+        itemRepository.clearFilters()
         _isNewFilter.value = true
     }
 
@@ -441,6 +439,10 @@ constructor(private val itemRepository: ItemRepository) :
             newDouble = nullVariable.replace(",", "").toDouble()
         }
         return newDouble
+    }
+
+    companion object {
+        const val TAG = "MachineStockViewModel"
     }
 
 }

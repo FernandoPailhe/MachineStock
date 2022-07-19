@@ -1,9 +1,12 @@
 package com.ferpa.machinestock.utilities
 
+import android.util.Log
+import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.utilities.Const.OWNER_1
 import com.ferpa.machinestock.utilities.Const.OWNER_2
 import com.ferpa.machinestock.utilities.Const.SOCIEDAD
+import java.util.*
 
 
 class CustomListUtil {
@@ -20,9 +23,9 @@ class CustomListUtil {
 
     private var filterShared: Boolean = false
 
-    private val filterStatusList: MutableList<String> = mutableListOf()
+    val filterStatusList: MutableList<String> = mutableListOf()
 
-    private val filterTypeList: MutableList<Char> = mutableListOf()
+    val filterTypeList: MutableList<String> = mutableListOf()
 
     fun filterItem(item: Item): Boolean {
 
@@ -96,21 +99,25 @@ class CustomListUtil {
         }
     }
 
+    fun getIsOwnerFiltered(): Boolean{
+        return filterOwner1 || filterOwner2 || filterShared
+    }
+
     fun setFilter(type: String) {
 
         if (type != OWNER_1 && type != OWNER_2 && type != SOCIEDAD) {
             if( type != "Mecánica" && type != "Hidraúlica" && type != "Neumática") {
-                if (filterStatusList.contains(type)) {
-                    filterStatusList -= type
+                if (filterStatusList.contains(type.uppercase())) {
+                    filterStatusList -= type.uppercase(Locale.getDefault())
                 } else {
-                    filterStatusList += type
+                    filterStatusList += type.uppercase(Locale.getDefault())
                 }
             } else {
-                val char: Char = type[0]
-                if (filterTypeList.contains(char)) {
-                    filterTypeList -= char
+                val char = type[0].toString()
+                if (filterTypeList.contains(char.uppercase())) {
+                    filterTypeList -= char.uppercase()
                 } else {
-                    filterTypeList += char
+                    filterTypeList += char.uppercase()
                 }
             }
         } else {
@@ -121,6 +128,8 @@ class CustomListUtil {
             }
         }
 
+        Log.d(TAG, "FilterStatusList -> $filterStatusList")
+        Log.d(TAG, "FilterTypeList -> $filterTypeList")
         isFilteredList = setIsFilteredList()
     }
 
@@ -156,7 +165,10 @@ class CustomListUtil {
 
         filterTypeList.clear()
 
+    }
 
+    companion object {
+        const val TAG = "CustomListUtil"
     }
 
 

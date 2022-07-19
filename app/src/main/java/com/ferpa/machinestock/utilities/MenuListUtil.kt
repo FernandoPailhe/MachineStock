@@ -3,8 +3,6 @@ package com.ferpa.machinestock.utilities
 import android.util.Log
 import com.ferpa.machinestock.model.Item
 
-const val TAG = "MenuListUtil"
-
 class MenuListUtil(
     var sortBy: String? = null,
     var filterByStatus: List<String> = listOf(),
@@ -76,6 +74,10 @@ class MenuListUtil(
             }
         }
         return isAdded
+    }
+
+    companion object {
+        const val TAG = "MenuListUtil"
     }
 
 }

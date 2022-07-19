@@ -1,8 +1,13 @@
 package com.ferpa.machinestock.ui
 
 import android.os.Bundle
+import android.text.InputType
+import android.util.Log
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.CheckBox
+import android.widget.TextView
+import androidx.databinding.adapters.TextViewBindingAdapter.setText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentItemListBinding
+import com.ferpa.machinestock.model.getType
 import com.ferpa.machinestock.ui.adapter.AllItemsListAdapter
 import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
@@ -17,7 +23,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcompat.widget.SearchView.OnQueryTextListener {
+class ItemListFragment : Fragment(R.layout.fragment_item_list),
+    androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
     private var _binding: FragmentItemListBinding? = null
     private val binding get() = _binding!!
@@ -60,7 +67,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
             //TODO Implement SlidingPaneLayout
         }
 
-        if (viewModel.getProduct() == "TODAS"){
+        if (viewModel.getProduct() == "TODAS") {
             binding.recyclerView.adapter = allItemsListAdapter
         } else {
             binding.recyclerView.adapter = productListAdapter
@@ -71,14 +78,15 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
             recyclerView.layoutManager = LinearLayoutManager(this@ItemListFragment.context)
 
             //Top Menu
-            listTitle.text = viewModel.getProduct()
-            inputSearch.setOnQueryTextListener(this@ItemListFragment)
-            addItemAction.setOnClickListener {
-                viewModel.setCurrentId(0)
-                findNavController().navigate(
-                    ItemListFragmentDirections.actionItemListFragmentToAddItemFragment(viewModel.getProduct())
-                )
+            listTitle.apply {
+                inputType = InputType.TYPE_NULL
+                setText(viewModel.getProduct(), TextView.BufferType.SPANNABLE)
+                setAdapter(setAdapterArray(R.array.product_options))
+                setOnItemClickListener { adapterView, view, position, l ->
+                    viewModel.setProduct(adapterView.getItemAtPosition(position) as String)
+                }
             }
+            inputSearch.setOnQueryTextListener(this@ItemListFragment)
             clearFilterAction.setOnClickListener {
                 clearAllFilters()
             }
@@ -95,7 +103,9 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
         lifecycleScope.launch {
             viewModel.isNewFilter.collect {
                 if (it) {
-                    if(viewModel.getProduct() == "TODAS"){
+                    Log.d(TAG, "IsNewFilter")
+                    Log.d(TAG, "New Product ${viewModel.getProduct()}")
+                    if (viewModel.getProduct() == "TODAS") {
                         subscribeUiAllItems(allItemsListAdapter)
                     } else {
                         subscribeUi(productListAdapter)
@@ -105,6 +115,19 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
             }
         }
 
+    }
+
+    override fun onResume() {
+
+        binding.listTitle.apply {
+            inputType = InputType.TYPE_NULL
+            setText(viewModel.getProduct(), TextView.BufferType.SPANNABLE)
+            setAdapter(setAdapterArray(R.array.product_options))
+            setOnItemClickListener { adapterView, view, position, l ->
+                viewModel.setProduct(adapterView.getItemAtPosition(position) as String)
+            }
+        }
+        super.onResume()
     }
 
     private fun setFilterMenuVisibility(isVisible: Boolean) {
@@ -132,6 +155,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
     private fun subscribeUi(adapter: ItemListAdapter) {
         lifecycleScope.launchWhenStarted {
             viewModel.filterItems.collect {
+                Log.d(TAG, "subscribeUi -> $it")
                 adapter.submitList(it)
             }
         }
@@ -204,6 +228,18 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list), androidx.appcomp
         viewModel.clearFilters()
         checkFilter()
         bindFilterMenu()
+    }
+
+    private fun setAdapterArray(stringArray: Int): ArrayAdapter<String> {
+        val array = arrayListOf<String>("TODAS")
+        for (product in resources.getStringArray(stringArray)) {
+            array.add(product)
+        }
+        return ArrayAdapter(requireContext(), R.layout.dropdown_item, array)
+    }
+
+    companion object {
+        const val TAG = "ItemListFragment"
     }
 
 }

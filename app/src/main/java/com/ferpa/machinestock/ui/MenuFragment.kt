@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.databinding.FragmentMenuBinding
+import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.adapter.MenuListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +30,8 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
 
     private lateinit var menuListAdapter: MenuListAdapter
 
+    private lateinit var searchListAdapter: ItemListAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +45,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
         super.onViewCreated(view, savedInstanceState)
 
         menuListAdapter = MenuListAdapter(this)
+
 
         subscribeUi(menuListAdapter)
 
@@ -70,7 +74,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
 
     override fun onResume() {
         lifecycleScope.launchWhenStarted {
-            viewModel.mainMenuItemListFlow.collect {
+            viewModel.mainMenuItemList.collect {
                 idList.clear()
                 it.forEachIndexed { index, menuItem ->
                     idList.add(mutableListOf<Long>())
@@ -85,7 +89,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
 
     private fun subscribeUi(adapter: MenuListAdapter) {
         lifecycleScope.launchWhenStarted {
-            viewModel.mainMenuItemListFlow.collect {
+            viewModel.mainMenuItemList.collect {
                 adapter.submitList(it)
                 it.forEachIndexed { index, menuItem ->
                     idList.add(mutableListOf<Long>())

@@ -12,9 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
@@ -26,6 +23,8 @@ import com.ferpa.machinestock.databinding.FragmentDetailBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.utilities.Const.REQUEST_GALLERY_PHOTO
+import com.ferpa.machinestock.utilities.Const.REQUEST_TAKE_PHOTO
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,15 +41,12 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     private val viewModel: MachineStockViewModel by activityViewModels()
 
-    private val REQUEST_GALLERY_PHOTO = 199
-    private val REQUEST_TAKE_PHOTO = 198
-
     lateinit var item: Item
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -63,7 +59,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     }
 
     /* Binding
-
      */
     private fun setDetailItemInterface() {
         viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->
@@ -243,7 +238,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
                 "com.ferpa.fileprovider", file
             )
         } catch (e: java.lang.Exception) {
-            Toast.makeText(this.requireContext(), "" + e.message, Toast.LENGTH_LONG).show()
+            Log.e(TAG, "getUriFromFileToShare " + e.message)
         }
         return uri
 
@@ -332,9 +327,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
         }
     }
 
-
     /*
-    Navigate To Photo Detail
+    Navigate To Full Screen Fragment
      */
     override fun onItemClick(position: Int) {
 
@@ -346,6 +340,10 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             )
             this.findNavController().navigate(action)
         }
+    }
+
+    companion object {
+        const val TAG = "DetailFragment"
     }
 
 }

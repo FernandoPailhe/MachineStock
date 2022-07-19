@@ -27,6 +27,9 @@ import com.ferpa.machinestock.databinding.FragmentAddItemBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.utilities.Const
+import com.ferpa.machinestock.utilities.Const.REQUEST_GALLERY_PHOTO
+import com.ferpa.machinestock.utilities.Const.REQUEST_TAKE_PHOTO
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager.Companion.getReduceBitmapFromGallery
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,8 +37,6 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val REQUEST_GALLERY_PHOTO = 199
-private const val REQUEST_TAKE_PHOTO = 198
 
 @AndroidEntryPoint
 class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnItemClickListener {
