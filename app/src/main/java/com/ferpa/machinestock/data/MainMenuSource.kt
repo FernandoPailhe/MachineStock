@@ -36,7 +36,7 @@ object MainMenuSource {
             MenuListUtil(
                 sortBy = "feature1",
                 listSize = 5,
-                filterByStatus = listOf("Vendida","Retirada")
+                filterByStatus = listOf("VENDIDA","RETIRADA")
             ),
             null
         ),
@@ -48,7 +48,7 @@ object MainMenuSource {
             MenuListUtil(
                 sortBy = "feature1",
                 filterByProduct = listOf("GUILLOTINA"),
-                filterByStatus = listOf("A reparar","Disponible","Reservada","Señada","No informado")
+                filterByStatus = listOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
             ),
             null
         ),
@@ -60,7 +60,7 @@ object MainMenuSource {
             MenuListUtil(
                 sortBy = "feature1",
                 filterByProduct = listOf("PLEGADORA"),
-                filterByStatus = listOf("NOT","Vendida","Retirada")
+                filterByStatus = listOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
             ),
             null
         ),
@@ -72,7 +72,7 @@ object MainMenuSource {
             MenuListUtil(
                 sortBy = "feature1",
                 filterByProduct = listOf("BALANCIN"),
-                filterByStatus = listOf("NOT","Vendida","Retirada")
+                filterByStatus = listOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
             ),
             null
         ),
@@ -84,7 +84,7 @@ object MainMenuSource {
             MenuListUtil(
                 sortBy = "feature1",
                 filterByProduct = listOf("TORNO"),
-                filterByStatus = listOf("NOT","Vendida","Retirada")
+                filterByStatus = listOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
             ),
             null
         ),
@@ -96,7 +96,7 @@ object MainMenuSource {
             MenuListUtil(
                 sortBy = "product",
                 filterByProduct = listOf("NOT","GUILLOTINA","PLEGADORA","BALANCIN","TORNO"),
-                filterByStatus = listOf("NOT","Vendida","Retirada")
+                filterByStatus = listOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
             ),
             null
         )

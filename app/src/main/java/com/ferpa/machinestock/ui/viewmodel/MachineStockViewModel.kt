@@ -6,11 +6,8 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.*
-import com.ferpa.machinestock.utilities.Const
 import com.ferpa.machinestock.utilities.PhotoListManager
-import com.ferpa.machinestock.utilities.PhotoListManager.Companion.addNewPhoto
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
+
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -29,6 +26,9 @@ constructor(private val itemRepository: ItemRepository) :
     val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
 
     val mainMenuItemList: Flow<List<MainMenuItem>> = itemRepository.menuList
+
+    val productArray: Flow<List<String>> = itemRepository.productArray
+    //val productArray: LiveData<List<String>> get() = _productArray
 
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
@@ -121,12 +121,12 @@ constructor(private val itemRepository: ItemRepository) :
             storageRef.child(PhotoListManager.getDeleteUrl(item, deletePhoto))
 
         photoRef.delete()
-            .addOnSuccessListener(OnSuccessListener<Void?> {
+            .addOnSuccessListener{
                 Log.d(TAG, "onSuccess: deleted file $deletePhoto")
                 updateItem(PhotoListManager.deletePhoto(item, deletePhoto))
-            }).addOnFailureListener(OnFailureListener {
+            }.addOnFailureListener{
                 Log.d(TAG, "onFailure: did not delete file $deletePhoto")
-            })
+            }
 
         val thumbRef = storageRef.child(
             PhotoListManager.getDeleteUrl(
@@ -136,11 +136,11 @@ constructor(private val itemRepository: ItemRepository) :
         )
 
         thumbRef.delete()
-            .addOnSuccessListener(OnSuccessListener<Void?> {
+            .addOnSuccessListener{
                 Log.d(TAG, "onSuccess: deleted file $deletePhoto t")
-            }).addOnFailureListener(OnFailureListener {
+            }.addOnFailureListener{
                 Log.d(TAG, "onFailure: did not delete file $deletePhoto t")
-            })
+            }
 
     }
 
@@ -258,7 +258,7 @@ constructor(private val itemRepository: ItemRepository) :
             location = location,
             brand = brand,
             feature1 = feature1.toDouble(),
-            feature2 = feature2.toDouble(),
+            feature2 = feature2.toDoubleOrNull(),
             feature3 = feature3,
             price = price,
             owner1 = owner1,
@@ -385,11 +385,7 @@ constructor(private val itemRepository: ItemRepository) :
 
         if (!isFeatureEntryValid(product, itemFeature1, itemFeature2)) {
             isValid = 1
-        } else if (!isOwnerEntryValid(
-                stringToIntOrEmptyToZero(owner1),
-                stringToIntOrEmptyToZero(owner2)
-            )
-        ) {
+        } else if (!isOwnerEntryValid(stringToIntOrEmptyToZero(owner1), stringToIntOrEmptyToZero(owner2))) {
             isValid = 2
         }
         //TODO isInsideNumberValid?

@@ -3,6 +3,7 @@ package com.ferpa.machinestock.data
 
 import android.util.Log
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.asLiveData
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.network.ItemsApi
@@ -18,59 +19,79 @@ constructor(
     val customListUtil: CustomListUtil
 ) {
 
+    private val dbSize = if (itemDao.getAll().asLiveData().value != null) itemDao.getAll()
+        .asLiveData().value!!.size else 200
+
     private var allItems = itemDao.getAll()
 
     val itemsFlow: Flow<List<Item>> = getCustomQuery()
 
+    var productArray = itemDao.getProductList()
+
     private fun getCustomQuery() = flow {
+
+        val productList = listOf(customListUtil.getProduct())
 
         val flow =
             if (customListUtil.getSearchInput() == "%%") {
-                if (customListUtil.getProduct() == "TODAS"){
-                    if ( customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isEmpty()) {
+                if (customListUtil.getProduct() == "TODAS") {
+                    if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isEmpty()) {
                         itemDao.getAll()
-                    } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()){
-                        itemDao.getAllFilterType(customListUtil.filterTypeList)
-                    } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()){
-                        itemDao.getAllFilterStatus(customListUtil.filterStatusList)
+                    } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()) {
+                        itemDao.getAllFilterType(
+                            customListUtil.filterTypeList,
+                            dbSize.toString()
+                        )
+                    } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()) {
+                        itemDao.getAllFilterStatus(
+                            customListUtil.filterStatusList,
+                            dbSize.toString()
+                        )
                     } else {
-                        itemDao.getAllFilterStatusAndType(customListUtil.filterStatusList, customListUtil.filterTypeList)
+                        itemDao.getAllFilterStatusAndType(
+                            customListUtil.filterStatusList, customListUtil.filterTypeList,
+                            dbSize.toString()
+                        )
                     }
                 } else if (customListUtil.filterStatusList.isNotEmpty()) {
                     if (customListUtil.filterTypeList.isNotEmpty()) {
                         itemDao.getFilteredProductStatusAndType(
-                            customListUtil.getProduct(),
+                            productList,
                             customListUtil.filterStatusList,
-                            customListUtil.filterTypeList
+                            customListUtil.filterTypeList,
+                            dbSize.toString()
                         )
                     } else {
                         itemDao.getFilteredProductAndStatus(
-                            customListUtil.getProduct(),
-                            customListUtil.filterStatusList
+                            productList,
+                            customListUtil.filterStatusList,
+                            dbSize.toString()
                         )
                     }
                 } else if (customListUtil.filterTypeList.isNotEmpty()) {
                     itemDao.getFilteredProductAndType(
-                        customListUtil.getProduct(),
-                        customListUtil.filterTypeList
+                        productList,
+                        customListUtil.filterTypeList,
+                        dbSize.toString()
                     )
                 } else {
                     itemDao.getFilteredProduct(
-                        customListUtil.getProduct()
+                        productList,
+                        dbSize.toString()
                     )
                 }
             } else {
                 if (customListUtil.getProduct() == "TODAS") {
-                    if (!customListUtil.isFilteredList ) {
+                    if (!customListUtil.isFilteredList) {
                         itemDao.getSearchQueryAllItems(
                             customListUtil.getSearchInput()
                         )
-                    } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()){
+                    } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()) {
                         itemDao.getAllFilterTypeWithSearch(
                             customListUtil.filterTypeList,
                             customListUtil.getSearchInput()
                         )
-                    } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()){
+                    } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()) {
                         itemDao.getAllFilterStatusWithSearch(
                             customListUtil.filterStatusList,
                             customListUtil.getSearchInput()
@@ -142,23 +163,39 @@ constructor(
 
     private suspend fun getMenuQuery(menuListUtil: MenuListUtil): List<Item> {
 
-        return if (menuListUtil.filterByProduct.size == 1) {
-            val product = menuListUtil.filterByProduct.first()
-            itemDao.getProductsWithLimit(product, menuListUtil.listSize.toString())
-                .map { list ->
-                    menuListUtil.getMenuList(list)
-                }.first()
-        } else if (menuListUtil.filterByProduct.size > 1 && menuListUtil.filterByProduct.contains("NOT")) {
-            val notProduct = menuListUtil.filterByProduct.subList(1, 5)
-            itemDao.getOthersProductsWithLimit(notProduct,
+        //TODO implement different orders
+        return if (menuListUtil.filterByProduct.isNotEmpty()) {
+            if(menuListUtil.filterByProduct.contains("NOT")){
+                itemDao.getFilteredNotProductAndStatus(
+                    menuListUtil.filterByProduct,
+                    menuListUtil.filterByStatus,
+                    menuListUtil.listSize.toString()
+                ).first()
+            } else if (menuListUtil.filterByStatus.isNotEmpty()) {
+                itemDao.getFilteredProductAndStatus(
+                    menuListUtil.filterByProduct,
+                    menuListUtil.filterByStatus,
+                    menuListUtil.listSize.toString()
+                ).first()
+            } else {
+                itemDao.getFilteredProduct(
+                    menuListUtil.filterByProduct,
+                    menuListUtil.listSize.toString()
+                ).first()
+            }
+        } else if (menuListUtil.filterByStatus.isNotEmpty()) {
+            itemDao.getAllFilterStatus(
+                menuListUtil.filterByStatus,
                 menuListUtil.listSize.toString()
-            ).map { list ->
-                menuListUtil.getMenuList(list)
-            }.first()
+            ).first()
         } else {
-            allItems.map { list ->
-                menuListUtil.getMenuList(list)
-            }.first()
+            if (menuListUtil.sortBy == "editDate") {
+                itemDao.getAll().map{
+                    menuListUtil.getMenuList(it)
+                }.first()
+            } else {
+                itemDao.getAllWithLimitSortByInsertDate(menuListUtil.listSize.toString()).first()
+            }
         }
     }
 

@@ -28,7 +28,7 @@ data class Item(
     @ColumnInfo(name = "price") val price: Double? = 0.0,
     @ColumnInfo(name = "currency") val currency: String? = "$",
     @ColumnInfo(name = "type") val type: String? = "",
-    @ColumnInfo(name = "status") val status: String? = "no informado",
+    @ColumnInfo(name = "status") val status: String? = "No informado",
     @ColumnInfo(name = "observations") val observations: String? = null,
     @ColumnInfo(name = "editDate") var editDate: String? = getCurrentDate(),
     @ColumnInfo(name = "editUser") var editUser: String? = null,

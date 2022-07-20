@@ -21,28 +21,36 @@ interface ItemDao {
     fun getItem(id: Long): Flow<Item>
 
 
+    @Query("SELECT DISTINCT product FROM item")
+    fun getProductList(): Flow<List<String>>
+
     /*
     Separate product Queries
      */
     @Query("SELECT * FROM item " +
-            "WHERE product = :product " +
-            "ORDER BY feature1 ASC")
-    fun getFilteredProduct(product: String): Flow<List<Item>>
+            "WHERE product IN (:product) " +
+            "ORDER BY feature1 ASC LIMIT :limit")
+    fun getFilteredProduct(product: List<String>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
-            "WHERE product = :product AND status IN (:statusFilterList) " +
-            "ORDER BY feature1 ASC")
-    fun getFilteredProductAndStatus(product: String, statusFilterList: List<String>): Flow<List<Item>>
+            "WHERE product IN (:product) AND status IN (:statusFilterList) " +
+            "ORDER BY feature1 ASC LIMIT :limit")
+    fun getFilteredProductAndStatus(product: List<String>, statusFilterList: List<String>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
-            "WHERE product = :product AND type IN (:typeFilterList) " +
-            "ORDER BY feature1 ASC")
-    fun getFilteredProductAndType(product: String, typeFilterList: List<String>): Flow<List<Item>>
+            "WHERE product IN (:product) AND type IN (:typeFilterList) " +
+            "ORDER BY feature1 ASC LIMIT :limit")
+    fun getFilteredProductAndType(product: List<String>, typeFilterList: List<String>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
-            "WHERE product = :product AND status IN (:statusFilterList) AND type IN (:typeFilterList) " +
-            "ORDER BY feature1 ASC")
-    fun getFilteredProductStatusAndType(product: String, statusFilterList: List<String>, typeFilterList: List<String>): Flow<List<Item>>
+            "WHERE product NOT IN (:product) AND status IN (:statusFilterList) " +
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getFilteredNotProductAndStatus(product: List<String>, statusFilterList: List<String>, limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
+            "WHERE product IN (:product) AND status IN (:statusFilterList) AND type IN (:typeFilterList) " +
+            "ORDER BY feature1 ASC LIMIT :limit")
+    fun getFilteredProductStatusAndType(product: List<String>, statusFilterList: List<String>, typeFilterList: List<String>, limit: String): Flow<List<Item>>
 
     /*
     Separate product Queries with search
@@ -70,23 +78,29 @@ interface ItemDao {
     /*
     All machines queries
      */
-    @Query("SELECT * FROM item ORDER BY editDate")
+    @Query("SELECT * FROM item ORDER BY editDate DESC")
     fun getAll(): Flow<List<Item>>
+
+    @Query("SELECT * FROM item ORDER BY editDate DESC LIMIT :limit")
+    fun getAllWithLimit(limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item ORDER BY insertDate DESC LIMIT :limit")
+    fun getAllWithLimitSortByInsertDate(limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
             "WHERE status IN (:statusFilterList) " +
-            "ORDER BY feature1 ASC")
-    fun getAllFilterStatus(statusFilterList: List<String>): Flow<List<Item>>
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterStatus(statusFilterList: List<String>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
             "WHERE type IN (:typeFilterList) " +
-            "ORDER BY feature1 ASC")
-    fun getAllFilterType(typeFilterList: List<String>): Flow<List<Item>>
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterType(typeFilterList: List<String>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
             "WHERE status IN (:statusFilterList) AND type IN (:typeFilterList) " +
-            "ORDER BY feature1 ASC")
-    fun getAllFilterStatusAndType( statusFilterList: List<String>, typeFilterList: List<String>): Flow<List<Item>>
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterStatusAndType( statusFilterList: List<String>, typeFilterList: List<String>, limit: String): Flow<List<Item>>
 
     /*
     All machines queries with search
@@ -126,17 +140,5 @@ interface ItemDao {
             "WHERE NOT product in (:notProduct)" +
             "ORDER BY editDate ASC LIMIT :limit")
     fun getOthersProductsWithLimit(notProduct: List<String>, limit: String): Flow<List<Item>>
-
-
-    /*
-    @Query("SELECT * FROM item WHERE product = :product AND (brand LIKE :searchQuery OR insideNumber LIKE :searchQuery OR feature1 LIKE :searchQuery OR feature2 LIKE :searchQuery OR feature3 LIKE :searchQuery)")
-    fun getSearchQueryFilterByProduct(product: String, searchQuery: String): Flow<List<Item>>
-
-       @Query("SELECT * FROM item " +
-            "WHERE product = :product " +
-            "AND NOT status = :notStatus1 OR status = :notStatus2 " +
-            "ORDER BY feature1 ASC")
-    fun getOnlyAvailableProducts(product: String, notStatus1: String, notStatus2: String): Flow<List<Item>>
-     */
 
 }

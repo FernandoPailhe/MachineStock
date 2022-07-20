@@ -408,7 +408,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemInsideNumber.text.toString(),
                 binding.itemLocation.text.toString(),
                 "$",
-                binding.itemStatus.text.toString(),
+                binding.itemStatus.text.toString().uppercase(Locale.getDefault()),
                 binding.itemOwner2.text.toString(),
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
@@ -424,7 +424,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         if (isEntryValid()) {
             viewModel.setUpdateItem(
                 item,
-                newProduct,
+                item.product,
                 binding.itemType.text.toString(),
                 binding.itemFeature1.text.toString(),
                 binding.itemFeature2.text.toString(),
@@ -434,7 +434,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemInsideNumber.text.toString(),
                 binding.itemLocation.text.toString(),
                 "$",
-                binding.itemStatus.text.toString(),
+                binding.itemStatus.text.toString().uppercase(Locale.getDefault()),
                 binding.itemOwner2.text.toString(),
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()

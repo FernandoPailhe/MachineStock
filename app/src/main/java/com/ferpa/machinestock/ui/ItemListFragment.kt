@@ -241,8 +241,12 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
     private fun setAdapterArray(stringArray: Int): ArrayAdapter<String> {
         val array = arrayListOf<String>("TODAS")
-        for (product in resources.getStringArray(stringArray)) {
-            array.add(product)
+        lifecycleScope.launchWhenStarted {
+            viewModel.productArray.collect {
+                for (product in it) {
+                    array.add(product)
+                }
+            }
         }
         return ArrayAdapter(requireContext(), R.layout.dropdown_item, array)
     }

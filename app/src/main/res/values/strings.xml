@@ -53,6 +53,7 @@
         <item>PLEGADORA</item>
         <item>BALANCIN</item>
         <item>TORNO</item>
+        <item>LIMADORA</item>
         <item>CILINDRO</item>
         <item>COMPRESOR</item>
         <item>FRESADORA</item>
@@ -88,7 +89,6 @@
         <item>SDB</item>
         <item>YUNAN</item>
     </string-array>
-
 
     <!--TODO Cambiar a depósitos originales-->
     <string-array name="location_options">
