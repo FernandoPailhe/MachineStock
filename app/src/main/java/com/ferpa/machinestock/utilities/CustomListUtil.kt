@@ -8,7 +8,7 @@ import com.ferpa.machinestock.utilities.Const.OWNER_2
 import com.ferpa.machinestock.utilities.Const.SOCIEDAD
 import java.util.*
 
-
+//TODO Clean innecesaries functions
 class CustomListUtil {
 
     private var product: String = "TODAS"

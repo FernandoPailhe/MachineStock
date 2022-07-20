@@ -3,6 +3,7 @@ package com.ferpa.machinestock.utilities
 import android.util.Log
 import com.ferpa.machinestock.model.Item
 
+//TODO Clean innecesaries functions
 class MenuListUtil(
     var sortBy: String? = null,
     var filterByStatus: List<String> = listOf(),
