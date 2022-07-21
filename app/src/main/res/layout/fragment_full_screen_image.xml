@@ -30,31 +30,13 @@
         android:layout_marginBottom="@dimen/margin_between_elements">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/save_image_action"
+            android:id="@+id/set_first_image_action"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_save"
+            android:src="@drawable/ic_round_favorite_24_filled"
             android:padding="@dimen/detail_padding"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/rotate_left_action"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_baseline_rotate_left_24"
-            android:padding="@dimen/detail_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/save_image_action" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/rotate_right_action"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_baseline_rotate_right_24"
-            android:padding="@dimen/detail_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/rotate_left_action" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/delete_action"
@@ -63,16 +45,7 @@
             android:src="@drawable/ic_baseline_delete_24"
             android:padding="@dimen/detail_padding"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/rotate_right_action" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/cancel_action"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_baseline_cancel_24"
-            android:padding="@dimen/detail_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/delete_action" />
+            app:layout_constraintStart_toEndOf="@id/set_first_image_action" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

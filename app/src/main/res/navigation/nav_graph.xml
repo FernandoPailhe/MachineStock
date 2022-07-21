@@ -19,7 +19,8 @@
             app:destination="@id/addItemFragment" />
         <action
             android:id="@+id/action_itemListFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:popUpTo="@id/itemListFragment" />
     </fragment>
     <fragment
         android:id="@+id/menuFragment"
@@ -30,34 +31,36 @@
             android:id="@+id/action_menuFragment_to_itemListFragment"
             app:destination="@id/itemListFragment"
             app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/menuFragment" />
         <action
             android:id="@+id/action_menuFragment_to_addItemFragment2"
-            app:destination="@id/addItemFragment" />
+            app:destination="@id/addItemFragment"
+            app:popUpTo="@id/menuFragment" />
         <action
             android:id="@+id/action_menuFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:popUpTo="@id/menuFragment" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
         android:name="com.ferpa.machinestock.ui.AddItemFragment"
         android:label="AddItemFragment" >
-        <action
-            android:id="@+id/action_addItemFragment_to_menuFragment"
-            app:destination="@id/menuFragment" />
         <argument
             android:name="product"
             app:argType="string"
             android:defaultValue="none" />
         <action
-            android:id="@+id/action_addItemFragment_to_itemListFragment"
-            app:destination="@id/itemListFragment" />
-        <action
             android:id="@+id/action_addItemFragment_to_fullScreenImageFragment"
-            app:destination="@id/fullScreenImageFragment" />
+            app:destination="@id/fullScreenImageFragment"
+            app:popUpTo="@id/addItemFragment" />
         <action
             android:id="@+id/action_addItemFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:popUpTo="@id/menuFragment" />
+        <action
+            android:id="@+id/action_addItemFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
     <fragment
         android:id="@+id/fullScreenImageFragment"
@@ -87,6 +90,10 @@
             app:destination="@id/itemListFragment" />
         <action
             android:id="@+id/action_detailFragment_to_fullScreenImageFragment"
-            app:destination="@id/fullScreenImageFragment" />
+            app:destination="@id/fullScreenImageFragment"
+            app:popUpTo="@id/detailFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
 </navigation>

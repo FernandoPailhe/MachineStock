@@ -58,7 +58,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     }
 
-    /* Binding
+    /*
+    Binding
      */
     private fun setDetailItemInterface() {
         viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->

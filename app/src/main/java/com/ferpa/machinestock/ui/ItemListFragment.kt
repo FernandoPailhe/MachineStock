@@ -7,7 +7,6 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.databinding.adapters.TextViewBindingAdapter.setText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,12 +14,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentItemListBinding
-import com.ferpa.machinestock.model.getType
 import com.ferpa.machinestock.ui.adapter.AllItemsListAdapter
 import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ItemListFragment : Fragment(R.layout.fragment_item_list),
@@ -77,7 +74,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
             listTitle.apply {
                 inputType = InputType.TYPE_NULL
                 setText(viewModel.getProduct(), TextView.BufferType.SPANNABLE)
-                setAdapter(setAdapterArray(R.array.product_options))
+                setAdapter(setAdapterArray())
                 setOnItemClickListener { adapterView, view, position, l ->
                     viewModel.setProduct(adapterView.getItemAtPosition(position) as String)
                     bindRecyclerView(adapterView.getItemAtPosition(position) as String)
@@ -121,7 +118,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         binding.listTitle.apply {
             inputType = InputType.TYPE_NULL
             setText(viewModel.getProduct(), TextView.BufferType.SPANNABLE)
-            setAdapter(setAdapterArray(R.array.product_options))
+            setAdapter(setAdapterArray())
             setOnItemClickListener { adapterView, view, position, l ->
                 viewModel.setProduct(adapterView.getItemAtPosition(position) as String)
                 bindRecyclerView(adapterView.getItemAtPosition(position) as String)
@@ -239,8 +236,8 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         bindFilterMenu()
     }
 
-    private fun setAdapterArray(stringArray: Int): ArrayAdapter<String> {
-        val array = arrayListOf<String>("TODAS")
+    private fun setAdapterArray(): ArrayAdapter<String> {
+        val array = arrayListOf("TODAS")
         lifecycleScope.launchWhenStarted {
             viewModel.productArray.collect {
                 for (product in it) {

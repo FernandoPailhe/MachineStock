@@ -1,19 +1,18 @@
 package com.ferpa.machinestock.utilities
 
 import android.util.Log
-import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.utilities.Const.OWNER_1
 import com.ferpa.machinestock.utilities.Const.OWNER_2
 import com.ferpa.machinestock.utilities.Const.SOCIEDAD
 import java.util.*
 
-//TODO Clean innecesaries functions
+//TODO Clean unnecessary functions
 class CustomListUtil {
 
     private var product: String = "TODAS"
 
-    var isFilteredList: Boolean = false
+    var isFilteredList: Boolean = true
 
     private var searchInput: String = "%%"
 
@@ -23,9 +22,30 @@ class CustomListUtil {
 
     private var filterShared: Boolean = false
 
-    val filterStatusList: MutableList<String> = mutableListOf()
+    var filterOwnerList: MutableList<Int> = setOwnerList()
+
+    val filterStatusList: MutableList<String> = mutableListOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
 
     val filterTypeList: MutableList<String> = mutableListOf()
+
+    private fun setOwnerList(): MutableList<Int> {
+        val ownerList: ArrayList<Int> = arrayListOf()
+        if (getIsOwnerFiltered()){
+            if (filterOwner1) {
+                ownerList += 100
+            }
+            if (filterOwner2) {
+                ownerList += 0
+            }
+            if (filterShared) {
+                for (i in 1..99){
+                    ownerList += i
+                }
+            }
+        }
+        Log.d(TAG, "NewFilterOwnerList -> $ownerList")
+        return ownerList
+    }
 
     fun filterItem(item: Item): Boolean {
 
@@ -83,7 +103,7 @@ class CustomListUtil {
     private fun filterType(item: Item): Boolean{
         var isAdded = false
         filterTypeList.forEach {
-            if (it.toString().equals(item.type,true)) {
+            if (it.equals(item.type,true)) {
                 isAdded = true
             }
         }
@@ -95,15 +115,21 @@ class CustomListUtil {
             OWNER_1 -> filterOwner1
             OWNER_2 -> filterOwner2
             SOCIEDAD -> filterShared
-            else -> filterStatusList.contains(type)
+            else -> filterStatusList.contains(type.uppercase())
         }
     }
 
     fun getIsOwnerFiltered(): Boolean{
-        return filterOwner1 || filterOwner2 || filterShared
+        return if (filterOwner1 && filterOwner2 && filterShared){
+            false
+        } else {
+            return filterOwner1 || filterOwner2 || filterShared
+        }
     }
 
     fun setFilter(type: String) {
+
+        Log.d(TAG, "Set Filter Type -> $type")
 
         if (type != OWNER_1 && type != OWNER_2 && type != SOCIEDAD) {
             if( type != "Mecánica" && type != "Hidraúlica" && type != "Neumática") {
@@ -126,8 +152,10 @@ class CustomListUtil {
                 OWNER_2 -> filterOwner2 = !filterOwner2
                 SOCIEDAD -> filterShared = !filterShared
             }
+            filterOwnerList = setOwnerList()
         }
 
+        Log.d(TAG, "FilterOwnerList -> $filterOwnerList")
         Log.d(TAG, "FilterStatusList -> $filterStatusList")
         Log.d(TAG, "FilterTypeList -> $filterTypeList")
         isFilteredList = setIsFilteredList()

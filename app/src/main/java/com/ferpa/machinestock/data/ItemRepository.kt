@@ -22,12 +22,16 @@ constructor(
     private val dbSize = if (itemDao.getAll().asLiveData().value != null) itemDao.getAll()
         .asLiveData().value!!.size else 200
 
-    private var allItems = itemDao.getAll()
+    private val allItems = itemDao.getAll()
+
+    val productArray = itemDao.getProductList()
 
     val itemsFlow: Flow<List<Item>> = getCustomQuery()
 
-    var productArray = itemDao.getProductList()
-
+    //TODO add filter owner
+    /*
+    Custom List Queries
+     */
     private fun getCustomQuery() = flow {
 
         val productList = listOf(customListUtil.getProduct())
@@ -38,20 +42,45 @@ constructor(
                     if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isEmpty()) {
                         itemDao.getAll()
                     } else if (customListUtil.filterTypeList.isNotEmpty() && customListUtil.filterStatusList.isEmpty()) {
-                        itemDao.getAllFilterType(
-                            customListUtil.filterTypeList,
-                            dbSize.toString()
-                        )
+                        if (customListUtil.getIsOwnerFiltered()) {
+                            itemDao.getAllFilterTypeAndOwner(
+                                customListUtil.filterTypeList,
+                                customListUtil.filterOwnerList,
+                                dbSize.toString()
+                            )
+                        } else {
+                            itemDao.getAllFilterType(
+                                customListUtil.filterTypeList,
+                                dbSize.toString()
+                            )
+                        }
                     } else if (customListUtil.filterTypeList.isEmpty() && customListUtil.filterStatusList.isNotEmpty()) {
-                        itemDao.getAllFilterStatus(
-                            customListUtil.filterStatusList,
-                            dbSize.toString()
-                        )
+                        if (customListUtil.getIsOwnerFiltered()) {
+                            itemDao.getAllFilterStatusAndOwner(
+                                customListUtil.filterStatusList,
+                                customListUtil.filterOwnerList,
+                                dbSize.toString()
+                            )
+                        } else {
+                            itemDao.getAllFilterStatus(
+                                customListUtil.filterStatusList,
+                                dbSize.toString()
+                            )
+                        }
                     } else {
-                        itemDao.getAllFilterStatusAndType(
-                            customListUtil.filterStatusList, customListUtil.filterTypeList,
-                            dbSize.toString()
-                        )
+                        if (customListUtil.getIsOwnerFiltered()) {
+                            itemDao.getAllFilterStatusOwnerAndType(
+                                customListUtil.filterStatusList,
+                                customListUtil.filterOwnerList,
+                                customListUtil.filterTypeList,
+                                dbSize.toString()
+                            )
+                        } else {
+                            itemDao.getAllFilterStatusAndType(
+                                customListUtil.filterStatusList, customListUtil.filterTypeList,
+                                dbSize.toString()
+                            )
+                        }
                     }
                 } else if (customListUtil.filterStatusList.isNotEmpty()) {
                     if (customListUtil.filterTypeList.isNotEmpty()) {
@@ -132,6 +161,7 @@ constructor(
             }
 
         emit(flow.first())
+
     }
 
     /*
@@ -165,7 +195,7 @@ constructor(
 
         //TODO implement different orders
         return if (menuListUtil.filterByProduct.isNotEmpty()) {
-            if(menuListUtil.filterByProduct.contains("NOT")){
+            if (menuListUtil.filterByProduct.contains("NOT")) {
                 itemDao.getFilteredNotProductAndStatus(
                     menuListUtil.filterByProduct,
                     menuListUtil.filterByStatus,
@@ -190,11 +220,12 @@ constructor(
             ).first()
         } else {
             if (menuListUtil.sortBy == "editDate") {
-                itemDao.getAll().map{
+                itemDao.getAll().map {
                     menuListUtil.getMenuList(it)
                 }.first()
             } else {
-                itemDao.getAllWithLimitSortByInsertDate(menuListUtil.listSize.toString()).first()
+                itemDao.getAllWithLimitSortByInsertDate(menuListUtil.listSize.toString())
+                    .first()
             }
         }
     }

@@ -28,7 +28,6 @@ constructor(private val itemRepository: ItemRepository) :
     val mainMenuItemList: Flow<List<MainMenuItem>> = itemRepository.menuList
 
     val productArray: Flow<List<String>> = itemRepository.productArray
-    //val productArray: LiveData<List<String>> get() = _productArray
 
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter

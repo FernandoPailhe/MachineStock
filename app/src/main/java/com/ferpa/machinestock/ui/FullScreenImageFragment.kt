@@ -1,13 +1,11 @@
 package com.ferpa.machinestock.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentFullScreenImageBinding
@@ -48,25 +46,26 @@ class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), P
 
         viewModel.retrieveItem(itemId).observe(this.viewLifecycleOwner){ selectedItem ->
             item = selectedItem
-            bindPhotoRecyclerView(item, photoPosition)
+            bindPhotoViewPager(item, photoPosition)
         }
+        
+        
 
         binding.apply {
 
             deleteAction.setOnClickListener {
+                //TODO Implement are you sure dialog
                 viewModel.deletePhoto(item, fullScreenPhotoViewPager.currentItem)
             }
-
-            cancelAction.setOnClickListener {
-                val action = FullScreenImageFragmentDirections.actionFullScreenImageFragmentToDetailFragment()
-                this@FullScreenImageFragment.findNavController().navigate(action)
+            setFirstImageAction.setOnClickListener {
+                //TODO Implement reorganize photos
             }
 
         }
 
     }
 
-    private fun bindPhotoRecyclerView(item: Item, photoPosition :Int) {
+    private fun bindPhotoViewPager(item: Item, photoPosition :Int) {
         val fullScreenPhotoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
         binding.fullScreenPhotoViewPager.adapter = fullScreenPhotoAdapter
         binding.fullScreenPhotoViewPager.currentItem = photoPosition

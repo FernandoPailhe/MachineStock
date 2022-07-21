@@ -20,7 +20,6 @@ interface ItemDao {
     @Query ("SELECT * from item WHERE ID = :id")
     fun getItem(id: Long): Flow<Item>
 
-
     @Query("SELECT DISTINCT product FROM item")
     fun getProductList(): Flow<List<String>>
 
@@ -88,9 +87,19 @@ interface ItemDao {
     fun getAllWithLimitSortByInsertDate(limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
+            "WHERE owner1 IN (:ownerList) " +
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterOwner(ownerList: List<Int>, limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
             "WHERE status IN (:statusFilterList) " +
             "ORDER BY editDate DESC LIMIT :limit")
     fun getAllFilterStatus(statusFilterList: List<String>, limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
+            "WHERE status IN (:statusFilterList) AND owner1 IN (:ownerList)" +
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterStatusAndOwner(statusFilterList: List<String>, ownerList: List<Int>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
             "WHERE type IN (:typeFilterList) " +
@@ -98,9 +107,19 @@ interface ItemDao {
     fun getAllFilterType(typeFilterList: List<String>, limit: String): Flow<List<Item>>
 
     @Query("SELECT * FROM item " +
+            "WHERE type IN (:typeFilterList) AND owner1 IN (:ownerList)" +
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterTypeAndOwner(typeFilterList: List<String>, ownerList: List<Int>, limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
             "WHERE status IN (:statusFilterList) AND type IN (:typeFilterList) " +
             "ORDER BY editDate DESC LIMIT :limit")
-    fun getAllFilterStatusAndType( statusFilterList: List<String>, typeFilterList: List<String>, limit: String): Flow<List<Item>>
+    fun getAllFilterStatusAndType(statusFilterList: List<String>, typeFilterList: List<String>, limit: String): Flow<List<Item>>
+
+    @Query("SELECT * FROM item " +
+            "WHERE status IN (:statusFilterList) AND type IN (:typeFilterList) AND owner1 IN (:ownerList)" +
+            "ORDER BY editDate DESC LIMIT :limit")
+    fun getAllFilterStatusOwnerAndType(statusFilterList: List<String>, ownerList: List<Int>, typeFilterList: List<String>, limit: String): Flow<List<Item>>
 
     /*
     All machines queries with search
