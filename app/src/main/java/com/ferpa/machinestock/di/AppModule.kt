@@ -2,7 +2,6 @@ package com.ferpa.machinestock.di
 
 import com.ferpa.machinestock.data.ItemDao
 import com.ferpa.machinestock.data.ItemRepository
-import com.ferpa.machinestock.network.ItemsApi
 import com.ferpa.machinestock.utilities.CustomListUtil
 import dagger.Module
 import dagger.Provides
@@ -25,10 +24,9 @@ object AppModule {
     @Singleton
     fun provideItemRepository(
             itemDao: ItemDao,
-            itemsApi: ItemsApi,
             customListUtil: CustomListUtil
         ) : ItemRepository {
-        return ItemRepository(itemDao, itemsApi, customListUtil)
+        return ItemRepository(itemDao, customListUtil)
     }
 
  }

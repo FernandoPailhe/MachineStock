@@ -22,7 +22,6 @@ import kotlin.Exception
 class ItemRepository
 constructor(
     private val itemDao: ItemDao,
-    private val itemsApi: ItemsApi,
     val customListUtil: CustomListUtil
 ) {
 
@@ -302,36 +301,30 @@ constructor(
     /*
     Network
      */
-    suspend fun compareDatabases() {
-
-        /*
-        val getItemsFromNetwork = itemsApi.getAllItems()
-        var needUpdate = true
-        if (getItemsFromNetwork.isSuccessful) {
-            itemDao.getAll().collectLatest { localList ->
-                while (needUpdate) {
-                    getItemsFromNetwork.body()?.forEach { networkItem ->
-                        val currentItem = localList.find { localItem ->
-                            networkItem.id == localItem.id
-                        }
-                        if (currentItem == null) {
-                            itemDao.insert(networkItem)
-                            Log.d("NetworkTrack", "Insert Item: ${networkItem.id}")
-                        } else {
-                            if (networkItem.editDate!! > currentItem.editDate.toString()) {
-                                itemDao.update(networkItem)
-                                Log.d("NetworkTrack", "Update Item: ${networkItem.id}")
-                            } else {
-                                Log.d("NetworkTrack", "Update End")
-                                needUpdate = false
-                                return@collectLatest
+    suspend fun compareLastNewItem() {
+        try {
+            firestoreUsedDbRef
+                .whereGreaterThan("insertDate", lastInsertDate.first().toString())
+                .get()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Retrieve ${it.documents.size} new items")
+                    for (itemFirestore in it.documents) {
+                        Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            itemFirestore.toObject<Item>()?.let { it1 ->
+                                itemDao.insert(it1)
+                                Log.d(TAG, "Create new ${itemFirestore.toObject<Item>()}")
                             }
                         }
                     }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        compareLastEdit()
+                    }
                 }
-            }
+                .addOnFailureListener { }
+        } catch (e: Exception) {
+
         }
-        */
     }
 
     private suspend fun compareLastEdit() {
@@ -358,32 +351,6 @@ constructor(
 
         }
 
-    }
-
-    suspend fun compareLastNewItem() {
-        try {
-            firestoreUsedDbRef
-                .whereGreaterThan("insertDate", lastInsertDate.first().toString())
-                .get()
-                .addOnSuccessListener {
-                    Log.d(TAG, "Retrieve ${it.documents.size} new items")
-                    for (itemFirestore in it.documents) {
-                        Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            itemFirestore.toObject<Item>()?.let { it1 ->
-                                itemDao.insert(it1)
-                                Log.d(TAG, "Create new ${itemFirestore.toObject<Item>()}")
-                            }
-                        }
-                    }
-                    CoroutineScope(Dispatchers.IO).launch {
-                        compareLastEdit()
-                    }
-                }
-                .addOnFailureListener { }
-        } catch (e: Exception) {
-
-        }
     }
 
     private fun postItem(item: Item) = CoroutineScope(Dispatchers.IO).launch {
