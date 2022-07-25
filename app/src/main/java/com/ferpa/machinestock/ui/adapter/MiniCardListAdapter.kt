@@ -58,10 +58,10 @@ class MiniCardListAdapter(
         fun bind(item: Item) {
             binding.apply {
                 //Todo design de product icon
-                bindTextView(itemProduct, item.product[0].toString())
+                bindTextView(itemProduct, item.product)
                 itemProduct.visibility = View.GONE
 
-                bindTextView(itemBrand, item.brand)
+                bindTextView(itemBrand, item.getBrand())
                 bindTextView(itemFeature1, item.getFeatures())
                 bindTextView(itemFeature3, item.feature3)
                 bindTextView(itemType, " - ${item.getType()[0]}")
@@ -73,8 +73,7 @@ class MiniCardListAdapter(
         }
 
         private fun bindTextView(txtView: TextView, itemDetail: String?) {
-            if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail == "NO ESPECÍFICA")
-            ) {
+            if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == " -  ") || (itemDetail == "NO ESPECÍFICA")) {
                 txtView.visibility = View.GONE
             } else {
                 txtView.text = itemDetail
@@ -101,7 +100,6 @@ class MiniCardListAdapter(
                 }
             }
         }
-
     }
 
     interface OnChildItemClickListener {

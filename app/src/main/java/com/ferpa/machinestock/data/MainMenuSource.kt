@@ -1,5 +1,6 @@
 package com.ferpa.machinestock.data
 
+import android.icu.text.Normalizer.NO
 import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.utilities.MenuListUtil
 
@@ -97,6 +98,28 @@ object MainMenuSource {
                 sortBy = "product",
                 filterByProduct = listOf("NOT","GUILLOTINA","PLEGADORA","BALANCIN","TORNO"),
                 filterByStatus = listOf("A REPARAR","DISPONIBLE","RESERVADA","SEÑADA","NO INFORMADO")
+            ),
+            null
+        ),
+        MainMenuItem(
+            "Estado no informado",
+            null,
+            9,
+            false,
+            MenuListUtil(
+                sortBy = "product",
+                filterByStatus = listOf("NO INFORMADO")
+            ),
+            null
+        ),
+        MainMenuItem(
+            "Maquinas a reparar",
+            null,
+            10,
+            false,
+            MenuListUtil(
+                sortBy = "product",
+                filterByStatus = listOf("A REPARAR")
             ),
             null
         )

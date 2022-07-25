@@ -27,11 +27,9 @@ import com.ferpa.machinestock.databinding.FragmentAddItemBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
-import com.ferpa.machinestock.utilities.Const
 import com.ferpa.machinestock.utilities.Const.REQUEST_GALLERY_PHOTO
 import com.ferpa.machinestock.utilities.Const.REQUEST_TAKE_PHOTO
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
-import com.ferpa.machinestock.utilities.imageUtils.ImageManager.Companion.getReduceBitmapFromGallery
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.*
 import java.text.SimpleDateFormat
@@ -65,7 +63,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
 
         //Set interface type
         if (id > 0) {
-            setDetailItemInterface()
+            setEditItemInterface()
             newProduct = viewModel.currentItem.value?.product.toString()
         } else {
             newProduct = viewModel.getProduct()
@@ -90,6 +88,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 inputType = InputType.TYPE_NULL
             }
             itemStatus.apply {
+                setText("NO INFORMADO", TextView.BufferType.SPANNABLE)
                 setAdapter(setAdapterArray(R.array.status_options))
                 inputType = InputType.TYPE_NULL
             }
@@ -115,7 +114,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         }
     }
 
-    private fun setDetailItemInterface() {
+    private fun setEditItemInterface() {
         viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->
             item = selectedItem
             bindItemDetails(item)
@@ -159,15 +158,18 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             val ei = ExifInterface(viewModel.currentPhotoPath)
             val orientation = ei.getAttribute(ExifInterface.TAG_ORIENTATION)
-            val uriList = ImageManager.getReduceBitmapListFromCamera(viewModel.currentPhotoPath,
-                orientation?.toInt() ?: 0, requireContext())
+            val uriList = ImageManager.getReduceBitmapListFromCamera(
+                viewModel.currentPhotoPath,
+                orientation?.toInt() ?: 0, requireContext()
+            )
             viewModel.uploadPhoto(uriList[0])
             viewModel.uploadPhoto(uriList[1], true)
         } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
                 val image = data.data
                 if (image != null) {
-                    val uriList = ImageManager.getReducedBitmapListFromGallery(image, requireContext())
+                    val uriList =
+                        ImageManager.getReducedBitmapListFromGallery(image, requireContext())
                     viewModel.uploadPhoto(uriList[0])
                     viewModel.uploadPhoto(uriList[1], true)
                 }
@@ -235,14 +237,15 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         binding.apply {
             itemProduct.setText(item.product, TextView.BufferType.SPANNABLE)
             bindFeatures(item.product, item.feature1, item.feature2, item.feature3.toString())
-            itemBrand.setText(item.brand, TextView.BufferType.SPANNABLE)
+            itemBrand.setText(item.getBrand(), TextView.BufferType.SPANNABLE)
             itemInsideNumber.setText(item.insideNumber, TextView.BufferType.SPANNABLE)
             itemLocation.apply {
                 setText(item.getLocation(), TextView.BufferType.SPANNABLE)
                 setAdapter(setAdapterArray(R.array.location_options))
             }
             itemType.apply {
-                setText(item.getType(), TextView.BufferType.SPANNABLE)
+                val type = if (item.getType() == "") "NO ESPECÍFICA" else item.getType()
+                setText(type, TextView.BufferType.SPANNABLE)
                 setAdapter(setAdapterArray(R.array.type_options))
             }
             itemOwner2.setText(item.owner2.toString())
@@ -312,6 +315,38 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 }
                 binding.itemFeature2Label.setHint(R.string.item_weight_req)
             }
+            "PESTAÑADORA" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_length_req)
+                feature2?.let {
+                    binding.itemFeature2.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature2Label.setHint(R.string.item_width_guillotina_req)
+            }
+            "CILINDRO" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_length_req)
+                feature2?.let {
+                    binding.itemFeature2.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature2Label.setHint(R.string.item_width_guillotina_req)
+            }
             "BALANCIN" -> {
                 feature1?.let {
                     binding.itemFeature1.setText(
@@ -338,6 +373,58 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 }
                 binding.itemFeature2Label.setHint(R.string.item_width_torno_req)
             }
+            "COMPRESOR" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_hp_req)
+                feature2?.let {
+                    binding.itemFeature2.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature2Label.setHint(R.string.item_volt_req)
+            }
+            "CEPILLO" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_weight_req)
+                binding.itemFeature2.visibility = View.GONE
+            }
+            "CLARK" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_length_req)
+                binding.itemFeature2.visibility = View.GONE
+            }
+            "FRESADORA" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_length_req)
+                feature2?.let {
+                    binding.itemFeature2.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature2Label.setHint(R.string.item_num_req)
+            }
             "LIMADORA" -> {
                 feature1?.let {
                     binding.itemFeature1.setText(
@@ -346,6 +433,16 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                     )
                 }
                 binding.itemFeature1Label.setHint(R.string.item_length_req)
+                binding.itemFeature2.visibility = View.GONE
+            }
+            "PLASMA" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_amp_req)
                 binding.itemFeature2.visibility = View.GONE
             }
             "SERRUCHO" -> {
@@ -358,6 +455,16 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemFeature1Label.hint = getString(R.string.item_pulg_req)
                 binding.itemFeature2.visibility = View.GONE
             }
+            "PLATO" -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_length_req)
+                binding.itemFeature2.visibility = View.GONE
+            }
             "SOLDADURA" -> {
                 feature1?.let {
                     binding.itemFeature1.setText(
@@ -368,9 +475,29 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemFeature1Label.hint = getString(R.string.item_mig_req)
                 binding.itemFeature2.visibility = View.GONE
             }
+            "HIDROCOPIADOR" -> {
+                binding.apply {
+                    itemFeature1Label.visibility = View.GONE
+                    itemFeature2Label.visibility = View.GONE
+                }
+            }
+            else -> {
+                feature1?.let {
+                    binding.itemFeature1.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature1Label.setHint(R.string.item_optional_req)
+                feature2?.let {
+                    binding.itemFeature2.setText(
+                        it.toString(),
+                        TextView.BufferType.SPANNABLE
+                    )
+                }
+                binding.itemFeature2Label.setHint(R.string.item_optional_req)
+            }
         }
-
-        //TODO SetRemainsProductsBindFeatures
 
         if (feature3 != "null") {
             if (feature3 != "new") {
@@ -413,7 +540,6 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
-            //TODO This have to wait the response of the updating
             val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
             this.findNavController().navigate(action)
         }
@@ -439,8 +565,6 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
-
-            //TODO This have to wait the response of the updating
             val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
             this.findNavController().navigate(action)
         }
@@ -500,7 +624,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                         setNewItemInterface(newProduct)
                     })
             builder.create()
-            builder.setOnCancelListener{
+            builder.setOnCancelListener {
                 val action = AddItemFragmentDirections.actionAddItemFragmentToMenuFragment()
                 this.findNavController().navigate(action)
             }

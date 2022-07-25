@@ -17,6 +17,12 @@ interface ItemDao {
     @Delete
     suspend fun delete (item: Item)
 
+    @Query ("SELECT editDate from item ORDER BY editDate DESC LIMIT 1")
+    fun getLastUpdate(): Flow<String>
+
+    @Query ("SELECT insertDate from item ORDER BY insertDate DESC LIMIT 1")
+    fun getLastNewItem(): Flow<String>
+
     @Query ("SELECT * from item WHERE ID = :id")
     fun getItem(id: Long): Flow<Item>
 

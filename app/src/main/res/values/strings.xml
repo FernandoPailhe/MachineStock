@@ -39,13 +39,13 @@
     </string-array>
 
     <string-array name="status_options">
-        <item>A reparar</item>
-        <item>Disponible</item>
-        <item>Reservada</item>
-        <item>Señada</item>
-        <item>Vendida</item>
-        <item>Retirada</item>
-        <item>No informado</item>
+        <item>A REPARAR</item>
+        <item>DISPONIBLE</item>
+        <item>RESERVADA</item>
+        <item>SEÑADA</item>
+        <item>VENDIDA</item>
+        <item>RETIRADA</item>
+        <item>NO INFORMADO</item>
     </string-array>
 
     <string-array name="product_options">
@@ -57,9 +57,12 @@
         <item>CILINDRO</item>
         <item>COMPRESOR</item>
         <item>FRESADORA</item>
+        <item>PESTAÑADORA</item>
+        <item>CREADORA</item>
         <item>PLASMA</item>
         <item>SERRUCHO</item>
         <item>SOLDADURA</item>
+        <item>HIDROCOPIADOR</item>
         <item>OTROS</item>
     </string-array>
 
@@ -131,6 +134,7 @@
     <string name="add_new_item">Add Item</string>
     <string name="currency_symbol">$</string>
     <string name="dialog_new_product_title">Nuevo ingreso:</string>
+    <string name="dialog_new_status">Selecciona estado:</string>
     <string name="filter_ok">Listo</string>
     <string name="filter_cancel">Cancelar</string>
     <string name="shared_ownership">Sociedad</string>
@@ -143,8 +147,9 @@
     <string name="percent_simbol">%</string>
     <string name="photo_upload_successfuly">La foto se ha subido correctamente</string>
     <string name="photo_upload_fail">Fallo en la carga de la foto, intentalo nuevamente</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="item_num_req">N °</string>
+    <string name="item_amp_req">en amp*</string>
+    <string name="item_optional_req">medidas opcionales</string>
+    <string name="no_internet">Base de datos desactualizada, no hay internet</string>
 
 </resources>

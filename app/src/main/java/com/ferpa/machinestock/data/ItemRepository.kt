@@ -7,9 +7,16 @@ import androidx.lifecycle.asLiveData
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.network.ItemsApi
+import com.ferpa.machinestock.utilities.Const.USED_FIRESTORE_DB
 import com.ferpa.machinestock.utilities.CustomListUtil
 import com.ferpa.machinestock.utilities.MenuListUtil
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlin.Exception
 
 class ItemRepository
@@ -23,6 +30,14 @@ constructor(
         .asLiveData().value!!.size else 200
 
     private val allItems = itemDao.getAll()
+
+    val isLocalDbUpdated = MutableStateFlow(false)
+
+    private val lastUpdate = itemDao.getLastUpdate()
+
+    private val lastInsertDate = itemDao.getLastNewItem()
+
+    private val firestoreUsedDbRef = Firebase.firestore.collection(USED_FIRESTORE_DB)
 
     val productArray = itemDao.getProductList()
 
@@ -172,7 +187,7 @@ constructor(
     private fun getMenuItemList() = flow<List<MainMenuItem>> {
 
         val menuList = arrayListOf<MainMenuItem>()
-        MainMenuSource.mainMenu.forEach {
+        MainMenuSource.mainMenu.sortedBy{it.priority}.forEach {
             menuList.add(createMenuItem(it))
         }
 
@@ -270,33 +285,25 @@ constructor(
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insertItem(item: Item) {
+        postItem(item)
         itemDao.insert(item)
     }
 
-    suspend fun postItem(item: Item) {
-        try {
-            itemsApi.postNewItem(item)
-        } catch (e: Exception) {
-            Log.d("PostItem", e.toString())
-            //TODO Save action to try it again later
-        }
+    suspend fun updateStatus(item: Item) {
+        postUpdateStatus(item)
+        itemDao.update(item)
     }
 
     suspend fun updateItem(item: Item) {
+        postItem(item)
         itemDao.update(item)
-        try {
-            itemsApi.updateItem(item)
-        } catch (e: Exception) {
-            Log.d("UpdateItem", e.toString())
-            //TODO Save action to try it again later
-        }
     }
-
 
     /*
     Network
      */
     suspend fun compareDatabases() {
+
         /*
         val getItemsFromNetwork = itemsApi.getAllItems()
         var needUpdate = true
@@ -327,15 +334,108 @@ constructor(
         */
     }
 
-    //TODO Delete when this will not more necessary
-    suspend fun populateDb() {
-        allItems.collect { list ->
-            list.forEach { item ->
-                try {
-                    itemsApi.postNewItem(item)
-                } catch (e: Exception) {
-                    Log.d("PostItem", e.toString())
+    private suspend fun compareLastEdit() {
+        try {
+            firestoreUsedDbRef
+                .whereGreaterThan("editDate", lastUpdate.first().toString())
+                .get()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Retrieve ${it.documents.size} edited items")
+                    for (itemFirestore in it.documents) {
+                        Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            itemFirestore.toObject<Item>()?.let { it1 ->
+                                itemDao.update(it1)
+                                Log.d(TAG, "Update ${itemFirestore.toObject<Item>()}")
+                            }
+                        }
+                    }
+                    isLocalDbUpdated.value = true
+                }.addOnFailureListener {
+
                 }
+        } catch (e: Exception) {
+
+        }
+
+    }
+
+    suspend fun compareLastNewItem() {
+        try {
+            firestoreUsedDbRef
+                .whereGreaterThan("insertDate", lastInsertDate.first().toString())
+                .get()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Retrieve ${it.documents.size} new items")
+                    for (itemFirestore in it.documents) {
+                        Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            itemFirestore.toObject<Item>()?.let { it1 ->
+                                itemDao.insert(it1)
+                                Log.d(TAG, "Create new ${itemFirestore.toObject<Item>()}")
+                            }
+                        }
+                    }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        compareLastEdit()
+                    }
+                }
+                .addOnFailureListener { }
+        } catch (e: Exception) {
+
+        }
+    }
+
+    private fun postItem(item: Item) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            firestoreUsedDbRef.document(item.id.toString()).set(item).addOnSuccessListener {
+                Log.d(TAG, "Post ${item.id} Succes")
+            }.addOnFailureListener { e ->
+                Log.d(TAG, "PostItem in Firestore -> $e")
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "PostItem in Firestore -> $e")
+        }
+    }
+
+    private fun postUpdateStatus(item: Item) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            firestoreUsedDbRef.document(item.id.toString())
+                .update(
+                    "status", item.status,
+                    "editDate", item.editDate,
+                    "editUser", item.editUser
+                )
+                .addOnSuccessListener {
+                    Log.d(TAG, "${item.id} New Status -> ${item.status} Succes")
+                }.addOnFailureListener { e ->
+                    Log.d(TAG, "NewStatus in Firestore -> $e")
+                }
+        } catch (e: Exception) {
+            Log.d(TAG, "NewStatus in Firestore -> $e")
+        }
+    }
+
+    fun retrieveItem(id: Long) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val querySnapshot =
+                firestoreUsedDbRef.document(id.toString()).get().addOnSuccessListener {
+                    val item = it.toObject<Item>()
+                }.addOnFailureListener {
+                    Log.d(TAG, "Retrieve Item $id in Firestore -> $it")
+                }
+        } catch (e: Exception) {
+
+        }
+    }
+
+    private fun subscribeToRealtimeUpdates() {
+        firestoreUsedDbRef.addSnapshotListener { querySnapshot, firestoreException ->
+            firestoreException?.let {
+                Log.d(TAG, it.message.toString())
+            }
+            querySnapshot?.let {
+
             }
         }
     }

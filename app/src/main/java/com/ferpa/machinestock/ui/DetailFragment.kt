@@ -2,6 +2,9 @@ package com.ferpa.machinestock.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -56,6 +59,15 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
         setDetailItemInterface()
 
+        binding.editStatusAction.setOnClickListener{
+            selectStatusDialog(savedInstanceState)
+        }
+
+    }
+
+    override fun onResume() {
+        setDetailItemInterface()
+        super.onResume()
     }
 
     /*
@@ -72,7 +84,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
         binding.apply {
             bindTextView(itemProduct, item.product)
-            bindTextView(itemBrand, item.brand)
+            bindTextView(itemBrand, item.getBrand())
             bindTextView(itemFeature1, item.getFeatures())
             bindTextView(itemFeature3, item.feature3)
             bindTextView(itemInsideNumber, item.getInsideNumber())
@@ -82,8 +94,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             bindTextView(itemObservations, item.getObservations())
             bindTextView(itemStatus, item.status)
 
-            itemOwner2.text = item.owner2.toString()
-            itemOwner1.text = item.owner1.toString()
+            itemOwner2.text = item.getOwnership()
+            //itemOwner1.text = item.owner1.toString()
 
             photoViewPager.adapter = PhotoAdapter(item.getMachinePhotoList(), this@DetailFragment)
 
@@ -111,10 +123,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     }
 
     private fun bindTextView(txtView: TextView, itemDetail: String?) {
-        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == "") || (itemDetail.equals(
-                "NO ESPECÍFICA"
-            ))
-        ) {
+        if ((itemDetail.equals("null")) || (itemDetail == null) || (itemDetail == " ") || (itemDetail == "")) {
             txtView.visibility = View.GONE
         } else {
             txtView.text = itemDetail
@@ -126,7 +135,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     */
     private fun shareProduct() {
 
-        if (item.getMachinePhotoList().isEmpty()) {
+        if (item.photos == "0") {
             shareIndexCard(getShareIndexCard(true))
         } else {
             shareIndexCardWithImages(item.getMachinePhotoList())
@@ -168,10 +177,10 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
         if (item.brand != null) {
             indexCard += resources.getString(
                 R.string.index_card_brand,
-                item.brand
+                item.getBrand()
             )
         }
-        if (item.feature1 != null) {
+        if (item.feature1 != null || item.feature2 != null) {
             indexCard += resources.getString(
                 R.string.index_card_features,
                 item.getFeatures()
@@ -341,6 +350,24 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             )
             this.findNavController().navigate(action)
         }
+    }
+
+    /*
+    New status dialog
+     */
+    private fun selectStatusDialog(savedInstanceState: Bundle?): Dialog {
+        val arrayList = resources.getStringArray(R.array.status_options)
+        return activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(R.string.dialog_new_status)
+                .setItems(
+                    R.array.status_options,
+                    DialogInterface.OnClickListener { dialog, which ->
+                        viewModel.setUpdateStatus(arrayList[which].toString())
+                    })
+            builder.create()
+            builder.show()
+        } ?: throw IllegalStateException("Activity cannot be null")
     }
 
     companion object {

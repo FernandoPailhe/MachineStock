@@ -16,6 +16,10 @@ object Const {
     const val FIRESTORAGE_BASE_URL = "gs://machinestock.appspot.com/"
     const val USED_MACHINES_PHOTO_BASE_URL = "usedmachinesphotos"
 
+    const val BASE_FIRESTORE = "company_user"
+    const val COMPANY_USER = "/canavese"
+    const val USED_FIRESTORE_DB = "$BASE_FIRESTORE$COMPANY_USER/used_machines"
+
     const val REQUEST_GALLERY_PHOTO = 199
     const val REQUEST_TAKE_PHOTO = 198
 

@@ -15,8 +15,8 @@ import java.util.*
 @Entity(tableName = "item")
 data class Item(
     @PrimaryKey(autoGenerate = true) val id: Long = newProductId(),
-    @ColumnInfo(name = "insertDate") val insertDate: String? = getCurrentDate(),
-    @ColumnInfo(name = "product") val product: String,
+    @ColumnInfo(name = "insertDate") val insertDate: String? = getTimeStamp(),
+    @ColumnInfo(name = "product") val product: String = "OTROS",
     @ColumnInfo(name = "owner1") val owner1: Int? = 0,
     @ColumnInfo(name = "owner2") val owner2: Int? = 0,
     @ColumnInfo(name = "insideNumber") val insideNumber: String? = "",
@@ -28,23 +28,27 @@ data class Item(
     @ColumnInfo(name = "price") val price: Double? = 0.0,
     @ColumnInfo(name = "currency") val currency: String? = "$",
     @ColumnInfo(name = "type") val type: String? = "",
-    @ColumnInfo(name = "status") val status: String? = "No informado",
+    @ColumnInfo(name = "status") val status: String? = "NO INFORMADO",
     @ColumnInfo(name = "observations") val observations: String? = null,
-    @ColumnInfo(name = "editDate") var editDate: String? = getCurrentDate(),
+    @ColumnInfo(name = "editDate") var editDate: String? = getTimeStamp(),
     @ColumnInfo(name = "editUser") var editUser: String? = null,
     @ColumnInfo(name = "excelText") val excelText: String? = null,
     @ColumnInfo(name = "photos") var photos: String? = "0"
 )
 
+fun Item.getBrand(): String? {
+    return brand?.uppercase()
+}
+
 fun Item.getName(): String? {
 
-    var itemName = brand
+    var itemName = brand?.uppercase()
 
     if (brand != null) {
         when (type) {
-            "H" -> itemName = "$brand - Hidráulica"
-            "N" -> itemName = "$brand - Neumática"
-            "M" -> itemName = "$brand - Mecánica"
+            "H" -> itemName = "${brand.uppercase()} - Hidráulica"
+            "N" -> itemName = "${brand.uppercase()} - Neumática"
+            "M" -> itemName = "${brand.uppercase()} - Mecánica"
         }
     } else {
         itemName = excelText.toString()
@@ -57,7 +61,7 @@ fun Item.getType(): String {
         "H" -> "Hidráulica"
         "N" -> "Neumática"
         "M" -> "Mecánica"
-        else -> "NO ESPECÍFICA"
+        else -> " "
     }
 }
 
@@ -83,12 +87,14 @@ fun Item.getFeatures(): String {
     var features = when (product) {
         "GUILLOTINA" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} mm"
         "PLEGADORA" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} tns"
+        "PESTAÑADORA" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} mm"
+        "CILINDRO" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} mm"
         "BALANCIN" -> "${formatNumber(feature1)} tns"
-        "TORNO" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} mm"
-        "COMPRESOR" -> "${formatNumber(feature1)} hp / ${formatNumber(feature2)} Volts"
+        "TORNO" -> "${formatNumber(feature2)} mm x ${formatNumber(feature1)} mm"
+        "COMPRESOR" -> "${formatNumber(feature1)} hp" + if (feature2 != null) "/ ${formatNumber(feature2)} Volts" else ""
         "CEPILLO" -> "${formatNumber(feature1)} tns"
         "CLARK" -> "${formatNumber(feature1)} mm"
-        "FRESADORA" -> "${formatNumber(feature1)} mm"
+        "FRESADORA" -> if (feature1 != null) "${formatNumber(feature1)} mm" else if (feature2 != null) "N° ${formatNumber(feature2)}" else ""
         "LIMADORA" -> "${formatNumber(feature1)} mm"
         "PLASMA" -> "${formatNumber(feature1)} amp"
         "PLATO" -> "${formatNumber(feature1)} mm"
@@ -99,7 +105,7 @@ fun Item.getFeatures(): String {
         else -> excelText.toString()
     }
 
-    if (features == "null" || feature1 == null) {
+    if (features == "null") {
         features = ""
     }
 
@@ -111,6 +117,8 @@ fun Item.getLocation(): String? {
     return when (location) {
         "Zoi" -> Const.LOCATION_1
         "Can" -> Const.LOCATION_2
+        "Zoilo" -> Const.LOCATION_1
+        "Canavese" -> Const.LOCATION_2
         else -> "A definir"
     }
 }
@@ -123,6 +131,22 @@ fun Item.getInsideNumber(): String? {
         null
     }
 
+}
+
+fun Item.getOwnership(): String?{
+    return if (owner1 == 100){
+        Const.OWNER_1
+    } else if (owner2 == 100){
+        Const.OWNER_2
+    } else if (owner1 != null || owner2 != null) {
+        if (owner1 == 0 && owner2 == 0){
+            "Falta completar datos"
+        } else {
+            "${Const.OWNER_2} ${owner2}% - ${Const.OWNER_1} ${owner1}%"
+        }
+    } else {
+        "Falta completar datos de propiedad"
+    }
 }
 
 fun Item.getBackgroundColor(): Int {
@@ -180,14 +204,14 @@ fun formatNumber(number: Double?): String {
 }
 
 @SuppressLint("SimpleDateFormat")
-fun getCurrentDate(): String {
-    val sdf = SimpleDateFormat("yyyy-MM-dd-hh-mm")
+fun getTimeStamp(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
     return sdf.format(Date())
 }
 
 @SuppressLint("SimpleDateFormat")
 fun newProductId(): Long {
-    val sdf = SimpleDateFormat("yyMMddhhmmssSSS")
+    val sdf = SimpleDateFormat("yyMMddHHmmssSSS")
     return (sdf.format(Date())).toLong()
 }
 

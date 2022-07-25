@@ -18,12 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().apply {
-            /* TODO Compare and update database first
-             * setKeepOnScreenCondition {
-            }
-            **/
-        }
+        installSplashScreen()
         setContentView(R.layout.activity_main)
 
         /*

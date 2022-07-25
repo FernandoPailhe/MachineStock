@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -46,12 +47,18 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
 
         menuListAdapter = MenuListAdapter(this)
 
+        lifecycleScope.launchWhenStarted {
+            viewModel.isDbUpdate.collect {
+                if (it) {
+                    subscribeUi(menuListAdapter)
+                }
+            }
+        }
 
-        subscribeUi(menuListAdapter)
-
-        binding.apply {
+        binding.apply{
             menuRecyclerView.adapter = menuListAdapter
-            menuRecyclerView.layoutManager = LinearLayoutManager(this@MenuFragment.requireContext())
+            menuRecyclerView.layoutManager =
+                LinearLayoutManager(this@MenuFragment.requireContext())
 
             menuAction.setOnClickListener {
                 //TODO Implement option menu

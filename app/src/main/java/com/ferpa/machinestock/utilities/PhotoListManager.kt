@@ -3,7 +3,7 @@ package com.ferpa.machinestock.utilities
 import android.util.Log
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MachinePhoto
-import com.ferpa.machinestock.model.getCurrentDate
+import com.ferpa.machinestock.model.getTimeStamp
 import com.ferpa.machinestock.utilities.Const.USED_MACHINES_PHOTO_BASE_URL
 
 class PhotoListManager {
@@ -122,7 +122,7 @@ class PhotoListManager {
         }
 
         private fun updatePhotoList(item: Item, newList: String): Item {
-            item.editDate = getCurrentDate()
+            item.editDate = getTimeStamp()
             item.photos = newList
 
             return item
