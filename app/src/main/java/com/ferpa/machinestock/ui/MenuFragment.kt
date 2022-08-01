@@ -16,6 +16,9 @@ import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import com.ferpa.machinestock.databinding.FragmentMenuBinding
 import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.adapter.MenuListAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -45,12 +48,19 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(Firebase.auth.currentUser == null) {
+            val action = MenuFragmentDirections.actionMenuFragmentToHomeFragment()
+            findNavController().navigate(action)
+        }
+
         menuListAdapter = MenuListAdapter(this)
 
         lifecycleScope.launchWhenStarted {
             viewModel.isDbUpdate.collect {
                 if (it) {
                     subscribeUi(menuListAdapter)
+                } else {
+                    Toast.makeText(this@MenuFragment.requireContext(), R.string.db_update_process, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -60,13 +70,20 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
             menuRecyclerView.layoutManager =
                 LinearLayoutManager(this@MenuFragment.requireContext())
 
-            menuAction.setOnClickListener {
-                //TODO Implement option menu
+            editListAction.setOnClickListener {
+                viewModel.setEditList(true)
+                val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment()
+                findNavController().navigate(action)
             }
 
             searchAction.setOnClickListener {
+                viewModel.setEditList(false)
                 val action = MenuFragmentDirections.actionMenuFragmentToItemListFragment()
                 findNavController().navigate(action)
+            }
+
+            updateAction.setOnClickListener {
+                viewModel.compareDatabases()
             }
 
             floatingActionButtonAddItem.setOnClickListener {
@@ -106,6 +123,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
                 }
             }
         }
+        Toast.makeText(this.context, R.string.db_updated, Toast.LENGTH_LONG).show()
     }
 
     override fun onItemClick(mainPosition: Int, childPosition: Int) {

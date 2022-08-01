@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "659280880124-c3rhv34v4d967davu70lqs2g85sr022q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ferpa.machinestock",
+            "certificate_hash": "497a7830bedd5d99c44e7e00945ab81e8f25bf42"
+          }
+        },
+        {
           "client_id": "659280880124-hlnf3n2omapabtdrov0gum0j29npnb0j.apps.googleusercontent.com",
           "client_type": 3
         }

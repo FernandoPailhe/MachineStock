@@ -57,10 +57,8 @@ class MiniCardListAdapter(
 
         fun bind(item: Item) {
             binding.apply {
-                //Todo design de product icon
                 bindTextView(itemProduct, item.product)
                 itemProduct.visibility = View.GONE
-
                 bindTextView(itemBrand, item.getBrand())
                 bindTextView(itemFeature1, item.getFeatures())
                 bindTextView(itemFeature3, item.feature3)
@@ -89,9 +87,17 @@ class MiniCardListAdapter(
                     "TORNO" -> R.drawable.s_torno
                     "FRESADORA" -> R.drawable.s_fresadora
                     "PLASMA" -> R.drawable.s_plasma
+                    "PLATO" -> R.drawable.s_plato
+                    "RECTIFICADORA" -> R.drawable.s_rectificadora
                     else -> R.drawable.ic_machine_icon
                 }
-                binding.miniCardImageView.setImageResource(photoResource)
+                if (photoResource == R.drawable.ic_machine_icon) {
+                    binding.miniCardImageView.visibility = View.GONE
+                    binding.textProductTitle.text = item.product
+                    binding.textProductTitle.visibility = View.VISIBLE
+                } else {
+                    binding.miniCardImageView.setImageResource(photoResource)
+                }
             } else {
                 FirebaseStorage.getInstance().reference.child(PhotoListManager.getMachinePhotoList(item,true)[0].imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
                     Picasso.get()

@@ -135,19 +135,12 @@
                             android:orientation="horizontal">
 
                             <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/item_owner2"
+                                android:id="@+id/item_owner"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/margin_between_text"
                                 android:singleLine="true"
                                 tools:text="Owner 2 50%" />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/item_owner1"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                tools:text="Owner 1 50%" />
 
                         </LinearLayout>
 
@@ -214,11 +207,21 @@
                             android:id="@+id/item_inside_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="right"
+                            android:layout_gravity="end"
                             android:layout_marginBottom="@dimen/margin"
                             android:padding="@dimen/detail_padding"
                             android:singleLine="true"
                             tools:text="Codigo: 5675 C" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/item_edit_user"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginBottom="@dimen/margin"
+                            android:padding="@dimen/detail_padding"
+                            android:singleLine="true"
+                            tools:text="Ultima edición: usuario" />
 
                     </LinearLayout>
 

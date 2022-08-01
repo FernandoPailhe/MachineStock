@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentAddItemBinding
 import com.ferpa.machinestock.model.*
@@ -50,7 +49,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddItemBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -103,7 +102,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             itemProduct.setText(newProduct)
             galleryAction.visibility = View.GONE
             cameraAction.visibility = View.GONE
-            recyclerViewLayout.visibility = View.GONE
+            addItemPhotoViewPager.visibility = View.GONE
             saveAction.setOnClickListener {
                 addNewItem()
             }
@@ -153,6 +152,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     }
 
     //Add Image
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
@@ -261,7 +261,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             }
 
             if (item.photos == "0") {
-                recyclerViewLayout.visibility = View.GONE
+                addItemPhotoViewPager.visibility = View.GONE
             }
 
             galleryAction.isEnabled = true
@@ -510,14 +510,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
 
     private fun bindPhotoRecyclerView(item: Item) {
 
-        if (item.getMachinePhotoList().isEmpty()) {
-            binding.photoRecyclerView.visibility = View.GONE
-        } else {
-            val photoAdapter = PhotoAdapter(item.getMachinePhotoList(), this)
-            binding.photoRecyclerView.layoutManager =
-                LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
-            binding.photoRecyclerView.adapter = photoAdapter
-        }
+        binding.addItemPhotoViewPager.adapter = PhotoAdapter(item.getMachinePhotoList(), this@AddItemFragment)
 
     }
 

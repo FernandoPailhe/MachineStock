@@ -1,5 +1,6 @@
 package com.ferpa.machinestock.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -54,12 +55,25 @@ class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), P
         binding.apply {
 
             deleteAction.setOnClickListener {
-                //TODO Implement are you sure dialog
-                viewModel.deletePhoto(item, fullScreenPhotoViewPager.currentItem)
+                val builder = AlertDialog.Builder(this@FullScreenImageFragment.context)
+                builder.setMessage(R.string.dialog_delete_photo)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.dialog_yes) { dialog, id ->
+                        viewModel.deletePhoto(item, fullScreenPhotoViewPager.currentItem)
+                    }
+                    .setNegativeButton(R.string.dialog_no) { dialog, id ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
+
             }
+
+            //TODO Implement reorganize photos
             setFirstImageAction.setOnClickListener {
-                //TODO Implement reorganize photos
+
             }
+            setFirstImageAction.visibility = View.GONE
 
         }
 

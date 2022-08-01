@@ -93,9 +93,9 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             bindTextView(itemPrice, item.getFormattedPrice(true))
             bindTextView(itemObservations, item.getObservations())
             bindTextView(itemStatus, item.status)
+            bindTextView(itemEditUser, item.getEditUser())
 
-            itemOwner2.text = item.getOwnership()
-            //itemOwner1.text = item.owner1.toString()
+            itemOwner.text = item.getOwnership()
 
             photoViewPager.adapter = PhotoAdapter(item.getMachinePhotoList(), this@DetailFragment)
 

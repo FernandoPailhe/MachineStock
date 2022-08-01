@@ -7,6 +7,9 @@ import androidx.lifecycle.*
 import com.ferpa.machinestock.data.ItemRepository
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.utilities.PhotoListManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,6 +41,9 @@ constructor(private val itemRepository: ItemRepository) :
     private val _isDbUpdate = itemRepository.isLocalDbUpdated
     val isDbUpdate: StateFlow<Boolean> get() = _isDbUpdate
 
+    private val _isEditList = MutableStateFlow(false)
+    val isEditList: StateFlow<Boolean> get() = _isEditList
+
     private var _currentItem: LiveData<Item> = itemRepository.getItem(currentId.value).asLiveData()
     val currentItem: LiveData<Item> get() = _currentItem
 
@@ -56,10 +62,14 @@ constructor(private val itemRepository: ItemRepository) :
         _currentItem = itemRepository.getItem(currentId.value).asLiveData()
     }
 
+    fun setEditList(isEditList: Boolean){
+        _isEditList.value = isEditList
+    }
+
     /*
     Network
      */
-    private fun compareDatabases() {
+    fun compareDatabases() {
         viewModelScope.launch {
             try {
                 itemRepository.compareLastNewItem()
@@ -67,6 +77,10 @@ constructor(private val itemRepository: ItemRepository) :
                 Log.e(TAG, "CompareNetworkItems $e")
             }
         }
+    }
+
+    fun createUser(uid: String, userMap: Map<String, String>){
+        itemRepository.createNewUser(uid, userMap)
     }
 
     /*
@@ -228,7 +242,7 @@ constructor(private val itemRepository: ItemRepository) :
             type = type,
             status = status?.uppercase(),
             observations = observations,
-            editUser = "",
+            editUser = Firebase.auth.currentUser?.displayName.toString()
         )
     } //Build new item Object
 
@@ -253,6 +267,7 @@ constructor(private val itemRepository: ItemRepository) :
             type = item.type,
             status = status?.uppercase(),
             observations = item.observations,
+            editUser = Firebase.auth.currentUser?.displayName.toString(),
             photos = item.photos
         )
     } //Build new status item Object
@@ -291,6 +306,7 @@ constructor(private val itemRepository: ItemRepository) :
             type = type,
             status = status?.uppercase(),
             observations = observations,
+            editUser = Firebase.auth.currentUser?.displayName.toString(),
             photos = item.photos
         )
     } //Build edit item Object

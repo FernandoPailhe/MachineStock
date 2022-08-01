@@ -40,6 +40,16 @@ fun Item.getBrand(): String? {
     return brand?.uppercase()
 }
 
+fun Item.getEditUser(): String? {
+    return if (editUser == null) {
+        null
+    } else if (editUser.equals("Admin")) {
+        null
+    } else {
+        "Ultima edición: $editUser"
+    }
+}
+
 fun Item.getName(): String? {
 
     var itemName = brand?.uppercase()
@@ -91,10 +101,18 @@ fun Item.getFeatures(): String {
         "CILINDRO" -> "${formatNumber(feature1)} mm x ${formatNumber(feature2)} mm"
         "BALANCIN" -> "${formatNumber(feature1)} tns"
         "TORNO" -> "${formatNumber(feature2)} mm x ${formatNumber(feature1)} mm"
-        "COMPRESOR" -> "${formatNumber(feature1)} hp" + if (feature2 != null) "/ ${formatNumber(feature2)} Volts" else ""
+        "COMPRESOR" -> "${formatNumber(feature1)} hp" + if (feature2 != null) "/ ${
+            formatNumber(
+                feature2
+            )
+        } Volts" else ""
         "CEPILLO" -> "${formatNumber(feature1)} tns"
         "CLARK" -> "${formatNumber(feature1)} mm"
-        "FRESADORA" -> if (feature1 != null) "${formatNumber(feature1)} mm" else if (feature2 != null) "N° ${formatNumber(feature2)}" else ""
+        "FRESADORA" -> if (feature1 != null) "${formatNumber(feature1)} mm" else if (feature2 != null) "N° ${
+            formatNumber(
+                feature2
+            )
+        }" else ""
         "LIMADORA" -> "${formatNumber(feature1)} mm"
         "PLASMA" -> "${formatNumber(feature1)} amp"
         "PLATO" -> "${formatNumber(feature1)} mm"
@@ -125,7 +143,7 @@ fun Item.getLocation(): String? {
 
 fun Item.getInsideNumber(): String? {
 
-    return if (insideNumber != null){
+    return if (insideNumber != null) {
         "Código: $insideNumber"
     } else {
         null
@@ -133,13 +151,13 @@ fun Item.getInsideNumber(): String? {
 
 }
 
-fun Item.getOwnership(): String?{
-    return if (owner1 == 100){
+fun Item.getOwnership(): String? {
+    return if (owner1 == 100) {
         Const.OWNER_1
-    } else if (owner2 == 100){
+    } else if (owner2 == 100) {
         Const.OWNER_2
     } else if (owner1 != null || owner2 != null) {
-        if (owner1 == 0 && owner2 == 0){
+        if (owner1 == 0 && owner2 == 0) {
             "Falta completar datos"
         } else {
             "${Const.OWNER_2} ${owner2}% - ${Const.OWNER_1} ${owner1}%"
@@ -164,7 +182,7 @@ fun Item.getBackgroundColor(): Int {
 }
 
 fun Item.getStatus(): String {
-    return if (status == null || status == ""){
+    return if (status == null || status == "") {
         "NO INFORMADO"
     } else {
         status.uppercase(Locale.getDefault())
@@ -179,15 +197,25 @@ fun Item.addNewPhoto(): String {
     return PhotoListManager.getNewPhotoUrl(this)
 }
 
-fun Item.getObservations(): String{
+fun Item.getObservations(): String {
 
-    return if (observations?.startsWith("SUF_", true) == true || observations?.startsWith("2SUF_", true) == true){
+    return if (observations?.startsWith("SUF_", true) == true || observations?.startsWith(
+            "2SUF_",
+            true
+        ) == true
+    ) {
         ""
     } else {
         observations ?: ""
     }
 
 }
+
+fun Item.getFirstLineInfo(): String ="${product.lowercase().replaceFirstChar {it.uppercase()}} ${getBrand()}"
+
+fun Item.getSecondLineInfo(): String = "${getFeatures()} ${getType()}"
+
+fun Item.getOneLineInfo(): String = "${product.lowercase().replaceFirstChar {it.uppercase()}} ${getBrand()} ${getFeatures()} ${getType()}"
 
 fun formatNumber(number: Double?): String {
 

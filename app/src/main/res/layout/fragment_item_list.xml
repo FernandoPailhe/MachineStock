@@ -192,6 +192,7 @@
                                 </LinearLayout>
 
                                 <com.google.android.material.divider.MaterialDivider
+                                    android:id="@+id/divider_1"
                                     android:layout_width="1dp"
                                     android:layout_height="match_parent" />
 
@@ -312,8 +313,7 @@
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/margin_between_elements"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@+id/list_title"
-            tools:listitem="@layout/list_item" />
+            tools:listitem="@layout/edit_list_item" />
 
     </LinearLayout>
 

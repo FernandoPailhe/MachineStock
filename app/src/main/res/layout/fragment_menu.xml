@@ -27,9 +27,18 @@
 
                 <ImageButton
                     android:id="@+id/menu_action"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_menu_24"
+                    android:background="@color/noneColor"
+                    android:layout_margin="@dimen/margin_between_elements"/>
+
+                <ImageButton
+                    android:id="@+id/edit_list_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_edit_list_24"
                     android:background="@color/noneColor"
                     android:layout_margin="@dimen/margin_between_elements"/>
 
@@ -38,6 +47,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_search_24_white"
+                    android:background="@color/noneColor"
+                    android:layout_margin="@dimen/margin_between_elements"/>
+
+                <ImageButton
+                    android:id="@+id/update_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_update_24"
                     android:background="@color/noneColor"
                     android:layout_margin="@dimen/margin_between_elements"/>
 

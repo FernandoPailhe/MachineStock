@@ -39,13 +39,13 @@
     </string-array>
 
     <string-array name="status_options">
+        <item>NO INFORMADO</item>
         <item>A REPARAR</item>
         <item>DISPONIBLE</item>
         <item>RESERVADA</item>
         <item>SEÑADA</item>
         <item>VENDIDA</item>
         <item>RETIRADA</item>
-        <item>NO INFORMADO</item>
     </string-array>
 
     <string-array name="product_options">
@@ -151,5 +151,11 @@
     <string name="item_amp_req">en amp*</string>
     <string name="item_optional_req">medidas opcionales</string>
     <string name="no_internet">Base de datos desactualizada, no hay internet</string>
+    <string name="web_client_id">659280880124-hlnf3n2omapabtdrov0gum0j29npnb0j.apps.googleusercontent.com</string>
+    <string name="dialog_delete_photo">¿Queres eliminar la foto?</string>
+    <string name="dialog_yes">Si</string>
+    <string name="dialog_no">No</string>
+    <string name="db_updated">Página actualizada</string>
+    <string name="db_update_process">Actualizando...</string>
 
 </resources>

@@ -8,6 +8,7 @@ import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.network.ItemsApi
 import com.ferpa.machinestock.utilities.Const.USED_FIRESTORE_DB
+import com.ferpa.machinestock.utilities.Const.USERS_FIRESTORE_DB
 import com.ferpa.machinestock.utilities.CustomListUtil
 import com.ferpa.machinestock.utilities.MenuListUtil
 import com.google.firebase.firestore.ktx.firestore
@@ -38,6 +39,8 @@ constructor(
 
     private val firestoreUsedDbRef = Firebase.firestore.collection(USED_FIRESTORE_DB)
 
+    private val firestoreUsersDbRef = Firebase.firestore.collection(USERS_FIRESTORE_DB)
+
     val productArray = itemDao.getProductList()
 
     val itemsFlow: Flow<List<Item>> = getCustomQuery()
@@ -47,7 +50,8 @@ constructor(
     Custom List Queries
      */
     private fun getCustomQuery() = flow {
-
+        //TODO check if this work fine
+        compareLastNewItem()
         val productList = listOf(customListUtil.getProduct())
 
         val flow =
@@ -308,12 +312,15 @@ constructor(
                 .get()
                 .addOnSuccessListener {
                     Log.d(TAG, "Retrieve ${it.documents.size} new items")
-                    for (itemFirestore in it.documents) {
-                        Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            itemFirestore.toObject<Item>()?.let { it1 ->
-                                itemDao.insert(it1)
-                                Log.d(TAG, "Create new ${itemFirestore.toObject<Item>()}")
+                    if (it.documents.size > 0 ) {
+                        isLocalDbUpdated.value = false
+                        for (itemFirestore in it.documents) {
+                            Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                itemFirestore.toObject<Item>()?.let { it1 ->
+                                    itemDao.insert(it1)
+                                    Log.d(TAG, "Create new ${itemFirestore.toObject<Item>()}")
+                                }
                             }
                         }
                     }
@@ -334,12 +341,15 @@ constructor(
                 .get()
                 .addOnSuccessListener {
                     Log.d(TAG, "Retrieve ${it.documents.size} edited items")
-                    for (itemFirestore in it.documents) {
-                        Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            itemFirestore.toObject<Item>()?.let { it1 ->
-                                itemDao.update(it1)
-                                Log.d(TAG, "Update ${itemFirestore.toObject<Item>()}")
+                    if (it.documents.size > 0 ) {
+                        isLocalDbUpdated.value = false
+                        for (itemFirestore in it.documents) {
+                            Log.d(TAG, "Retrieve ${itemFirestore.toObject<Item>()}")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                itemFirestore.toObject<Item>()?.let { it1 ->
+                                    itemDao.update(it1)
+                                    Log.d(TAG, "Update ${itemFirestore.toObject<Item>()}")
+                                }
                             }
                         }
                     }
@@ -405,6 +415,22 @@ constructor(
 
             }
         }
+    }
+
+    //TODO move user logic to another class
+    fun createNewUser(uid: String, userMap: Map<String, String> ) = CoroutineScope(Dispatchers.IO).launch{
+        try {
+            firestoreUsersDbRef.document(uid)
+                .set(userMap)
+                .addOnSuccessListener {
+                    Log.d(TAG, "$uid New User -> ${userMap.values} Succes")
+                }.addOnFailureListener { e ->
+                    Log.d(TAG, "NewStatus in Firestore -> $e")
+                }
+        } catch (e: Exception) {
+            Log.d(TAG, "NewUser in Firestore -> $e")
+        }
+
     }
 
     companion object {

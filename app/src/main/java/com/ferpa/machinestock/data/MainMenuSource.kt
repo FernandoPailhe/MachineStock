@@ -107,6 +107,7 @@ object MainMenuSource {
             9,
             false,
             MenuListUtil(
+                listSize = 100,
                 sortBy = "product",
                 filterByStatus = listOf("NO INFORMADO")
             ),
@@ -118,6 +119,7 @@ object MainMenuSource {
             10,
             false,
             MenuListUtil(
+                listSize = 100,
                 sortBy = "product",
                 filterByStatus = listOf("A REPARAR")
             ),

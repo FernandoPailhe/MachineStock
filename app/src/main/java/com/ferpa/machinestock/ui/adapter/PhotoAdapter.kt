@@ -66,6 +66,8 @@ class PhotoAdapter(
                         "TORNO" -> photoImageView.setImageResource(R.drawable.s_torno)
                         "FRESADORA" -> photoImageView.setImageResource(R.drawable.s_fresadora)
                         "PLASMA" -> photoImageView.setImageResource(R.drawable.s_plasma)
+                        "PLATO" -> photoImageView.setImageResource(R.drawable.s_plato)
+                        "RECTIFICADORA" -> photoImageView.setImageResource(R.drawable.s_rectificadora)
                         else -> photoImageView.setImageResource(R.drawable.ic_machine_icon)
                     }
                 }
@@ -75,7 +77,6 @@ class PhotoAdapter(
                 FirebaseStorage.getInstance().reference.child(photoUrl).downloadUrl.addOnSuccessListener {
                     Picasso.get()
                         .load(it)
-                        //.rotate(ExifInfo.getOrientation(binding.itemPhoto.context, it).toFloat())
                         .into(binding.photoImageView)
                         /**
                         .into(binding.itemPhoto, object: com.squareup.picasso.Callback{

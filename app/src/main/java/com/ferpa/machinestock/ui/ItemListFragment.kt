@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentItemListBinding
 import com.ferpa.machinestock.ui.adapter.AllItemsListAdapter
+import com.ferpa.machinestock.ui.adapter.EditListAdapter
 import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +28,8 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
     private val binding get() = _binding!!
 
     private lateinit var productListAdapter: ItemListAdapter
+
+    private lateinit var editListAdapter: EditListAdapter
 
     private lateinit var allItemsListAdapter: AllItemsListAdapter
 
@@ -60,6 +63,10 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
             this.findNavController().navigate(action)
             //binding.slidingPaneLayout.openPane()
             //TODO Implement SlidingPaneLayout
+        }
+
+        editListAdapter = EditListAdapter {
+
         }
 
         bindRecyclerView(viewModel.getProduct())
@@ -101,10 +108,14 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
                 if (it) {
                     Log.d(TAG, "IsNewFilter")
                     Log.d(TAG, "New Product ${viewModel.getProduct()}")
-                    if (viewModel.getProduct() == "TODAS") {
-                        subscribeUiAllItems(allItemsListAdapter)
+                    if (viewModel.isEditList.value){
+                        subscribeUiEditList(editListAdapter)
                     } else {
-                        subscribeUi(productListAdapter)
+                        if (viewModel.getProduct() == "TODAS") {
+                            subscribeUiAllItems(allItemsListAdapter)
+                        } else {
+                            subscribeUi(productListAdapter)
+                        }
                     }
                     viewModel.setNewFilterFalse()
                 }
@@ -158,6 +169,15 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         }
     }
 
+    private fun subscribeUiEditList(adapter: EditListAdapter) {
+        lifecycleScope.launchWhenStarted {
+            viewModel.filterItems.collect {
+                Log.d(TAG, "subscribeUiEditList -> ${it.size} items")
+                adapter.submitList(it)
+            }
+        }
+    }
+
     private fun subscribeUiAllItems(adapter: AllItemsListAdapter) {
         lifecycleScope.launchWhenStarted {
             viewModel.filterItems.collect {
@@ -169,7 +189,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
     private fun bindFilter(tv: CheckBox, type: Int, position: Int) {
 
-        val typeStr = getStringFromArray(type, position)
+        val typeStr = getStringFromArray(type, position).lowercase().replaceFirstChar { it.uppercase() }
         tv.text = typeStr
         tv.isChecked = viewModel.getFilterStatus(typeStr)
         tv.setOnClickListener {
@@ -180,11 +200,16 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
     }
 
     private fun bindRecyclerView(product: String){
-        if (product == "TODAS") {
-            binding.recyclerView.adapter = allItemsListAdapter
+        if (viewModel.isEditList.value){
+            binding.recyclerView.adapter = editListAdapter
         } else {
-            binding.recyclerView.adapter = productListAdapter
+            if (product == "TODAS") {
+                binding.recyclerView.adapter = allItemsListAdapter
+            } else {
+                binding.recyclerView.adapter = productListAdapter
+            }
         }
+
     }
 
     private fun bindFilterMenu() {
@@ -194,6 +219,10 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
             bindFilter(filterOwner1, R.array.owner_options, 0)
             bindFilter(filterOwner2, R.array.owner_options, 1)
             bindFilter(filterShared, R.array.owner_options, 2)
+            filterOwner1.visibility = View.GONE
+            filterOwner2.visibility = View.GONE
+            filterShared.visibility = View.GONE
+            divider1.visibility = View.GONE
 
             //FilterType
             bindFilter(filterType1, R.array.type_options, 0)
