@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentHomeBinding
 import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.utilities.Const.REQUEST_CODE_GOOGLE_LOG_IN
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -31,8 +32,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val viewModel: MachineStockViewModel by activityViewModels()
 
-    private val REQUEST_CODE_SING_IN = 3
-    private val EXTRA_NAME = "EXTRA_NAME"
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
@@ -64,13 +63,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun singIn() {
         val singInIntent = googleSignInClient.signInIntent
-        startActivityForResult(singInIntent, REQUEST_CODE_SING_IN)
+        startActivityForResult(singInIntent, REQUEST_CODE_GOOGLE_LOG_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_CODE_SING_IN) {
+        if (requestCode == REQUEST_CODE_GOOGLE_LOG_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
