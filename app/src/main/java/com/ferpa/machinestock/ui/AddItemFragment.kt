@@ -65,12 +65,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             setEditItemInterface()
             newProduct = viewModel.currentItem.value?.product.toString()
         } else {
-            newProduct = viewModel.getProduct()
-            if (newProduct == "TODAS") {
-                selectProductDialog(savedInstanceState)
-            } else {
-                setNewItemInterface(newProduct)
-            }
+            selectProductDialog(savedInstanceState)
         }
 
         /*
@@ -510,7 +505,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
 
     private fun bindPhotoRecyclerView(item: Item) {
 
-        binding.addItemPhotoViewPager.adapter = PhotoAdapter(item.getMachinePhotoList(), this@AddItemFragment)
+        binding.addItemPhotoViewPager.adapter =
+            PhotoAdapter(item.getMachinePhotoList(), this@AddItemFragment)
 
     }
 
