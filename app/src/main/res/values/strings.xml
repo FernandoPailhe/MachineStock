@@ -33,8 +33,8 @@
 
     <!--TODO Cambiar a socios originales-->
     <string-array name="owner_options">
-        <item>Maquimundo</item>
-        <item>Canavese</item>
+        <item>Socio 1</item>
+        <item>Socio 2</item>
         <item>Sociedad</item>
     </string-array>
 
@@ -95,8 +95,8 @@
 
     <!--TODO Cambiar a depósitos originales-->
     <string-array name="location_options">
-        <item>Zoilo</item>
-        <item>Canavese</item>
+        <item>Depósito 1</item>
+        <item>Depósito 2</item>
         <item>A definir</item>
     </string-array>
 
