@@ -1,11 +1,13 @@
 package com.ferpa.machinestock.di
 
-import com.ferpa.machinestock.data.ItemDao
-import com.ferpa.machinestock.data.ItemRepository
+import android.content.Context
+import com.ferpa.machinestock.data.MachineDao
+import com.ferpa.machinestock.data.MachinesRepository
 import com.ferpa.machinestock.utilities.CustomListUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 import javax.inject.Singleton
@@ -23,10 +25,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideItemRepository(
-            itemDao: ItemDao,
-            customListUtil: CustomListUtil
-        ) : ItemRepository {
-        return ItemRepository(itemDao, customListUtil)
+        machineDao: MachineDao,
+        customListUtil: CustomListUtil,
+        @ApplicationContext appContext: Context
+        ) : MachinesRepository {
+        return MachinesRepository(machineDao, customListUtil, appContext)
     }
 
  }

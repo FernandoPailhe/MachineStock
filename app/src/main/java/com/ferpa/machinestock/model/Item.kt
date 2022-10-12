@@ -1,7 +1,6 @@
 package com.ferpa.machinestock.model
 
 import android.annotation.SuppressLint
-import android.telephony.PhoneNumberUtils.formatNumber
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -14,7 +13,7 @@ import java.util.*
 
 @Entity(tableName = "item")
 data class Item(
-    @PrimaryKey(autoGenerate = true) val id: Long = newProductId(),
+    @PrimaryKey(autoGenerate = false) val id: Long = newProductId(),
     @ColumnInfo(name = "insertDate") val insertDate: String? = getTimeStamp(),
     @ColumnInfo(name = "product") val product: String = "OTROS",
     @ColumnInfo(name = "owner1") val owner1: Int? = 0,
@@ -29,11 +28,12 @@ data class Item(
     @ColumnInfo(name = "currency") val currency: String? = "$",
     @ColumnInfo(name = "type") val type: String? = "",
     @ColumnInfo(name = "status") val status: String? = "NO INFORMADO",
-    @ColumnInfo(name = "observations") val observations: String? = null,
+    @ColumnInfo(name = "observations") val observations: String? = "",
     @ColumnInfo(name = "editDate") var editDate: String? = getTimeStamp(),
-    @ColumnInfo(name = "editUser") var editUser: String? = null,
-    @ColumnInfo(name = "excelText") val excelText: String? = null,
-    @ColumnInfo(name = "photos") var photos: String? = "0"
+    @ColumnInfo(name = "editUser") var editUser: String? = "Admin",
+    @ColumnInfo(name = "excelText") val excelText: String? = "",
+    @ColumnInfo(name = "photos") var photos: String? = "0",
+    @ColumnInfo(name = "newMachine") var newMachine: Boolean? = false
 )
 
 fun Item.getBrand(): String? {
@@ -41,9 +41,9 @@ fun Item.getBrand(): String? {
 }
 
 fun Item.getEditUser(): String? {
-    return if (editUser == null) {
+    return if (editUser.isNullOrEmpty()) {
         null
-    } else if (editUser.equals("Admin")) {
+    } else if (editUser.equals("Admin") || editUser.equals("null")) {
         null
     } else {
         "Ultima edición: $editUser"
@@ -130,16 +130,8 @@ fun Item.getFeatures(): String {
     return features
 }
 
-fun Item.getLocation(): String? {
+fun Item.getLocation(): String? = this.location ?: "A definir"
 
-    return when (location) {
-        "Zoi" -> Const.LOCATION_1
-        "Can" -> Const.LOCATION_2
-        "Zoilo" -> Const.LOCATION_1
-        "Canavese" -> Const.LOCATION_2
-        else -> "A definir"
-    }
-}
 
 fun Item.getInsideNumber(): String? {
 
@@ -158,7 +150,7 @@ fun Item.getOwnership(): String? {
         Const.OWNER_2
     } else if (owner1 != null || owner2 != null) {
         if (owner1 == 0 && owner2 == 0) {
-            "Falta completar datos"
+            "Falta completar datos de propiedad"
         } else {
             "${Const.OWNER_2} ${owner2}% - ${Const.OWNER_1} ${owner1}%"
         }

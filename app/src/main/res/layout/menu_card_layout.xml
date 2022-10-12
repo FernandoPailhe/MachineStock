@@ -25,6 +25,7 @@
                 android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/title_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/margin_between_elements"
@@ -35,9 +36,30 @@
                     style="@style/Widget.MachineStock.ProductTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:textColor="@color/primaryTextColor"
                     tools:text="Nuevos ingresos" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/card_menu_list_size"
+                    style="@style/Widget.MachineStock.ProductTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/primaryTextColor"
+                    tools:text="8" />
+
+                <ImageView
+                    android:id="@+id/expand_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/noneColor"
+                    android:src="@drawable/ic_baseline_expand_more_24"/>
 
             </LinearLayout>
 

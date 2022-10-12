@@ -110,7 +110,7 @@ class PhotoListManager {
         private fun getPhotoList(item: Item): List<Int> {
             return if (item.photos != "0") {
                 val photoList = mutableListOf<Int>()
-                item.photos?.split("/")?.toList()?.forEach {
+                item.photos?.split(PHOTO_SEPARATOR)?.toList()?.forEach {
                     photoList.add(
                         it.toInt()
                     )

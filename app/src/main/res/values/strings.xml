@@ -33,8 +33,8 @@
 
     <!--TODO Cambiar a socios originales-->
     <string-array name="owner_options">
-        <item>Maquimundo</item>
-        <item>Canavese</item>
+        <item>Socio 1</item>
+        <item>Socio 2</item>
         <item>Sociedad</item>
     </string-array>
 
@@ -93,16 +93,17 @@
         <item>YUNAN</item>
     </string-array>
 
-    <!--TODO Cambiar a depósitos originales-->
     <string-array name="location_options">
-        <item>Zoilo</item>
-        <item>Canavese</item>
+        <item>Depósito 1</item>
+        <item>Depósito 2</item>
+        <item>Depósito 3</item>
+        <item>Depósito 4</item>
         <item>A definir</item>
     </string-array>
 
     <!-- Messages -->
     <string name="blank_item">Falta completar características básicas</string>
-    <string name="invalid_owner">El porcentaje total debe ser 100</string>
+    <string name="invalid_owner">El porcentaje total no debe superar 100</string>
     <string name="duplicate_inside_number">El código interno ya existe</string>
     <string name="succes_upload_image">La imagen ha sido subida al servidor</string>
     <string name="fail_upload_image">No se ha podido subir la imagen, intentelo más tarde</string>
@@ -124,8 +125,8 @@
     <string name="item_location_req">Depósito</string>
     <string name="item_type_req">Tipo</string>
     <string name="item_status_req">Estado</string>
-    <string name="item_owner2_req">Canavese %</string>
-    <string name="item_owner1_req">Maquimundo %</string>
+    <string name="item_owner2_req">Socio 2 %</string>
+    <string name="item_owner1_req">Socio 1 %</string>
     <string name="item_feature3_req">Otras características</string>
     <string name="item_observations_req">Observaciones</string>
 

@@ -7,12 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.MiniCardDetailBinding
 import com.ferpa.machinestock.model.*
+import com.ferpa.machinestock.utilities.Extensions.loadImage
 import com.ferpa.machinestock.utilities.PhotoListManager
-import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
 
 class MiniCardListAdapter(
     private val childItemClickListener: OnChildItemClickListener
@@ -55,18 +53,17 @@ class MiniCardListAdapter(
             }
         }
 
-        fun bind(item: Item) {
+        fun bind(machine: Item) {
             binding.apply {
-                bindTextView(itemProduct, item.product)
+                bindTextView(itemProduct, machine.product)
                 itemProduct.visibility = View.GONE
-                bindTextView(itemBrand, item.getBrand())
-                bindTextView(itemFeature1, item.getFeatures())
-                bindTextView(itemFeature3, item.feature3)
-                bindTextView(itemType, " - ${item.getType()[0]}")
-                bindTextView(itemPrice, item.getFormattedPrice(true))
-                bindTextView(itemStatus, item.getStatus())
-                bindPhoto(item)
-
+                bindTextView(itemBrand, machine.getBrand())
+                bindTextView(itemFeature1, machine.getFeatures())
+                bindTextView(itemFeature3, machine.feature3)
+                bindTextView(itemType, " - ${machine.getType()[0]}")
+                bindTextView(itemPrice, machine.getFormattedPrice(true))
+                bindTextView(itemStatus, machine.getStatus())
+                miniCardImageView.loadImage(machine.product, PhotoListManager.getMachinePhotoList(machine, true)[0], true)
             }
         }
 
@@ -78,34 +75,6 @@ class MiniCardListAdapter(
             }
         }
 
-        private fun bindPhoto(item: Item) {
-            if (item.getMachinePhotoList()[0].id == -1) {
-                val photoResource = when (item.product) {
-                    "GUILLOTINA" -> R.drawable.s_guillotina
-                    "PLEGADORA" -> R.drawable.s_plegadora
-                    "BALANCIN" -> R.drawable.s_balancin
-                    "TORNO" -> R.drawable.s_torno
-                    "FRESADORA" -> R.drawable.s_fresadora
-                    "PLASMA" -> R.drawable.s_plasma
-                    "PLATO" -> R.drawable.s_plato
-                    "RECTIFICADORA" -> R.drawable.s_rectificadora
-                    else -> R.drawable.ic_machine_icon
-                }
-                if (photoResource == R.drawable.ic_machine_icon) {
-                    binding.miniCardImageView.visibility = View.GONE
-                    binding.textProductTitle.text = item.product
-                    binding.textProductTitle.visibility = View.VISIBLE
-                } else {
-                    binding.miniCardImageView.setImageResource(photoResource)
-                }
-            } else {
-                FirebaseStorage.getInstance().reference.child(PhotoListManager.getMachinePhotoList(item,true)[0].imgSrcUrl.toString()).downloadUrl.addOnSuccessListener {
-                    Picasso.get()
-                        .load(it)
-                        .into(binding.miniCardImageView)
-                }
-            }
-        }
     }
 
     interface OnChildItemClickListener {

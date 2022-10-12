@@ -18,22 +18,23 @@ import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentAddItemBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
-import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
-import com.ferpa.machinestock.utilities.Const.REQUEST_GALLERY_PHOTO
-import com.ferpa.machinestock.utilities.Const.REQUEST_TAKE_PHOTO
+import com.ferpa.machinestock.ui.viewmodel.AddItemViewModel
+import com.ferpa.machinestock.utilities.Const.NEW_ITEM
+import com.ferpa.machinestock.utilities.Const.REQUEST_CODE_GALLERY_PHOTO
+import com.ferpa.machinestock.utilities.Const.REQUEST_CODE_TAKE_PHOTO
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 @AndroidEntryPoint
 class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnItemClickListener {
@@ -41,9 +42,12 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     private var _binding: FragmentAddItemBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MachineStockViewModel by activityViewModels()
+    private val viewModel: AddItemViewModel by viewModels()
 
-    lateinit var item: Item
+    private val navArgs: AddItemFragmentArgs by navArgs()
+
+    lateinit var machine: Item
+
     private lateinit var newProduct: String
 
     override fun onCreateView(
@@ -58,12 +62,12 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         super.onViewCreated(view, savedInstanceState)
 
         //Get Navigation Values
-        val id = viewModel.currentId.value
+        viewModel.getMachine(navArgs.machineId)
 
         //Set interface type
-        if (id > 0) {
+        if (navArgs.machineId > 0) {
             setEditItemInterface()
-            newProduct = viewModel.currentItem.value?.product.toString()
+            newProduct = navArgs.product
         } else {
             selectProductDialog(savedInstanceState)
         }
@@ -109,10 +113,10 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     }
 
     private fun setEditItemInterface() {
-        viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->
-            item = selectedItem
-            bindItemDetails(item)
-            bindPhotoRecyclerView(item)
+        viewModel.machine.observe(this.viewLifecycleOwner) { selectedItem ->
+            machine = selectedItem
+            bindItemDetails(machine)
+            bindPhotoRecyclerView(machine)
         }
         isEditable(true)
         setUpdateButtonInterface(true)
@@ -126,10 +130,10 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 saveAction.text = getString(R.string.save_action)
                 saveAction.setOnClickListener {
                     updateItem()
-                    setUpdateButtonInterface(false)
                 }
                 cancelAction.setOnClickListener {
-                    val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
+                    val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment(
+                        NEW_ITEM)
                     it.findNavController().navigate(action)
                 }
             }
@@ -150,7 +154,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             val ei = ExifInterface(viewModel.currentPhotoPath)
             val orientation = ei.getAttribute(ExifInterface.TAG_ORIENTATION)
             val uriList = ImageManager.getReduceBitmapListFromCamera(
@@ -159,7 +163,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             )
             viewModel.uploadPhoto(uriList[0])
             viewModel.uploadPhoto(uriList[1], true)
-        } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_CODE_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
                 val image = data.data
                 if (image != null) {
@@ -196,7 +200,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                             file
                         )
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                        startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PHOTO)
 
                     }
                 }
@@ -208,7 +212,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     private fun getGalleryInstance() {
         Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
             type = "image/*"
-            startActivityForResult(this, REQUEST_GALLERY_PHOTO)
+            startActivityForResult(this, REQUEST_CODE_GALLERY_PHOTO)
         }
     }
 
@@ -472,8 +476,9 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             }
             "HIDROCOPIADOR" -> {
                 binding.apply {
-                    itemFeature1Label.visibility = View.GONE
+                    itemFeature1Label.isEnabled = false
                     itemFeature2Label.visibility = View.GONE
+                    itemFeature3Label.visibility = View.VISIBLE
                 }
             }
             else -> {
@@ -503,10 +508,10 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         }
     }
 
-    private fun bindPhotoRecyclerView(item: Item) {
+    private fun bindPhotoRecyclerView(machine: Item) {
 
         binding.addItemPhotoViewPager.adapter =
-            PhotoAdapter(item.getMachinePhotoList(), this@AddItemFragment)
+            PhotoAdapter(machine.product, machine.getMachinePhotoList(), this@AddItemFragment)
 
     }
 
@@ -529,7 +534,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
-            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
+            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment(NEW_ITEM)
             this.findNavController().navigate(action)
         }
 
@@ -538,8 +543,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     private fun updateItem() {
         if (isEntryValid()) {
             viewModel.setUpdateItem(
-                item,
-                item.product,
+                machine,
+                machine.product,
                 binding.itemType.text.toString(),
                 binding.itemFeature1.text.toString(),
                 binding.itemFeature2.text.toString(),
@@ -554,7 +559,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
-            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment()
+            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment(navArgs.machineId)
             this.findNavController().navigate(action)
         }
 
@@ -626,7 +631,8 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
     */
     override fun onItemClick(position: Int) {
         val action = AddItemFragmentDirections.actionAddItemFragmentToFullScreenImageFragment(
-            position
+            machineId = machine.id,
+            photoPosition = position
         )
         this.findNavController().navigate(action)
     }

@@ -42,8 +42,8 @@
             app:destination="@id/detailFragment"
             app:popUpTo="@id/menuFragment" />
         <action
-            android:id="@+id/action_menuFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_menuFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
@@ -53,6 +53,9 @@
             android:name="product"
             app:argType="string"
             android:defaultValue="none" />
+        <argument
+            android:name="machine_id"
+            app:argType="long"/>
         <action
             android:id="@+id/action_addItemFragment_to_fullScreenImageFragment"
             app:destination="@id/fullScreenImageFragment"
@@ -71,6 +74,9 @@
         android:label="fragment_full_screen_image"
         tools:layout="@layout/fragment_full_screen_image" >
         <argument
+            android:name="machine_id"
+            app:argType="long" />
+        <argument
             android:name="photo_position"
             app:argType="integer"
             android:defaultValue="0" />
@@ -85,6 +91,9 @@
         android:id="@+id/detailFragment"
         android:name="com.ferpa.machinestock.ui.DetailFragment"
         android:label="DetailFragment" >
+        <argument
+            android:name="machine_id"
+            app:argType="long"/>
         <action
             android:id="@+id/action_detailFragment_to_addItemFragment"
             app:destination="@id/addItemFragment" />
@@ -100,12 +109,12 @@
             app:destination="@id/menuFragment" />
     </fragment>
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.ferpa.machinestock.ui.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        android:id="@+id/logInFragment"
+        android:name="com.ferpa.machinestock.ui.LogInFragment"
+        android:label="fragment_log_in"
+        tools:layout="@layout/fragment_log_in">
         <action
-            android:id="@+id/action_homeFragment_to_menuFragment"
+            android:id="@+id/action_logInFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
     </fragment>
 </navigation>

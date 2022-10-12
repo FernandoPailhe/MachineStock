@@ -1,17 +1,32 @@
 package com.ferpa.machinestock.data
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.ferpa.machinestock.model.Item
+import com.ferpa.machinestock.model.MachineStockUser
+import com.ferpa.machinestock.model.MainMenuPreferences
 
-@Database (entities = [Item::class], version = 1, exportSchema = true)
-abstract class ItemRoomDatabase : RoomDatabase () {
+@Database(
+    version = 4,
+    entities = [
+        Item::class,
+        MachineStockUser::class,
+        MainMenuPreferences::class
+    ],
+    autoMigrations = [
+        AutoMigration (from = 2, to = 4),
+        AutoMigration (from = 3, to = 4)
+    ],
+    exportSchema = true
+)
 
-    abstract fun itemDao(): ItemDao
+abstract class ItemRoomDatabase : RoomDatabase() {
+
+    abstract fun machineDao(): MachineDao
 
     companion object {
-        const val DATABASE_NAME = "used_item_db"
-        const val DATABASE_ASSET = "database/used_machines_july.sqlite"
+        const val DATABASE_NAME = "machine_stock_db"
     }
 
 }

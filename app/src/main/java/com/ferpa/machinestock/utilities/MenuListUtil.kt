@@ -45,7 +45,7 @@ class MenuListUtil(
                 list.filterNot { item ->
                     item.editDate.equals(item.insertDate)
                 }
-                    .sortedByDescending { it.editDate }
+                    .sortedByDescending { it.editDate }.subList(0, size)
             } else {
                 list.sortedByDescending { it.feature1 }.subList(0, size)
             }

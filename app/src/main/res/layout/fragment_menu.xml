@@ -50,13 +50,20 @@
                     android:background="@color/noneColor"
                     android:layout_margin="@dimen/margin_between_elements"/>
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <ImageButton
-                    android:id="@+id/update_action"
+                    android:id="@+id/add_item_action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_update_24"
+                    android:src="@drawable/ic_baseline_add_24"
+                    android:contentDescription="@string/add_new_item"
                     android:background="@color/noneColor"
-                    android:layout_margin="@dimen/margin_between_elements"/>
+                    android:layout_margin="@dimen/margin_between_elements"
+                    app:tint="@color/primaryTextColor" />
 
             </LinearLayout>
 
@@ -70,6 +77,7 @@
 
     </LinearLayout>
 
+    <!--Todo define if this floating button stay or not
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button_add_item"
         style="@style/Widget.MachineStock.FloatingActionButton"
@@ -79,6 +87,7 @@
         android:layout_margin="@dimen/margin_between_elements"
         android:contentDescription="@string/add_new_item"
         app:srcCompat="@drawable/ic_baseline_add_24" />
+        -->
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

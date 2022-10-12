@@ -13,5 +13,7 @@ data class MainMenuItem(
     var priority: Int?,
     var hasNews: Boolean = false,
     var menuListUtil: MenuListUtil = MenuListUtil(),
-    var itemList: List<Item>?
+    var itemList: List<Item>?,
+    val initiallyExpanded: Boolean = true,
+    val visible: Boolean? = true,
 )

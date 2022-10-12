@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.MenuCardLayoutBinding
 import com.ferpa.machinestock.model.*
 
@@ -45,12 +46,12 @@ class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
 
             val miniCardListAdapter = MiniCardListAdapter(object: MiniCardListAdapter.OnChildItemClickListener{
                 override fun onChildItemClick(clickPosition: Int) {
-                    mainMenuListener.onItemClick(adapterPosition, clickPosition)
+                    mainMenuListener.onItemClick(adapterPosition, clickPosition, true)
                     Log.d("OnItemClick", "override onChildItemClick Main Adapter $adapterPosition / $clickPosition")
                 }
             })
 
-            if (mainMenuItem.itemList?.isEmpty() == true || mainMenuItem.itemList == null){
+            if (mainMenuItem.itemList?.isEmpty() == true || mainMenuItem.itemList == null || mainMenuItem.visible == false){
                 binding.apply {
                     cardItem.visibility = View.GONE
                     miniCardRecyclerView.visibility = View.GONE
@@ -65,14 +66,31 @@ class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
                         false
                     )
                     miniCardRecyclerView.adapter = miniCardListAdapter
+                    cardMenuListSize.text = mainMenuItem.itemList!!.size.toString()
+                    if (mainMenuItem.initiallyExpanded){
+                        if (miniCardRecyclerView.visibility == View.VISIBLE) {
+                            expandAction.setImageResource(R.drawable.ic_baseline_expand_less_24)
+                        }
+                    } else {
+                        expandAction.setImageResource(R.drawable.ic_baseline_expand_more_24)
+                        miniCardRecyclerView.visibility = View.GONE
+                    }
                 }
             }
+
         }
 
         override fun onClick(p0: View?) {
+            if (binding.miniCardRecyclerView.visibility == View.GONE){
+                binding.miniCardRecyclerView.visibility = View.VISIBLE
+                binding.expandAction.setImageResource(R.drawable.ic_baseline_expand_less_24)
+            } else {
+                binding.expandAction.setImageResource(R.drawable.ic_baseline_expand_more_24)
+                binding.miniCardRecyclerView.visibility = View.GONE
+            }
             val position: Int = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                mainMenuListener.onItemClick(adapterPosition, -1)
+                mainMenuListener.onItemClick(adapterPosition, -1, binding.miniCardRecyclerView.visibility == View.VISIBLE )
             }
             Log.d("OnItemClick", "override onClick Main Adapter $adapterPosition / No Item")
 
@@ -81,7 +99,7 @@ class MenuListAdapter(private val mainMenuListener: OnItemClickListener) :
     }
 
     interface OnItemClickListener {
-        fun onItemClick(mainPosition: Int, childPosition: Int)
+        fun onItemClick(mainPosition: Int, childPosition: Int, expand: Boolean)
     }
 
     companion object {

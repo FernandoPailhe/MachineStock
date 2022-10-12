@@ -1,86 +1,37 @@
 package com.ferpa.machinestock.ui.viewmodel
 
-
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
-import com.ferpa.machinestock.data.ItemRepository
-import com.ferpa.machinestock.model.*
+import com.ferpa.machinestock.data.MachinesRepository
+import com.ferpa.machinestock.model.Item
+import com.ferpa.machinestock.model.addNewPhoto
 import com.ferpa.machinestock.utilities.PhotoListManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
-class MachineStockViewModel
+class AddItemViewModel
 @Inject
-constructor(private val itemRepository: ItemRepository) :
-    ViewModel() {
+constructor(private val machinesRepository: MachinesRepository): ViewModel() {
+
+    private val _machine = MutableLiveData<Item>()
+    val machine: LiveData<Item> get() = _machine
 
     lateinit var currentPhotoPath: String
 
-    val filterItems: Flow<List<Item>> = itemRepository.itemsFlow
-
-    val mainMenuItemList: Flow<List<MainMenuItem>> = itemRepository.menuList
-
-    val productArray: Flow<List<String>> = itemRepository.productArray
-
-    private val _isNewFilter = MutableStateFlow(true)
-    val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
-
-    private val _currentId = MutableStateFlow<Long>(1)
-    val currentId: StateFlow<Long> get() = _currentId
-
-    private val _isDbUpdate = itemRepository.isLocalDbUpdated
-    val isDbUpdate: StateFlow<Boolean> get() = _isDbUpdate
-
-    private val _isEditList = MutableStateFlow(false)
-    val isEditList: StateFlow<Boolean> get() = _isEditList
-
-    private var _currentItem: LiveData<Item> = itemRepository.getItem(currentId.value).asLiveData()
-    val currentItem: LiveData<Item> get() = _currentItem
-
     private val storage: FirebaseStorage = FirebaseStorage.getInstance()
-
     private var storageRef = storage.reference
 
-    init {
-        compareDatabases()
-    }
-
-    fun getProduct(): String = itemRepository.customListUtil.getProduct()
-
-    fun setCurrentId(id: Long) {
-        _currentId.value = id
-        _currentItem = itemRepository.getItem(currentId.value).asLiveData()
-    }
-
-    fun setEditList(isEditList: Boolean){
-        _isEditList.value = isEditList
-    }
-
-    /*
-    Network
-     */
-    fun compareDatabases() {
+    fun getMachine(machineId: Long) {
         viewModelScope.launch {
-            try {
-                itemRepository.compareLastNewItem()
-            } catch (e: Exception) {
-                Log.e(TAG, "CompareNetworkItems $e")
-            }
+            _machine.value = machinesRepository.getItem(machineId).first()
         }
-    }
-
-    fun createUser(uid: String, userMap: Map<String, String>){
-        itemRepository.createNewUser(uid, userMap)
     }
 
     /*
@@ -90,9 +41,9 @@ constructor(private val itemRepository: ItemRepository) :
 
         //TODO Progress animation
         val machinePhotosRef = if (!isThumbnail) {
-            storageRef.child(currentItem.value!!.addNewPhoto())
+            storageRef.child(machine.value!!.addNewPhoto())
         } else {
-            storageRef.child(currentItem.value!!.addNewPhoto() + "t")
+            storageRef.child(machine.value!!.addNewPhoto() + "t")
         }
 
         val uploadTask = machinePhotosRef.putFile(uri)
@@ -110,7 +61,7 @@ constructor(private val itemRepository: ItemRepository) :
             if (task.isSuccessful && !isThumbnail) {
                 uriPath = task.result.path.toString()
                 uriPath.let { Log.d("Uri Path", it) }
-                currentItem.value?.let {
+                machine.value?.let {
                     updateItem(PhotoListManager.addNewPhoto(it))
                 }
                 Log.d(
@@ -123,93 +74,12 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
-    fun deletePhoto(item: Item, deletePhoto: Int) {
-
-        val photoRef =
-            storageRef.child(PhotoListManager.getDeleteUrl(item, deletePhoto))
-
-        photoRef.delete()
-            .addOnSuccessListener {
-                Log.d(TAG, "onSuccess: deleted file $deletePhoto")
-                updateItem(PhotoListManager.deletePhoto(item, deletePhoto))
-            }.addOnFailureListener {
-                Log.d(TAG, "onFailure: did not delete file $deletePhoto")
-            }
-
-        val thumbRef = storageRef.child(
-            PhotoListManager.getDeleteUrl(
-                item,
-                deletePhoto
-            ) + "t"
-        )
-
-        thumbRef.delete()
-            .addOnSuccessListener {
-                Log.d(TAG, "onSuccess: deleted file $deletePhoto t")
-            }.addOnFailureListener {
-                Log.d(TAG, "onFailure: did not delete file $deletePhoto t")
-            }
-
-    }
-
-    /*
-    Update Custom List Util
-     */
-    fun setProduct(newProduct: String) {
-        itemRepository.setProduct(newProduct)
-        Log.d(TAG, "New Filter Product -> $newProduct")
-        _isNewFilter.value = true
-    }
-
-    fun setNewFilterFalse() {
-        _isNewFilter.value = false
-    }
-
-    fun setQueryText(inputSearch: String?) {
-        itemRepository.setQueryText(inputSearch)
-        _isNewFilter.value = true
-    }
-
-    fun getFilterStatus(type: String): Boolean {
-        return itemRepository.getFilterStatus(type)
-    }
-
-    fun setFilter(type: String) {
-        itemRepository.setFilter(type)
-        _isNewFilter.value = true
-    }
-
-    fun isFilterList(): Boolean {
-        return itemRepository.isFilterList()
-    }
-
-    fun clearFilters() {
-        itemRepository.clearFilters()
-        _isNewFilter.value = true
-    }
-
-    //Manage Single Item
-    fun retrieveItem(id: Long): LiveData<Item> {
-        return itemRepository.getItem(id).asLiveData()
-    }
-
-    private fun insertItem(item: Item) {
-        viewModelScope.launch {
-            itemRepository.insertItem(item)
-        }
-    }
-
     private fun updateItem(item: Item) {
         viewModelScope.launch {
-            itemRepository.updateItem(item)
+            machinesRepository.updateItem(item)
         }
     }
 
-    private fun updateStatus(item: Item){
-        viewModelScope.launch {
-            itemRepository.updateStatus(item)
-        }
-    }
 
     private fun getNewItemEntry(
         product: String,
@@ -245,32 +115,6 @@ constructor(private val itemRepository: ItemRepository) :
             editUser = Firebase.auth.currentUser?.displayName.toString()
         )
     } //Build new item Object
-
-    private fun getNewStatusEntry(
-        item: Item,
-        status: String?,
-    ): Item {
-        return Item(
-            id = item.id,
-            insertDate = item.insertDate,
-            product = item.product,
-            insideNumber = item.insideNumber,
-            location = item.location,
-            brand = item.brand,
-            feature1 = item.feature1,
-            feature2 = item.feature2,
-            feature3 = item.feature3,
-            price = item.price,
-            owner1 = item.owner1,
-            owner2 = item.owner2,
-            currency = item.currency,
-            type = item.type,
-            status = status?.uppercase(),
-            observations = item.observations,
-            editUser = Firebase.auth.currentUser?.displayName.toString(),
-            photos = item.photos
-        )
-    } //Build new status item Object
 
     private fun getEditItemEntry(
         item: Item,
@@ -353,7 +197,7 @@ constructor(private val itemRepository: ItemRepository) :
                 observations
             )
         insertItem(newItem)
-        setCurrentId(newItem.id)
+        getMachine(newItem.id)
     }
 
     fun setUpdateItem(
@@ -402,18 +246,11 @@ constructor(private val itemRepository: ItemRepository) :
         updateItem(editItem)
     }
 
-    fun setUpdateStatus(status: String?) {
-        updateStatus(getNewStatusEntry(currentItem.value!!.copy(), status))
-    }
 
-    private fun getAddOwner(owner: String?): Int {
-
-        return if (owner != null) {
-            if (owner.isNotEmpty()) {
-                owner.toInt()
-            } else 0
-        } else 0
-
+    private fun insertItem(item: Item) {
+        viewModelScope.launch {
+            machinesRepository.insertItem(item)
+        }
     }
 
     fun isEntryValid(
@@ -442,7 +279,9 @@ constructor(private val itemRepository: ItemRepository) :
     }
 
 
-    //Validates Entries
+    /*
+     * Validates Entries
+     */
     private fun isOwnerEntryValid(owner1: Int?, owner2: Int?): Boolean {
         var total = 0
         total = owner1!! + owner2!!
@@ -477,6 +316,20 @@ constructor(private val itemRepository: ItemRepository) :
         }
     }
 
+
+    private fun getAddOwner(owner: String?): Int {
+
+        return if (owner != null) {
+            if (owner.isNotEmpty()) {
+                owner.toInt()
+            } else 0
+        } else 0
+
+    }
+
+    /*
+     * Utils
+     */
     private fun stringToIntOrEmptyToZero(nullVariable: String?): Int {
         var newInt = 0
         if (nullVariable != "" && nullVariable != null) {
@@ -492,9 +345,4 @@ constructor(private val itemRepository: ItemRepository) :
         }
         return newDouble
     }
-
-    companion object {
-        const val TAG = "MachineStockViewModel"
-    }
-
 }

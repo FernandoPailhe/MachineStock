@@ -8,14 +8,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.ferpa.machinestock.R
-import com.ferpa.machinestock.databinding.FragmentHomeBinding
-import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.databinding.FragmentLogInBinding
+import com.ferpa.machinestock.model.MachineStockUser
+import com.ferpa.machinestock.ui.viewmodel.LoginViewModel
 import com.ferpa.machinestock.utilities.Const.REQUEST_CODE_GOOGLE_LOG_IN
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -25,23 +25,23 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    private var _binding: FragmentHomeBinding? = null
+class LogInFragment : Fragment(R.layout.fragment_log_in) {
+
+    private var _binding: FragmentLogInBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MachineStockViewModel by activityViewModels()
+    private val viewModel: LoginViewModel by viewModels()
 
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentLogInBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -55,7 +55,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .requestEmail()
             .build()
 
-        googleSignInClient = GoogleSignIn.getClient(this@HomeFragment.context!!, gso)
+        googleSignInClient = GoogleSignIn.getClient(this.requireContext(), gso)
 
         singIn()
 
@@ -98,18 +98,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
-            mapOf("email" to user.email, "name" to user.displayName)?.let {
-                viewModel.createUser(user.uid,
-                    it as Map<String, String>
+            viewModel.createUser(
+                MachineStockUser(
+                    user.uid,
+                    name = user.displayName,
+                    profilePhotoUrl = user.photoUrl.toString(),
+                    email = user.email,
+                    phoneNumber = user.phoneNumber
                 )
-            }
-            val action = HomeFragmentDirections.actionHomeFragmentToMenuFragment()
-            findNavController().navigate(action)
+            )
         }
+        val action = LogInFragmentDirections.actionLogInFragmentToMenuFragment()
+        findNavController().navigate(action)
+
     }
 
     companion object {
-        const val TAG = "HomeFragment"
+        const val TAG = "LogInFragment"
     }
 
 }

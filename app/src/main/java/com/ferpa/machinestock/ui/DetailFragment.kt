@@ -18,19 +18,24 @@ import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentDetailBinding
 import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter
-import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
-import com.ferpa.machinestock.utilities.Const.REQUEST_GALLERY_PHOTO
-import com.ferpa.machinestock.utilities.Const.REQUEST_TAKE_PHOTO
+import com.ferpa.machinestock.ui.viewmodel.DetailViewModel
+import com.ferpa.machinestock.utilities.Const.REQUEST_CODE_GALLERY_PHOTO
+import com.ferpa.machinestock.utilities.Const.REQUEST_CODE_TAKE_PHOTO
+import com.ferpa.machinestock.utilities.PhotoListManager
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -42,9 +47,11 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MachineStockViewModel by activityViewModels()
+    private val viewModel: DetailViewModel by viewModels()
 
-    lateinit var item: Item
+    private val navArgs: DetailFragmentArgs by navArgs()
+
+    lateinit var currentMachine: Item
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,35 +81,35 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     Binding
      */
     private fun setDetailItemInterface() {
-        viewModel.currentItem.observe(this.viewLifecycleOwner) { selectedItem ->
-            item = selectedItem
-            bindItemDetails(item)
+        viewModel.getMachine(navArgs.machineId)
+        viewModel.machine.observe(this.viewLifecycleOwner) { machine ->
+            currentMachine = machine
+            bindItemDetails(machine)
         }
     }
 
-    private fun bindItemDetails(item: Item) {
+    private fun bindItemDetails(machine: Item) {
 
         binding.apply {
-            bindTextView(itemProduct, item.product)
-            bindTextView(itemBrand, item.getBrand())
-            bindTextView(itemFeature1, item.getFeatures())
-            bindTextView(itemFeature3, item.feature3)
-            bindTextView(itemInsideNumber, item.getInsideNumber())
-            bindTextView(itemLocation, item.getLocation())
-            bindTextView(itemType, item.getType())
-            bindTextView(itemPrice, item.getFormattedPrice(true))
-            bindTextView(itemObservations, item.getObservations())
-            bindTextView(itemStatus, item.status)
-            bindTextView(itemEditUser, item.getEditUser())
+            bindTextView(itemProduct, machine.product)
+            bindTextView(itemBrand, machine.getBrand())
+            bindTextView(itemFeature1, machine.getFeatures())
+            bindTextView(itemFeature3, machine.feature3)
+            bindTextView(itemInsideNumber, machine.getInsideNumber())
+            bindTextView(itemLocation, machine.getLocation())
+            bindTextView(itemType, machine.getType())
+            bindTextView(itemPrice, machine.getFormattedPrice(true))
+            bindTextView(itemObservations, machine.getObservations())
+            bindTextView(itemStatus, machine.status)
+            bindTextView(itemEditUser, machine.getEditUser())
 
-            itemOwner.text = item.getOwnership()
+            itemOwner.text = machine.getOwnership()
 
-            photoViewPager.adapter = PhotoAdapter(item.getMachinePhotoList(), this@DetailFragment)
+            photoViewPager.adapter = PhotoAdapter(machine.product, PhotoListManager.getMachinePhotoList(machine), this@DetailFragment)
 
             floatingActionButtonEditItem.setOnClickListener {
-                viewModel.setCurrentId(item.id)
                 val action =
-                    DetailFragmentDirections.actionDetailFragmentToAddItemFragment(item.product)
+                    DetailFragmentDirections.actionDetailFragmentToAddItemFragment(product = machine.product, machineId = navArgs.machineId)
                 it.findNavController().navigate(action)
             }
 
@@ -135,10 +142,17 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     */
     private fun shareProduct() {
 
-        if (item.photos == "0") {
-            shareIndexCard(getShareIndexCard(true))
+        var withPrice = false
+
+        lifecycleScope.launch {
+            if (viewModel.shareWithPrice.first() != null) {
+                withPrice = viewModel.shareWithPrice.first()!!
+            }
+        }
+        if (currentMachine.photos == "0") {
+            shareIndexCard(getShareIndexCard(withPrice))
         } else {
-            shareIndexCardWithImages(item.getMachinePhotoList())
+            shareIndexCardWithImages(currentMachine.getMachinePhotoList(), withPrice)
         }
     }
 
@@ -154,14 +168,14 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     }
 
-    private fun shareIndexCardWithImages(machinePhotoList: List<MachinePhoto>) {
+    private fun shareIndexCardWithImages(machinePhotoList: List<MachinePhoto>, withPrice: Boolean?) {
 
         val uriArray = getUriArray(machinePhotoList)
 
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
             putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriArray)
             type = "image/*"
-            putExtra(Intent.EXTRA_TEXT, getShareIndexCard(true))
+            putExtra(Intent.EXTRA_TEXT, getShareIndexCard(withPrice))
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_tittle))
             type = "image/png"
         }
@@ -170,39 +184,41 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
 
     }
 
-    private fun getShareIndexCard(withPrice: Boolean): String {
+    private fun getShareIndexCard(withPrice: Boolean?): String {
 
-        var indexCard = resources.getString(R.string.index_card_product, item.product)
+        var indexCard = resources.getString(R.string.index_card_product, currentMachine.product)
 
-        if (item.brand != null) {
+        if (!currentMachine.brand.isNullOrEmpty()) {
             indexCard += resources.getString(
                 R.string.index_card_brand,
-                item.getBrand()
+                currentMachine.getBrand()
             )
         }
-        if (item.feature1 != null || item.feature2 != null) {
+        if (currentMachine.feature1 != null || currentMachine.feature2 != null) {
             indexCard += resources.getString(
                 R.string.index_card_features,
-                item.getFeatures()
+                currentMachine.getFeatures()
             )
         }
-        if (item.feature3 != null) {
+        if (!currentMachine.feature3.isNullOrEmpty()) {
             indexCard += resources.getString(
                 R.string.index_card_other_features,
-                item.feature3
+                currentMachine.feature3
             )
         }
-        if (item.type != null) {
+        if (!currentMachine.type.isNullOrEmpty() && currentMachine.type != " ") {
             indexCard += resources.getString(
                 R.string.index_card_type,
-                item.getType()
+                currentMachine.getType()
             )
         }
-        if (withPrice) {
-            indexCard += resources.getString(
-                R.string.index_card_price,
-                item.getFormattedPrice(true)
-            )
+        if (withPrice != null){
+            if (withPrice) {
+                indexCard += resources.getString(
+                    R.string.index_card_price,
+                    currentMachine.getFormattedPrice(true)
+                )
+            }
         }
 
         return indexCard
@@ -275,7 +291,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             val ei = ExifInterface(viewModel.currentPhotoPath)
             val orientation = ei.getAttribute(ExifInterface.TAG_ORIENTATION)
             val uriList = ImageManager.getReduceBitmapListFromCamera(
@@ -284,7 +300,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             )
             viewModel.uploadPhoto(uriList[0])
             viewModel.uploadPhoto(uriList[1], true)
-        } else if (requestCode == REQUEST_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_CODE_GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
             if (data != null && data.data != null) {
                 val image = data.data
                 if (image != null) {
@@ -321,7 +337,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
                             file
                         )
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                        startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PHOTO)
 
                     }
                 }
@@ -333,7 +349,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     private fun getGalleryInstance() {
         Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
             type = "image/*"
-            startActivityForResult(this, REQUEST_GALLERY_PHOTO)
+            startActivityForResult(this, REQUEST_CODE_GALLERY_PHOTO)
         }
     }
 
@@ -342,11 +358,12 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
      */
     override fun onItemClick(position: Int) {
 
-        if (item.getMachinePhotoList()[0].id == -1) {
+        if (currentMachine.getMachinePhotoList()[0].id == -1) {
             getGalleryInstance()
         } else {
             val action = DetailFragmentDirections.actionDetailFragmentToFullScreenImageFragment(
-                position
+                machineId = currentMachine.id,
+                photoPosition = position
             )
             this.findNavController().navigate(action)
         }
@@ -362,7 +379,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
             builder.setTitle(R.string.dialog_new_status)
                 .setItems(
                     R.array.status_options,
-                    DialogInterface.OnClickListener { dialog, which ->
+                    DialogInterface.OnClickListener { _, which ->
                         viewModel.setUpdateStatus(arrayList[which].toString())
                     })
             builder.create()

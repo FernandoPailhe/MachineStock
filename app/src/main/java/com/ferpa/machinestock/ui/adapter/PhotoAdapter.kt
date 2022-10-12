@@ -4,19 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ferpa.machinestock.R
-import com.ferpa.machinestock.databinding.PhotoItemBinding
 import com.ferpa.machinestock.databinding.PhotoViewPagerBinding
 import com.ferpa.machinestock.model.MachinePhoto
 import com.ferpa.machinestock.ui.adapter.PhotoAdapter.MachinePhotoViewHolder
-import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
-
+import com.ferpa.machinestock.utilities.Extensions.loadImage
 
 class PhotoAdapter(
+    private val product: String,
     private val machinePhotoList: List<MachinePhoto>,
-    private val listener: OnItemClickListener,
-    private val photoSize: String = ""
+    private val listener: OnItemClickListener
 ) :
     RecyclerView.Adapter<MachinePhotoViewHolder>() {
 
@@ -52,47 +48,10 @@ class PhotoAdapter(
             if (position != RecyclerView.NO_POSITION) {
                 listener.onItemClick(position)
             }
-
         }
 
         fun bind(machinePhoto: MachinePhoto) {
-
-            if (machinePhoto.imgSrcUrl == null || machinePhotoList.isEmpty() || machinePhoto.id == -1) {
-                binding.apply {
-                    when (machinePhoto.imgSrcUrl) {
-                        "GUILLOTINA" -> photoImageView.setImageResource(R.drawable.s_guillotina)
-                        "PLEGADORA" -> photoImageView.setImageResource(R.drawable.s_plegadora)
-                        "BALANCIN" -> photoImageView.setImageResource(R.drawable.s_balancin)
-                        "TORNO" -> photoImageView.setImageResource(R.drawable.s_torno)
-                        "FRESADORA" -> photoImageView.setImageResource(R.drawable.s_fresadora)
-                        "PLASMA" -> photoImageView.setImageResource(R.drawable.s_plasma)
-                        "PLATO" -> photoImageView.setImageResource(R.drawable.s_plato)
-                        "RECTIFICADORA" -> photoImageView.setImageResource(R.drawable.s_rectificadora)
-                        else -> photoImageView.setImageResource(R.drawable.ic_machine_icon)
-                    }
-                }
-            } else {
-                val photoUrl = machinePhoto.imgSrcUrl.toString() + photoSize
-
-                FirebaseStorage.getInstance().reference.child(photoUrl).downloadUrl.addOnSuccessListener {
-                    Picasso.get()
-                        .load(it)
-                        .into(binding.photoImageView)
-                        /**
-                        .into(binding.itemPhoto, object: com.squareup.picasso.Callback{
-                            override fun onSuccess() {
-                                TODO("Loading Animation")
-                            }
-                            override fun onError(e: Exception?) {
-                                TODO("Not yet implemented")
-                            }
-                        })
-                        **/
-                }.addOnFailureListener {
-                    //TODO Manage Exception
-                }
-            }
-
+            binding.photoImageView.loadImage(product, machinePhoto)
         }
 
     }
@@ -102,6 +61,5 @@ class PhotoAdapter(
     }
 
     override fun getItemCount() = machinePhotoList.size
-
 
 }

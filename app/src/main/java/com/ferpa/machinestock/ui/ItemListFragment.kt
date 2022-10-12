@@ -1,5 +1,6 @@
 package com.ferpa.machinestock.ui
 
+
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -8,16 +9,16 @@ import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentItemListBinding
 import com.ferpa.machinestock.ui.adapter.AllItemsListAdapter
-import com.ferpa.machinestock.ui.adapter.EditListAdapter
 import com.ferpa.machinestock.ui.adapter.ItemListAdapter
-import com.ferpa.machinestock.ui.viewmodel.MachineStockViewModel
+import com.ferpa.machinestock.ui.viewmodel.ItemListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,11 +30,9 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
     private lateinit var productListAdapter: ItemListAdapter
 
-    private lateinit var editListAdapter: EditListAdapter
-
     private lateinit var allItemsListAdapter: AllItemsListAdapter
 
-    private val viewModel: MachineStockViewModel by activityViewModels()
+    private val viewModel: ItemListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,24 +48,16 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
         var isFilterMenuVisible = false
 
-        allItemsListAdapter = AllItemsListAdapter {
-            viewModel.setCurrentId(it.id)
-            val action = ItemListFragmentDirections.actionItemListFragmentToDetailFragment()
+        allItemsListAdapter = AllItemsListAdapter { machine ->
+            val action =
+                ItemListFragmentDirections.actionItemListFragmentToDetailFragment(machineId = machine.id)
             this.findNavController().navigate(action)
-            //binding.slidingPaneLayout.openPane()
-            //TODO Implement SlidingPaneLayout
         }
 
-        productListAdapter = ItemListAdapter {
-            viewModel.setCurrentId(it.id)
-            val action = ItemListFragmentDirections.actionItemListFragmentToDetailFragment()
+        productListAdapter = ItemListAdapter { machine ->
+            val action =
+                ItemListFragmentDirections.actionItemListFragmentToDetailFragment(machineId = machine.id)
             this.findNavController().navigate(action)
-            //binding.slidingPaneLayout.openPane()
-            //TODO Implement SlidingPaneLayout
-        }
-
-        editListAdapter = EditListAdapter {
-
         }
 
         bindRecyclerView(viewModel.getProduct())
@@ -106,16 +97,13 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         lifecycleScope.launchWhenStarted {
             viewModel.isNewFilter.collect {
                 if (it) {
+                    viewModel.collectFilterList()
                     Log.d(TAG, "IsNewFilter")
                     Log.d(TAG, "New Product ${viewModel.getProduct()}")
-                    if (viewModel.isEditList.value){
-                        subscribeUiEditList(editListAdapter)
+                    if (viewModel.getProduct() == "TODAS") {
+                        subscribeUiAllItems(allItemsListAdapter)
                     } else {
-                        if (viewModel.getProduct() == "TODAS") {
-                            subscribeUiAllItems(allItemsListAdapter)
-                        } else {
-                            subscribeUi(productListAdapter)
-                        }
+                        subscribeUi(productListAdapter)
                     }
                     viewModel.setNewFilterFalse()
                 }
@@ -148,8 +136,6 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
     }
 
-    //TODO Hide filter menu with swipeUp
-
     override fun onQueryTextSubmit(query: String?): Boolean {
         viewModel.setQueryText(query)
         return true
@@ -161,35 +147,25 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
     }
 
     private fun subscribeUi(adapter: ItemListAdapter) {
-        lifecycleScope.launchWhenStarted {
-            viewModel.filterItems.collect {
-                Log.d(TAG, "subscribeUi -> ${it.size} items")
-                adapter.submitList(it)
-            }
+        viewModel.filterList.observe(this.viewLifecycleOwner) { filterList ->
+            Log.d(TAG, "subscribeUiAll -> ${filterList.size} items")
+            adapter.submitList(filterList)
         }
-    }
-
-    private fun subscribeUiEditList(adapter: EditListAdapter) {
-        lifecycleScope.launchWhenStarted {
-            viewModel.filterItems.collect {
-                Log.d(TAG, "subscribeUiEditList -> ${it.size} items")
-                adapter.submitList(it)
-            }
-        }
+        binding.recyclerView.scrollToPosition(viewModel.itemListPosition.value)
     }
 
     private fun subscribeUiAllItems(adapter: AllItemsListAdapter) {
-        lifecycleScope.launchWhenStarted {
-            viewModel.filterItems.collect {
-                Log.d(TAG, "subscribeUiAll -> ${it.size} items")
-                adapter.submitList(it)
-            }
+        viewModel.filterList.observe(this.viewLifecycleOwner) { filterList ->
+            Log.d(TAG, "subscribeUiAll -> ${filterList.size} items")
+            adapter.submitList(filterList)
         }
+        binding.recyclerView.scrollToPosition(viewModel.itemListPosition.value)
     }
 
     private fun bindFilter(tv: CheckBox, type: Int, position: Int) {
 
-        val typeStr = getStringFromArray(type, position).lowercase().replaceFirstChar { it.uppercase() }
+        val typeStr =
+            getStringFromArray(type, position).lowercase().replaceFirstChar { it.uppercase() }
         tv.text = typeStr
         tv.isChecked = viewModel.getFilterStatus(typeStr)
         tv.setOnClickListener {
@@ -199,16 +175,21 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
     }
 
-    private fun bindRecyclerView(product: String){
-        if (viewModel.isEditList.value){
-            binding.recyclerView.adapter = editListAdapter
+    private fun bindRecyclerView(product: String) {
+        if (product == "TODAS") {
+            binding.recyclerView.adapter = allItemsListAdapter
         } else {
-            if (product == "TODAS") {
-                binding.recyclerView.adapter = allItemsListAdapter
-            } else {
-                binding.recyclerView.adapter = productListAdapter
-            }
+            binding.recyclerView.adapter = productListAdapter
         }
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                viewModel.itemListPosition.value =
+                    (((recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()!!))
+                Log.d(TAG, "set scroll with AddOnScroll to ${viewModel.itemListPosition.value}")
+            }
+        })
 
     }
 
@@ -267,11 +248,9 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
     private fun setAdapterArray(): ArrayAdapter<String> {
         val array = arrayListOf("TODAS")
-        lifecycleScope.launchWhenStarted {
-            viewModel.productArray.collect {
-                for (product in it) {
-                    array.add(product)
-                }
+        viewModel.productArray.observe(this.viewLifecycleOwner) {
+            for (product in it) {
+                array.add(product)
             }
         }
         return ArrayAdapter(requireContext(), R.layout.dropdown_item, array)
