@@ -24,7 +24,7 @@ Aplicación Android desarrollada en Kotlin. Es una aplicación de administració
   
 - Pantalla de busqueda:
   - Se hace una consulta por entrada de texto
-  - Se filtra la bista por: tipo, estado y tecnología.
+  - Se filtra la vista por: tipo, estado y tecnología.
   
 - Pantalla de detalle: 
   - Se accede a la ficha técnica de la maquina.
