@@ -11,7 +11,7 @@ Aplicación Android desarrollada en Kotlin. Es una aplicación de administració
 - Navigation Component
 - Fragments
 - Recycler View
-- Picasso
+- Glide
 - Constraint Layout
 - Firebase (Auth, Firestorage, Firestore)
 
