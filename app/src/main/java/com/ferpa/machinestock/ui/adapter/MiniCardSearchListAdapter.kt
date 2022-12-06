@@ -1,5 +1,6 @@
 package com.ferpa.machinestock.ui.adapter
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,11 @@ import com.ferpa.machinestock.model.*
 import com.ferpa.machinestock.utilities.Extensions.loadImage
 import com.ferpa.machinestock.utilities.PhotoListManager
 
-class MiniCardListAdapter(
-    private val childItemClickListener: OnChildItemClickListener
+class MiniCardSearchListAdapter(
+    private val onItemClicked: (Item) -> Unit,
+    private val isAllProductsList: Boolean = false
 ) :
-    ListAdapter<Item, MiniCardListAdapter.ItemViewHolder>(DiffCallBack) {
+    ListAdapter<Item, MiniCardSearchListAdapter.ItemViewHolder>(DiffCallBack) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -26,41 +28,35 @@ class MiniCardListAdapter(
                 LayoutInflater.from(
                     parent.context
                 )
-            ), childItemClickListener
+            )
         )
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current)
+        holder.itemView.setOnClickListener {
+            onItemClicked(current)
+        }
+        holder.bind(current, isAllProductsList)
 
     }
 
     class ItemViewHolder(
-        private var binding: MiniCardDetailBinding,
-        private val childItemClickListener: OnChildItemClickListener
+        private var binding: MiniCardDetailBinding
     ) :
-        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(p0: View?) {
-            val position: Int = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
-                childItemClickListener.onChildItemClick(position)
-            }
-        }
-
-        fun bind(machine: Item) {
+        fun bind(machine: Item, isAllProductsList: Boolean) {
             binding.apply {
-                bindTextView(itemBrand, machine.getBrand())
+                miniCardDetail.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                miniCardImageView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                val cardTitle = if (isAllProductsList) "${machine.product} - ${machine.getBrand()}" else machine.getBrand()
+                bindTextView(itemBrand, cardTitle)
                 bindTextView(itemFeature1, machine.getFeatures())
-//                bindTextView(itemFeature3, machine.feature3)
                 bindTextView(itemPrice, machine.getFormattedPrice(true))
                 bindTextView(itemStatus, machine.getStatus())
                 miniCardImageView.loadImage(machine.product, PhotoListManager.getMachinePhotoList(machine, true)[0], true)
+                cardBrand.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
             }
         }
 
@@ -72,10 +68,6 @@ class MiniCardListAdapter(
             }
         }
 
-    }
-
-    interface OnChildItemClickListener {
-        fun onChildItemClick(clickPosition: Int)
     }
 
     companion object {
@@ -90,6 +82,5 @@ class MiniCardListAdapter(
 
         }
     }
-
 
 }

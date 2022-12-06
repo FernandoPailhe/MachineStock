@@ -79,10 +79,6 @@ class FullScreenImageFragment : Fragment(R.layout.fragment_full_screen_image), P
         binding.fullScreenPhotoViewPager.currentItem = photoPosition
     }
 
-    companion object {
-        const val TAG = "FullScreenImageFragment"
-    }
-
     override fun onItemClick(position: Int) {
 
     }

@@ -15,13 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentMenuBinding
-import com.ferpa.machinestock.model.MachineStockUser
-import com.ferpa.machinestock.ui.adapter.ItemListAdapter
 import com.ferpa.machinestock.ui.adapter.MenuListAdapter
 import com.ferpa.machinestock.ui.viewmodel.MenuViewModel
 import com.ferpa.machinestock.utilities.Const.NEW_ITEM
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -38,8 +34,6 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
     private var menuList: MutableList<String> = mutableListOf()
 
     private lateinit var menuListAdapter: MenuListAdapter
-
-    private lateinit var searchListAdapter: ItemListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,9 +69,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu), MenuListAdapter.OnItemCli
 
         menuListAdapter = MenuListAdapter(this)
 
-
         subscribeUi(menuListAdapter)
-
 
         binding.apply {
             menuRecyclerView.adapter = menuListAdapter

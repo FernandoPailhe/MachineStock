@@ -84,7 +84,7 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
-            .addOnCompleteListener() { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(ContentValues.TAG, "signInWithCredential: succes")
                     val user = auth.currentUser
@@ -111,10 +111,6 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
         val action = LogInFragmentDirections.actionLogInFragmentToMenuFragment()
         findNavController().navigate(action)
 
-    }
-
-    companion object {
-        const val TAG = "LogInFragment"
     }
 
 }

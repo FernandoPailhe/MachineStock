@@ -297,7 +297,6 @@
                 app:layout_constraintStart_toEndOf="@id/save_action"
                 app:layout_constraintTop_toBottomOf="@id/add_item_photo_view_pager" />
 
-            <!-- TODO Decide if add image buttons remains or go to the trash -->
             <com.google.android.material.button.MaterialButton
                 android:visibility="gone"
                 android:id="@+id/camera_action"

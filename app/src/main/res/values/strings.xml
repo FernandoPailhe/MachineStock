@@ -31,7 +31,6 @@
         <item>No especifica</item>
     </string-array>
 
-    <!--TODO Cambiar a socios originales-->
     <string-array name="owner_options">
         <item>Socio 1</item>
         <item>Socio 2</item>

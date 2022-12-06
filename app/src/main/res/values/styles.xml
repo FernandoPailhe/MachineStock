@@ -63,6 +63,13 @@
         <item name="android:textAppearance">?attr/textAppearanceOverline</item>
     </style>
 
+    <style name="Widget.MachineStock.CardBrand" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="android:textAppearance">?attr/textAppearanceOverline</item>
+    </style>
+
     <style name="Widget.MachineStock.CardMenuLayout" parent="Widget.Material3.CardView.Elevated">
         <item name="cardCornerRadius">8dp</item>
         <item name="cornerFamily">rounded</item>
