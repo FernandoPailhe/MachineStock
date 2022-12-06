@@ -4,7 +4,7 @@ Aplicación Android desarrollada en Kotlin. Es una aplicación de administració
 (Algunos archivos del repositorio no son los originales por motivos de privacidad.)
 
 # Tecnologías:
-- Arquitectura MVVM
+- Arquitectura Limpia MVVM con Casos de Uso
 - Corrutinas
 - Room
 - Dagger Hilt
