@@ -16,8 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.databinding.FragmentItemListBinding
-import com.ferpa.machinestock.ui.adapter.AllItemsListAdapter
-import com.ferpa.machinestock.ui.adapter.ItemListAdapter
+import com.ferpa.machinestock.ui.adapter.MiniCardSearchListAdapter
 import com.ferpa.machinestock.ui.viewmodel.ItemListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,9 +27,9 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
     private var _binding: FragmentItemListBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var productListAdapter: ItemListAdapter
+    private lateinit var productListAdapter: MiniCardSearchListAdapter
 
-    private lateinit var allItemsListAdapter: AllItemsListAdapter
+    private lateinit var allItemsListAdapter: MiniCardSearchListAdapter
 
     private val viewModel: ItemListViewModel by viewModels()
 
@@ -48,17 +47,17 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
 
         var isFilterMenuVisible = false
 
-        allItemsListAdapter = AllItemsListAdapter { machine ->
+        allItemsListAdapter = MiniCardSearchListAdapter ({ machine ->
             val action =
-                ItemListFragmentDirections.actionItemListFragmentToDetailFragment(machineId = machine.id)
+                com.ferpa.machinestock.ui.ItemListFragmentDirections.actionItemListFragmentToDetailFragment(machineId = machine.id)
             this.findNavController().navigate(action)
-        }
+        }, true)
 
-        productListAdapter = ItemListAdapter { machine ->
+        productListAdapter = MiniCardSearchListAdapter ({ machine ->
             val action =
                 ItemListFragmentDirections.actionItemListFragmentToDetailFragment(machineId = machine.id)
             this.findNavController().navigate(action)
-        }
+        })
 
         bindRecyclerView(viewModel.getProduct())
 
@@ -146,7 +145,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         return true
     }
 
-    private fun subscribeUi(adapter: ItemListAdapter) {
+    private fun subscribeUi(adapter: MiniCardSearchListAdapter) {
         viewModel.filterList.observe(this.viewLifecycleOwner) { filterList ->
             Log.d(TAG, "subscribeUiAll -> ${filterList.size} items")
             adapter.submitList(filterList)
@@ -154,7 +153,7 @@ class ItemListFragment : Fragment(R.layout.fragment_item_list),
         binding.recyclerView.scrollToPosition(viewModel.itemListPosition.value)
     }
 
-    private fun subscribeUiAllItems(adapter: AllItemsListAdapter) {
+    private fun subscribeUiAllItems(adapter: MiniCardSearchListAdapter) {
         viewModel.filterList.observe(this.viewLifecycleOwner) { filterList ->
             Log.d(TAG, "subscribeUiAll -> ${filterList.size} items")
             adapter.submitList(filterList)

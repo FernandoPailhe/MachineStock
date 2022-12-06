@@ -58,6 +58,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -133,7 +134,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 }
                 cancelAction.setOnClickListener {
                     val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment(
-                        NEW_ITEM)
+                        navArgs.machineId)
                     it.findNavController().navigate(action)
                 }
             }
@@ -534,7 +535,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
                 binding.itemOwner1.text.toString(),
                 binding.itemObservations.text.toString()
             )
-            val action = AddItemFragmentDirections.actionAddItemFragmentToDetailFragment(NEW_ITEM)
+            val action = AddItemFragmentDirections.actionAddItemFragmentToMenuFragment()
             this.findNavController().navigate(action)
         }
 
@@ -590,8 +591,7 @@ class AddItemFragment : Fragment(R.layout.fragment_add_item), PhotoAdapter.OnIte
             binding.itemFeature1.text.toString(),
             binding.itemFeature2.text.toString(),
             binding.itemOwner1.text.toString(),
-            binding.itemOwner2.text.toString(),
-            binding.itemInsideNumber.text.toString()
+            binding.itemOwner2.text.toString()
         )
 
         if (isEntryValid == 1) {

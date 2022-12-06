@@ -132,7 +132,6 @@ fun Item.getFeatures(): String {
 
 fun Item.getLocation(): String? = this.location ?: "A definir"
 
-
 fun Item.getInsideNumber(): String? {
 
     return if (insideNumber != null) {

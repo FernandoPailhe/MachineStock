@@ -311,7 +311,7 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/margin_between_elements"
+            android:layout_marginHorizontal="@dimen/margin_between_elements_small"
             android:clipToPadding="false"
             tools:listitem="@layout/edit_list_item" />
 

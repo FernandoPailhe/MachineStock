@@ -11,6 +11,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.asLiveData
+import com.ferpa.machinestock.data.MachinesRepository.Companion.FIRST_TIME
+import com.ferpa.machinestock.data.MachinesRepository.Companion.WITH_PRICE
 import com.ferpa.machinestock.model.Item
 import com.ferpa.machinestock.model.MainMenuItem
 import com.ferpa.machinestock.model.MachineStockUser
@@ -101,8 +103,14 @@ constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getFilterList(flowList: Flow<List<Item>>): Flow<List<Item>> {
-        return flowList.mapLatest { list ->
-            list.filter { customListUtil.filterItem(it) }.sortedBy { it.feature1 }
+        return if (customListUtil.getProduct() == "TODAS") {
+            flowList.mapLatest { list ->
+                list.filter { customListUtil.filterItem(it) }
+            }
+        } else {
+            flowList.mapLatest { list ->
+                list.filter { customListUtil.filterItem(it) }.sortedBy { it.feature1 }
+            }
         }
     }
 

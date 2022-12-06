@@ -7,9 +7,7 @@ import com.ferpa.machinestock.model.Item
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.concurrent.Flow
 import javax.inject.Inject
 
 
@@ -24,8 +22,8 @@ constructor(private val machinesRepository: MachinesRepository) : ViewModel() {
     private val _isNewFilter = MutableStateFlow(true)
     val isNewFilter: StateFlow<Boolean> get() = _isNewFilter
 
-    private val _itemListPosition = MutableStateFlow (0)
-    val itemListPosition: MutableStateFlow<Int> get () = _itemListPosition
+    private val _itemListPosition = MutableStateFlow(0)
+    val itemListPosition: MutableStateFlow<Int> get() = _itemListPosition
 
     fun getProduct(): String = machinesRepository.customListUtil.getProduct()
 
@@ -37,7 +35,7 @@ constructor(private val machinesRepository: MachinesRepository) : ViewModel() {
 
     fun collectFilterList() {
         viewModelScope.launch {
-            machinesRepository.itemsFlow.collect(){ collectedFilterList ->
+            machinesRepository.itemsFlow.collect { collectedFilterList ->
                 _filterList.postValue(collectedFilterList)
             }
         }

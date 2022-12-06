@@ -3,6 +3,7 @@
 
     <dimen name="margin">16dp</dimen>
     <dimen name="margin_between_elements">16dp</dimen>
+    <dimen name="margin_between_elements_small">8dp</dimen>
     <dimen name="menu_padding">8dp</dimen>
     <dimen name="margin_between_text">4dp</dimen>
     <dimen name="percent_icon_size">40dp</dimen>

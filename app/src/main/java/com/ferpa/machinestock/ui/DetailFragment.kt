@@ -19,7 +19,6 @@ import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -34,8 +33,6 @@ import com.ferpa.machinestock.utilities.PhotoListManager
 import com.ferpa.machinestock.utilities.imageUtils.ImageManager
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -142,13 +139,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail), PhotoAdapter.OnItemCl
     */
     private fun shareProduct() {
 
-        var withPrice = false
+        var withPrice = true
 
-        lifecycleScope.launch {
-            if (viewModel.shareWithPrice.first() != null) {
-                withPrice = viewModel.shareWithPrice.first()!!
-            }
-        }
         if (currentMachine.photos == "0") {
             shareIndexCard(getShareIndexCard(withPrice))
         } else {

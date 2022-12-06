@@ -2,10 +2,11 @@ package com.ferpa.machinestock.utilities
 
 import android.util.Log
 import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.ferpa.machinestock.R
 import com.ferpa.machinestock.model.MachinePhoto
 import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
 
 object Extensions {
 
@@ -27,15 +28,16 @@ object Extensions {
         } else {
             FirebaseStorage.getInstance().reference.child(machinePhoto.imgSrcUrl.toString()).downloadUrl.addOnSuccessListener { uri ->
                 if (fit) {
-                    Picasso.get()
+                    Glide.with(this.context)
                         .load(uri)
                         .placeholder(photoResource)
-                        .fit()
+                        .fitCenter()
                         .centerCrop()
                         .into(this)
                 } else {
-                    Picasso.get()
+                    Glide.with(this.context)
                         .load(uri)
+                        .transform(RoundedCorners(16))
                         .placeholder(photoResource)
                         .into(this)
                 }
@@ -44,5 +46,25 @@ object Extensions {
             }
         }
     }
+
+    fun String?.stringToDoubleOrEmptyToZero(): Double {
+        var newDouble = 0.0
+        if (this != "" && this != null) {
+            newDouble = this.replace(",", "").toDouble()
+        }
+        return newDouble
+    }
+
+    fun String?.stringToIntOrEmptyToZero(): Int {
+        var newInt = 0
+        if (this != "" && this != null) {
+            newInt = this.toInt()
+        }
+        return newInt
+    }
+
+    fun String?.getCapTypeOrEmpty() = if (this.isNullOrEmpty()) "" else this[0].toString()
+
+    fun String?.getAddOwner() = if (this.isNullOrEmpty()) 0 else this.toInt()
 
 }
