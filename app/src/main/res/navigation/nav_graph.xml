@@ -12,14 +12,18 @@
         <action
             android:id="@+id/action_itemListFragment_to_menuFragment"
             app:destination="@id/menuFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"/>
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
         <action
             android:id="@+id/action_itemListFragment_to_addItemFragment"
             app:destination="@id/addItemFragment" />
         <action
             android:id="@+id/action_itemListFragment_to_detailFragment"
             app:destination="@id/detailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/itemListFragment" />
     </fragment>
     <fragment
@@ -30,16 +34,26 @@
         <action
             android:id="@+id/action_menuFragment_to_itemListFragment"
             app:destination="@id/itemListFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
             app:popUpTo="@id/menuFragment" />
         <action
             android:id="@+id/action_menuFragment_to_addItemFragment2"
             app:destination="@id/addItemFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/menuFragment" />
         <action
             android:id="@+id/action_menuFragment_to_detailFragment"
             app:destination="@id/detailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/menuFragment" />
         <action
             android:id="@+id/action_menuFragment_to_logInFragment"
@@ -59,14 +73,22 @@
         <action
             android:id="@+id/action_addItemFragment_to_fullScreenImageFragment"
             app:destination="@id/fullScreenImageFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/addItemFragment" />
         <action
             android:id="@+id/action_addItemFragment_to_detailFragment"
             app:destination="@id/detailFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
             app:popUpTo="@id/menuFragment" />
         <action
             android:id="@+id/action_addItemFragment_to_menuFragment"
-            app:destination="@id/menuFragment" />
+            app:destination="@id/menuFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/fullScreenImageFragment"
@@ -96,16 +118,28 @@
             app:argType="long"/>
         <action
             android:id="@+id/action_detailFragment_to_addItemFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:destination="@id/addItemFragment" />
         <action
             android:id="@+id/action_detailFragment_to_itemListFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
             app:destination="@id/itemListFragment" />
         <action
             android:id="@+id/action_detailFragment_to_fullScreenImageFragment"
             app:destination="@id/fullScreenImageFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/detailFragment" />
         <action
             android:id="@+id/action_detailFragment_to_menuFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
             app:destination="@id/menuFragment" />
     </fragment>
     <fragment
