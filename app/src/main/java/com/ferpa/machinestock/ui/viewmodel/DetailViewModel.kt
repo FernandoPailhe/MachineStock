@@ -46,6 +46,7 @@ constructor(
     private fun updateItem(machine: Item) {
         viewModelScope.launch {
             detailUseCases.updateItemUseCase(machine)
+            getMachine(machine.id)
         }
     }
 

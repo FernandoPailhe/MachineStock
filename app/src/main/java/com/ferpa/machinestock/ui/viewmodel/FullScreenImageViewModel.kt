@@ -34,6 +34,7 @@ constructor(private val machinesRepository: MachinesRepository) : ViewModel() {
     private fun updateItem(item: Item) {
         viewModelScope.launch {
             machinesRepository.updateItem(item)
+            getMachine(item.id)
         }
     }
 
