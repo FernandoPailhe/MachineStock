@@ -16,14 +16,14 @@ Aplicación Android desarrollada en Kotlin. Es una aplicación de administració
 - Firebase (Auth, Firestorage, Firestore)
 
 # Funcionalidades:
-- Menu principal muestra un listado de listas diferentes:
-  - Según tipos de máquinas
-  - Según estado de las máquinas
-  - Según fecha de cambio de la ficha de la maquina
-  - Según fecha de ingreso de la maquina
+- Menu principal muestra un listado de listas diferentes, expandibles y minimizables:
+  - Según tipos de máquinas.
+  - Según estado de las máquinas.
+  - Según fecha de cambio de la ficha de la maquina.
+  - Según fecha de ingreso de la maquina.
   
 - Pantalla de busqueda:
-  - Se hace una consulta por entrada de texto
+  - Se hace una consulta por entrada de texto.
   - Se filtra la vista por: tipo, estado y tecnología.
   
 - Pantalla de detalle: 
